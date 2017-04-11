@@ -11,11 +11,25 @@ import model.Computer;
 
 public class ComputerDAO extends DefaultDAO implements ComputerInterface {
     
-    private final static String QUERY_FIND_COMPUTER = "SELECT * FROM " + Computer.TABLE_NAME;
-    private final static String QUERY_FIND_COMPUTER_BY_ID = "SELECT * FROM " + Computer.TABLE_NAME + " WHERE id = ? ";
-    private final static String QUERY_ADD_COMPUTER = "INSERT INTO " + Computer.TABLE_NAME + " (id, name, introduced, discontinued, company_id) VALUES(?, ?, ?, ?, ?)";
-    private final static String QUERY_UPDATE_COMPUTER = "UPDATE " + Computer.TABLE_NAME + " SET name = ?, introduced = ?, discontinued = ?, company_id = ? WHERE id = ?";
-    private final static String QUERY_DELETE_COMPUTER = "DELETE FROM " + Computer.TABLE_NAME + " WHERE id = ? ";
+    private final static String QUERY_FIND_COMPUTER = "SELECT * FROM " 
+    + Computer.TABLE_NAME;
+    
+    private final static String QUERY_FIND_COMPUTER_BY_ID = "SELECT * FROM " 
+    + Computer.TABLE_NAME 
+    + " WHERE " + Computer.FIELD_ID + " = ? ";
+    
+    private final static String QUERY_ADD_COMPUTER = "INSERT INTO " 
+    + Computer.TABLE_NAME + " ("
+    + Computer.FIELD_ID + ", "
+    + Computer.FIELD_NAME + ", "
+    + Computer.FIELD_INTRODUCED + ", "
+    + Computer.FIELD_DISCONTINUED + ", "
+    + Computer.FIELD_COMPANY_ID 
+    + ") VALUES(?, ?, ?, ?, ?)";
+    
+    private final static String QUERY_DELETE_COMPUTER = "DELETE FROM " 
+    + Computer.TABLE_NAME 
+    + " WHERE " + Computer.FIELD_ID + " = ? ";
     
 	@Override
 	public List<Computer> listComputers() {
@@ -27,11 +41,11 @@ public class ComputerDAO extends DefaultDAO implements ComputerInterface {
             final ResultSet rset = stmt.executeQuery();
 
             while (rset.next()) {
-                Computer computer = new Computer(rset.getInt("id"), 
-						                		rset.getString("name"), 
-						                		rset.getTimestamp("introduced"), 
-						                		rset.getTimestamp("discontinued"), 
-						                		rset.getInt("company_id"));
+                Computer computer = new Computer(rset.getInt(Computer.FIELD_ID), 
+						                		rset.getString(Computer.FIELD_NAME), 
+						                		rset.getTimestamp(Computer.FIELD_INTRODUCED), 
+						                		rset.getTimestamp(Computer.FIELD_DISCONTINUED), 
+						                		rset.getInt(Computer.FIELD_COMPANY_ID));
                 computers.add(computer);
             }
 
@@ -70,11 +84,11 @@ public class ComputerDAO extends DefaultDAO implements ComputerInterface {
             ResultSet rset = stmt.executeQuery();
 
             if (rset.next()) {
-                computer = new Computer(rset.getInt("id"), 
-				                		rset.getString("name"), 
-				                		rset.getTimestamp("introduced"), 
-				                		rset.getTimestamp("introduced"), 
-				                		rset.getInt("company_id"));
+                computer = new Computer(rset.getInt(Computer.FIELD_ID), 
+				                		rset.getString(Computer.FIELD_NAME), 
+				                		rset.getTimestamp(Computer.FIELD_INTRODUCED), 
+				                		rset.getTimestamp(Computer.FIELD_DISCONTINUED), 
+				                		rset.getInt(Computer.FIELD_COMPANY_ID));
             }
 
         } catch (SQLException e) {
@@ -147,13 +161,16 @@ public class ComputerDAO extends DefaultDAO implements ComputerInterface {
 		
 		try {
             con = getConnexion();
-            stmt = con.prepareStatement(QUERY_UPDATE_COMPUTER);
+            StringBuilder sb = new StringBuilder("UPDATE " + Computer.TABLE_NAME + " SET ");
+        
+        	sb.append(Computer.FIELD_NAME + " = " + (name == null ? Computer.FIELD_NAME : "'" + name + "'") + ", ");
+        	sb.append(Computer.FIELD_INTRODUCED + "= " + (introduced == null ? Computer.FIELD_INTRODUCED : "'" + introduced + "'") + ", ");
+        	sb.append(Computer.FIELD_DISCONTINUED + " = " + (discontinued == null ? Computer.FIELD_DISCONTINUED : "'" + discontinued + "'") + ", ");
+        	sb.append(Computer.FIELD_COMPANY_ID + " = " + (companyId == 0 ? Computer.FIELD_COMPANY_ID : "'" + companyId + "'"));
             
-            stmt.setString(1, name);
-            stmt.setTimestamp(2, introduced);
-            stmt.setTimestamp(3, discontinued);
-            stmt.setInt(4, companyId);
-            stmt.setInt(5, id);
+            sb.append(" WHERE " + Computer.FIELD_ID + " = " + id);
+            
+            stmt = con.prepareStatement(sb.toString());
             
             int res = stmt.executeUpdate();
             update = true;

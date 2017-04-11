@@ -2,15 +2,10 @@ package test;
 
 import static org.junit.Assert.*;
 
-import java.util.List;
-
 import org.junit.Test;
 
 import service.ComputerService;
 
-import daos.CompanyDAO;
-import daos.ComputerDAO;
-import model.Company;
 import model.Computer;
 
 public class ComputerTest {

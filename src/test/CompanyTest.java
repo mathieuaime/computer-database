@@ -2,15 +2,11 @@ package test;
 
 import static org.junit.Assert.*;
 
-import java.util.List;
-
 import org.junit.Test;
 
 import service.CompanyService;
 
-import daos.CompanyDAO;
 import model.Company;
-
 public class CompanyTest {
 
 	@Test
