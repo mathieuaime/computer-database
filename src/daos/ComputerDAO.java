@@ -1,17 +1,18 @@
 package daos;
 
+import java.util.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
 import interfaces.IComputerDAO;
+import model.Company;
 import model.Computer;
 
 public class ComputerDAO extends DefaultDAO implements IComputerDAO {
     
-    private final static String QUERY_FIND_COMPUTER 		= "SELECT * FROM " + Computer.TABLE_NAME;
+    private final static String QUERY_FIND_COMPUTERS 		= "SELECT * FROM " + Computer.TABLE_NAME;
     
     private final static String QUERY_FIND_COMPUTER_BY_ID 	= "SELECT * FROM " 
 														    + Computer.TABLE_NAME 
@@ -30,6 +31,17 @@ public class ComputerDAO extends DefaultDAO implements IComputerDAO {
 														    + Computer.TABLE_NAME 
 														    + " WHERE " + Computer.FIELD_ID + " = ? ";
     
+    private final static String QUERY_FIND_COMPANY 			= "SELECT "
+    														+ Company.TABLE_NAME + "." + Company.FIELD_ID + ", "
+    														+ Company.TABLE_NAME + "." + Company.FIELD_NAME
+    														+ " FROM "
+														    + Company.TABLE_NAME
+														    + " INNER JOIN " + Computer.TABLE_NAME 
+														    + " ON " + Computer.FIELD_COMPANY_ID + " = " 
+														    + Company.TABLE_NAME + "." + Company.FIELD_ID
+														    + " WHERE " + Computer.TABLE_NAME + "." 
+														    + Computer.FIELD_ID + " = ? ";
+    
 	@Override
 	public List<Computer> listComputers() {
 		return listComputers(-1,-1);
@@ -40,8 +52,8 @@ public class ComputerDAO extends DefaultDAO implements IComputerDAO {
 		List<Computer> computers = new ArrayList<>();
 		
 		try {
-            con = getConnexion();
-            stmt = con.prepareStatement(QUERY_FIND_COMPUTER 
+            con 	= getConnexion();
+            stmt 	= con.prepareStatement(QUERY_FIND_COMPUTERS 
             		+ (length != -1 ? " ORDER BY " + Computer.FIELD_ID + " LIMIT " + length : "") 
             		+ (length != -1 && offset != -1 ? " OFFSET " + offset : ""));
             
@@ -50,8 +62,8 @@ public class ComputerDAO extends DefaultDAO implements IComputerDAO {
             while (rset.next()) {
                 Computer computer = new Computer(rset.getInt(Computer.FIELD_ID), 
 						                		rset.getString(Computer.FIELD_NAME), 
-						                		rset.getTimestamp(Computer.FIELD_INTRODUCED), 
-						                		rset.getTimestamp(Computer.FIELD_DISCONTINUED), 
+						                		rset.getDate(Computer.FIELD_INTRODUCED), 
+						                		rset.getDate(Computer.FIELD_DISCONTINUED), 
 						                		rset.getInt(Computer.FIELD_COMPANY_ID));
                 computers.add(computer);
             }
@@ -93,8 +105,8 @@ public class ComputerDAO extends DefaultDAO implements IComputerDAO {
             if (rset.next()) {
                 computer = new Computer(rset.getInt(Computer.FIELD_ID), 
 				                		rset.getString(Computer.FIELD_NAME), 
-				                		rset.getTimestamp(Computer.FIELD_INTRODUCED), 
-				                		rset.getTimestamp(Computer.FIELD_DISCONTINUED), 
+				                		rset.getDate(Computer.FIELD_INTRODUCED), 
+				                		rset.getDate(Computer.FIELD_DISCONTINUED), 
 				                		rset.getInt(Computer.FIELD_COMPANY_ID));
             }
 
@@ -123,7 +135,7 @@ public class ComputerDAO extends DefaultDAO implements IComputerDAO {
 	}
 
 	@Override
-	public boolean addComputer(int id, String name, Timestamp introduced, Timestamp discontinued, int companyId) {
+	public boolean addComputer(int id, String name, Date introduced, Date discontinued, int companyId) {
 		boolean add = false;
 		
 		try {
@@ -131,8 +143,8 @@ public class ComputerDAO extends DefaultDAO implements IComputerDAO {
             stmt = con.prepareStatement(QUERY_ADD_COMPUTER);
             stmt.setInt(1, id);
             stmt.setString(2, name);
-            stmt.setTimestamp(3, introduced);
-            stmt.setTimestamp(4, discontinued);
+            stmt.setObject(3, introduced);
+            stmt.setObject(4, discontinued);
             stmt.setInt(5, companyId);
             
             int res = stmt.executeUpdate();
@@ -163,19 +175,28 @@ public class ComputerDAO extends DefaultDAO implements IComputerDAO {
 	}
 
 	@Override
-	public boolean updateComputer(int id, String name, Timestamp introduced, Timestamp discontinued, int companyId) {
+	public boolean updateComputer(int id, String name, Date introduced, Date discontinued, int companyId) {
 		boolean update = false;
 		
 		try {
             con = getConnexion();
-            StringBuilder sb = new StringBuilder("UPDATE " + Computer.TABLE_NAME + " SET ");
+            StringBuilder sb = new StringBuilder();
         
-        	sb.append(Computer.FIELD_NAME + " = " + (name == null ? Computer.FIELD_NAME : "'" + name + "'") + ", ");
-        	sb.append(Computer.FIELD_INTRODUCED + "= " + (introduced == null ? Computer.FIELD_INTRODUCED : "'" + introduced + "'") + ", ");
-        	sb.append(Computer.FIELD_DISCONTINUED + " = " + (discontinued == null ? Computer.FIELD_DISCONTINUED : "'" + discontinued + "'") + ", ");
-        	sb.append(Computer.FIELD_COMPANY_ID + " = " + (companyId == 0 ? Computer.FIELD_COMPANY_ID : "'" + companyId + "'"));
-            
-            sb.append(" WHERE " + Computer.FIELD_ID + " = " + id);
+        	sb.append("UPDATE " + Computer.TABLE_NAME + " SET ")
+        	
+        	.append(Computer.FIELD_NAME + " = ")
+        	.append((name == null ? Computer.FIELD_NAME : "'" + name + "'") + ", ")
+        	
+        	.append(Computer.FIELD_INTRODUCED + " = ")
+        	.append((introduced == null ? Computer.FIELD_INTRODUCED : "'" + introduced + "'") + ", ")
+        	
+        	.append(Computer.FIELD_DISCONTINUED	+ " = ")
+        	.append((discontinued == null ? Computer.FIELD_DISCONTINUED : "'" + discontinued + "'") + ", ")
+
+        	.append(Computer.FIELD_COMPANY_ID + " = ")
+        	.append((companyId == 0 ? Computer.FIELD_COMPANY_ID : "'" + companyId + "'"))
+
+            .append(" WHERE " + Computer.FIELD_ID + " = " + id);
             
             stmt = con.prepareStatement(sb.toString());
             
@@ -239,6 +260,44 @@ public class ComputerDAO extends DefaultDAO implements IComputerDAO {
         }
 		
 		return delete;
+	}
+
+	@Override
+	public Company getCompany(int id) {
+		Company company = null;
+		
+		try {
+            con = getConnexion();
+            stmt = con.prepareStatement(QUERY_FIND_COMPANY);
+            stmt.setInt(1, id);
+            final ResultSet rset = stmt.executeQuery();
+
+            if (rset.next()) {
+                company = new Company(rset.getInt(Company.FIELD_ID), rset.getString(Company.FIELD_NAME));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+
+            if (stmt != null) {
+                try {
+                    stmt.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            if (con != null) {
+                try {
+                    con.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+		
+		return company;
 	}
 
 }
