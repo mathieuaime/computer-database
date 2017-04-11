@@ -7,16 +7,16 @@ public class Company implements Serializable {
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -8416954786511932741L;
-
+	private static final long serialVersionUID 	= -8416954786511932741L;
+	
+	public static final String TABLE_NAME 		= "company";
+	
+	public static final String FIELD_ID 		= "id";	
+	public static final String FIELD_NAME 		= "name";
+	
 	private int id;
 	
 	private String name;
-	
-	public static final String TABLE_NAME = "company";
-	
-	public static final String FIELD_ID = "id";	
-	public static final String FIELD_NAME = "name";
 	
 	public Company() {
 		

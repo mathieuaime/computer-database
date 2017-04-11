@@ -5,12 +5,12 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.PreparedStatement;
 
-public class DefaultDAO {
+public abstract class DefaultDAO {
 	
 	protected Connection con = null;
 	protected PreparedStatement stmt = null;
     
-	protected String URL = "jdbc:mysql://localhost:3306/computer-database-db";
+	protected String URL = "jdbc:mysql://localhost:3306/computer-database-db?zeroDateTimeBehavior=convertToNull";
 	protected String LOGIN = "root";
 	protected String PASSWORD = "root";
 	

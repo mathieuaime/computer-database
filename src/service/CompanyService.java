@@ -3,7 +3,7 @@ package service;
 import java.util.List;
 
 import model.Company;
-
+import model.Page;
 import daos.CompanyDAO;
 
 public class CompanyService {
@@ -14,15 +14,20 @@ public class CompanyService {
 		companyDao = new CompanyDAO();
 	}
 	
-	public List<Company> get() {
-		return companyDao.listCompanies();
+	public Page<Company> get() {
+		List<Company> l = companyDao.listCompanies();
+		return new Page<Company>(l, 1);
+	}
+	
+	public Page<Company> get(int pageNumero, int length) {
+		return new Page<Company>(companyDao.listCompanies(pageNumero * length, length), pageNumero);
 	}
 	
 	public Company get(int id) {
 		return companyDao.getCompany(id);
 	}
 	
-	public void add(Company company) {
+	/*public void add(Company company) {
 		companyDao.addCompany(company.getId(), company.getName());
 	}
 	
@@ -32,6 +37,6 @@ public class CompanyService {
 	
 	public void delete(int id) {
 		companyDao.deleteCompany(id);
-	}
+	}*/
 
 }

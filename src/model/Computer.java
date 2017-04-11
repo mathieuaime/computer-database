@@ -7,15 +7,15 @@ public class Computer implements Serializable {
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 8297703855786572960L;
+	private static final long serialVersionUID 		= 8297703855786572960L;
 	
-	public static final String TABLE_NAME = "computer";
+	public static final String TABLE_NAME 			= "computer";
 	
-	public static final String FIELD_ID = "id";
-	public static final String FIELD_NAME = "name";
-	public static final String FIELD_INTRODUCED = "introduced";
-	public static final String FIELD_DISCONTINUED = "discontinued";
-	public static final String FIELD_COMPANY_ID = "company_id";
+	public static final String FIELD_ID 			= "id";
+	public static final String FIELD_NAME 			= "name";
+	public static final String FIELD_INTRODUCED 	= "introduced";
+	public static final String FIELD_DISCONTINUED	= "discontinued";
+	public static final String FIELD_COMPANY_ID 	= "company_id";
 	
 	private int id;     
 	

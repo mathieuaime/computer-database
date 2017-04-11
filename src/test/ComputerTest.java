@@ -23,6 +23,9 @@ public class ComputerTest {
 
 		    assertEquals(c1, cdao.get(1000));
 		    assertEquals(c2, cdao.get(1001));
+		    assertEquals(576, cdao.get().getObjectNumber());
+		    assertEquals(10, cdao.get(5,10).getObjectNumber());
+		    
 
 		    cdao.update(1000, c2);
 		    cdao.update(1001, c1);

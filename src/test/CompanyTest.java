@@ -6,25 +6,26 @@ import org.junit.Test;
 
 import service.CompanyService;
 
-import model.Company;
 public class CompanyTest {
 
 	@Test
 	public void test() {
 		CompanyService cdao = new CompanyService();
-		Company c1 = new Company(100, "Company1");
-		Company c2 = new Company(101, "Company2");
+		/*Company c1 = new Company(100, "Company1");
+		Company c2 = new Company(101, "Company2");*/
 		
 		try{
 		    
-			cdao.add(c1);
+			/*cdao.add(c1);
 			cdao.add(c2);
 
 		    assertEquals(c1, cdao.get(100));
-		    assertEquals(c2, cdao.get(101));
+		    assertEquals(c2, cdao.get(101));*/
+		    assertEquals(42, cdao.get().getObjectNumber());
+		    assertEquals(10, cdao.get(5,10).getObjectNumber());
 
 
-		    cdao.update(100, c2);
+		    /*cdao.update(100, c2);
 		    cdao.update(101, c1);
 
 		    assertEquals("Company1", cdao.get(101).getName());
@@ -32,7 +33,7 @@ public class CompanyTest {
 
 		    
 		    cdao.delete(100);
-		    cdao.delete(101);
+		    cdao.delete(101);*/
 
 		    assertNull(cdao.get(100));
 		    assertNull(cdao.get(101));

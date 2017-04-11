@@ -3,6 +3,7 @@ package service;
 import java.util.List;
 
 import model.Computer;
+import model.Page;
 import daos.ComputerDAO;
 
 public class ComputerService {
@@ -12,8 +13,13 @@ public class ComputerService {
 		computerDao = new ComputerDAO();
 	}
 	
-	public List<Computer> get() {
-		return computerDao.listComputers();
+	public Page<Computer> get() {
+		List<Computer> l = computerDao.listComputers();
+		return new Page<Computer>(l, 1);
+	}
+	
+	public Page<Computer> get(int pageNumero, int length) {
+		return new Page<Computer>(computerDao.listComputers(pageNumero * length, length), pageNumero);
 	}
 	
 	public Computer get(int id) {

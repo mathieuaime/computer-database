@@ -5,23 +5,38 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import interfaces.CompanyInterface;
+import interfaces.ICompanyDAO;
 import model.Company;
 
-public class CompanyDAO extends DefaultDAO implements CompanyInterface {
+public class CompanyDAO extends DefaultDAO implements ICompanyDAO {
     
-    private final static String QUERY_FIND_COMPANIES = "SELECT * FROM " + Company.TABLE_NAME;    
-    private final static String QUERY_FIND_COMPANY_BY_ID = "SELECT * FROM " + Company.TABLE_NAME + " WHERE " + Company.FIELD_ID + " = ? ";
-    private final static String QUERY_ADD_COMPANY = "INSERT INTO " + Company.TABLE_NAME + " (" + Company.FIELD_ID + ", " + Company.FIELD_NAME + ") VALUES (?, ?)";
-    private final static String QUERY_DELETE_COMPANY = "DELETE FROM " + Company.TABLE_NAME + " WHERE " + Company.FIELD_ID + " = ? ";
+    private final static String QUERY_FIND_COMPANIES 		= "SELECT * FROM " + Company.TABLE_NAME;    
+    
+    private final static String QUERY_FIND_COMPANY_BY_ID 	= "SELECT * FROM " + Company.TABLE_NAME 
+    														+ " WHERE " + Company.FIELD_ID + " = ? ";
+    
+    /*private final static String QUERY_ADD_COMPANY 		= "INSERT INTO " + Company.TABLE_NAME 
+     * 														+ " (" + Company.FIELD_ID + ", " 
+ * 															+ Company.FIELD_NAME + ") VALUES (?, ?)";
+ * 
+    private final static String QUERY_DELETE_COMPANY 		= "DELETE FROM " + Company.TABLE_NAME 
+    														+ " WHERE " + Company.FIELD_ID + " = ? ";*/
 
-	@Override
+    @Override
 	public List<Company> listCompanies() {
+    	return listCompanies(-1, -1);
+    }
+    
+    
+	@Override
+	public List<Company> listCompanies(int offset, int length) {
 		List<Company> companies = new ArrayList<>();
 		
 		try {
             con = getConnexion();
-            stmt = con.prepareStatement(QUERY_FIND_COMPANIES);
+            stmt = con.prepareStatement(QUERY_FIND_COMPANIES 
+            		+ (length != -1 ? " ORDER BY " + Company.FIELD_ID + " LIMIT " + length : "") 
+            		+ (length != -1 && offset != -1 ? " OFFSET " + offset : ""));
 
             final ResultSet rset = stmt.executeQuery();
 
@@ -92,7 +107,7 @@ public class CompanyDAO extends DefaultDAO implements CompanyInterface {
 		return company;
 	}
 
-	@Override
+	/*@Override
 	public boolean addCompany(int id, String name) {
 		boolean add = false;
 		
@@ -103,7 +118,7 @@ public class CompanyDAO extends DefaultDAO implements CompanyInterface {
             stmt.setString(2, name);
             
             int res = stmt.executeUpdate();
-            add = true;
+            add = res == 1;
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -127,9 +142,9 @@ public class CompanyDAO extends DefaultDAO implements CompanyInterface {
         }
 		
 		return add;
-	}
+	}*/
 
-	@Override
+	/*@Override
 	public boolean updateCompany(int id, String name) {
 		boolean add = false;
 		
@@ -144,7 +159,7 @@ public class CompanyDAO extends DefaultDAO implements CompanyInterface {
             stmt = con.prepareStatement(sb.toString());
             
             int res = stmt.executeUpdate();
-            add = true;
+            add = res == 1;
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -168,9 +183,9 @@ public class CompanyDAO extends DefaultDAO implements CompanyInterface {
         }
 		
 		return add;
-	}
+	}*/
 
-	@Override
+	/*@Override
 	public boolean deleteCompany(int id) {
 		boolean delete = false;
 		
@@ -179,7 +194,7 @@ public class CompanyDAO extends DefaultDAO implements CompanyInterface {
             stmt = con.prepareStatement(QUERY_DELETE_COMPANY);
             stmt.setInt(1, id);
             int res = stmt.executeUpdate();
-            delete = true;
+            delete = res == 1;
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -203,6 +218,6 @@ public class CompanyDAO extends DefaultDAO implements CompanyInterface {
         }
 		
 		return delete;
-	}
+	}*/
 	
 }

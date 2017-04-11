@@ -6,38 +6,45 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
-import interfaces.ComputerInterface;
+import interfaces.IComputerDAO;
 import model.Computer;
 
-public class ComputerDAO extends DefaultDAO implements ComputerInterface {
+public class ComputerDAO extends DefaultDAO implements IComputerDAO {
     
-    private final static String QUERY_FIND_COMPUTER = "SELECT * FROM " 
-    + Computer.TABLE_NAME;
+    private final static String QUERY_FIND_COMPUTER 		= "SELECT * FROM " + Computer.TABLE_NAME;
     
-    private final static String QUERY_FIND_COMPUTER_BY_ID = "SELECT * FROM " 
-    + Computer.TABLE_NAME 
-    + " WHERE " + Computer.FIELD_ID + " = ? ";
+    private final static String QUERY_FIND_COMPUTER_BY_ID 	= "SELECT * FROM " 
+														    + Computer.TABLE_NAME 
+														    + " WHERE " + Computer.FIELD_ID + " = ? ";
     
-    private final static String QUERY_ADD_COMPUTER = "INSERT INTO " 
-    + Computer.TABLE_NAME + " ("
-    + Computer.FIELD_ID + ", "
-    + Computer.FIELD_NAME + ", "
-    + Computer.FIELD_INTRODUCED + ", "
-    + Computer.FIELD_DISCONTINUED + ", "
-    + Computer.FIELD_COMPANY_ID 
-    + ") VALUES(?, ?, ?, ?, ?)";
+    private final static String QUERY_ADD_COMPUTER 			= "INSERT INTO " 
+														    + Computer.TABLE_NAME + " ("
+														    + Computer.FIELD_ID + ", "
+														    + Computer.FIELD_NAME + ", "
+														    + Computer.FIELD_INTRODUCED + ", "
+														    + Computer.FIELD_DISCONTINUED + ", "
+														    + Computer.FIELD_COMPANY_ID 
+														    + ") VALUES(?, ?, ?, ?, ?)";
     
-    private final static String QUERY_DELETE_COMPUTER = "DELETE FROM " 
-    + Computer.TABLE_NAME 
-    + " WHERE " + Computer.FIELD_ID + " = ? ";
+    private final static String QUERY_DELETE_COMPUTER 		= "DELETE FROM " 
+														    + Computer.TABLE_NAME 
+														    + " WHERE " + Computer.FIELD_ID + " = ? ";
     
 	@Override
 	public List<Computer> listComputers() {
+		return listComputers(-1,-1);
+	}
+	
+	@Override
+	public List<Computer> listComputers(int offset, int length) {
 		List<Computer> computers = new ArrayList<>();
 		
 		try {
             con = getConnexion();
-            stmt = con.prepareStatement(QUERY_FIND_COMPUTER);
+            stmt = con.prepareStatement(QUERY_FIND_COMPUTER 
+            		+ (length != -1 ? " ORDER BY " + Computer.FIELD_ID + " LIMIT " + length : "") 
+            		+ (length != -1 && offset != -1 ? " OFFSET " + offset : ""));
+            
             final ResultSet rset = stmt.executeQuery();
 
             while (rset.next()) {
@@ -81,7 +88,7 @@ public class ComputerDAO extends DefaultDAO implements ComputerInterface {
             con = getConnexion();
             stmt = con.prepareStatement(QUERY_FIND_COMPUTER_BY_ID);
             stmt.setInt(1, id);
-            ResultSet rset = stmt.executeQuery();
+            final ResultSet rset = stmt.executeQuery();
 
             if (rset.next()) {
                 computer = new Computer(rset.getInt(Computer.FIELD_ID), 
@@ -129,7 +136,7 @@ public class ComputerDAO extends DefaultDAO implements ComputerInterface {
             stmt.setInt(5, companyId);
             
             int res = stmt.executeUpdate();
-            add = true;
+            add = res == 1;
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -173,7 +180,7 @@ public class ComputerDAO extends DefaultDAO implements ComputerInterface {
             stmt = con.prepareStatement(sb.toString());
             
             int res = stmt.executeUpdate();
-            update = true;
+            update = res == 1;
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -208,7 +215,7 @@ public class ComputerDAO extends DefaultDAO implements ComputerInterface {
             stmt = con.prepareStatement(QUERY_DELETE_COMPUTER);
             stmt.setInt(1, id);
             int res = stmt.executeUpdate();
-            delete = true;
+            delete = res == 1;
 
         } catch (SQLException e) {
             e.printStackTrace();
