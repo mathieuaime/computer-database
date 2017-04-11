@@ -2,42 +2,100 @@ package test;
 
 import static org.junit.Assert.*;
 
+import org.junit.Before;
 import org.junit.Test;
 
+import model.Company;
 import service.CompanyService;
 
 public class CompanyTest {
+	
+	private CompanyService companyService = new CompanyService();
+	private Company c1 = new Company(1000, "Company1");
+	private Company c2 = new Company(1001, "Company2");
+	
+	public CompanyTest() {
+		companyService = new CompanyService();
+	}
+	
+	@Before	
+    public void executedBeforeEach() {
+		companyService.delete(1000);
+		companyService.delete(1001);
+    }
+	
+	@Test
+	public void testDelete() {		
+		try{
+		    
+			companyService.add(c1);
+			
+			assertEquals(c1, companyService.get(1000));
+		    
+		    companyService.delete(1000);
+
+		    assertNull(companyService.get(1000));
+
+		    
+		  } catch (Exception e) {
+			  e.printStackTrace();
+		} 
+	}
 
 	@Test
-	public void test() {
-		CompanyService cdao = new CompanyService();
-		/*Company c1 = new Company(100, "Company1");
-		Company c2 = new Company(101, "Company2");*/
+	public void testGet() {
+		
+		try{
+
+		    assertEquals(1, companyService.get(1).getId());
+		    
+		    assertEquals(42, companyService.get().getObjectNumber());
+		    
+		    assertEquals(10, companyService.get(1,10).getObjectNumber());
+		    
+		    assertNull(companyService.get(1000));
+
+		    
+		  } catch (Exception e) {
+			  e.printStackTrace();
+		} 
+	}
+	
+	@Test
+	public void testAdd() {
+		
+		try{		    
+			companyService.add(c1);
+
+		    assertEquals(c1, companyService.get(1000));
+		    
+		  } catch (Exception e) {
+			  e.printStackTrace();
+		} 
+	}
+	
+	@Test
+	public void testUpdate() {
 		
 		try{
 		    
-			/*cdao.add(c1);
-			cdao.add(c2);
-
-		    assertEquals(c1, cdao.get(100));
-		    assertEquals(c2, cdao.get(101));*/
-		    assertEquals(42, cdao.get().getObjectNumber());
-		    assertEquals(10, cdao.get(5,10).getObjectNumber());
-
-
-		    /*cdao.update(100, c2);
-		    cdao.update(101, c1);
-
-		    assertEquals("Company1", cdao.get(101).getName());
-		    assertEquals("Company2", cdao.get(100).getName());
-
+			companyService.add(c1);
 		    
-		    cdao.delete(100);
-		    cdao.delete(101);*/
+		    companyService.update(1000, c2);
 
-		    assertNull(cdao.get(100));
-		    assertNull(cdao.get(101));
+		    assertEquals(c2.getName(), companyService.get(1000).getName());
+		    
+		  } catch (Exception e) {
+			  e.printStackTrace();
+		} 
+	}
+	
+	@Test
+	public void testGetComputer() {
+		
+		try{
 
+		    assertEquals(40, companyService.getComputers(1).size());
 		    
 		  } catch (Exception e) {
 			  e.printStackTrace();

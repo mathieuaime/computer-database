@@ -19,7 +19,7 @@ public class Company implements Serializable {
 	private String name;
 	
 	public Company() {
-		
+		this(0,null);
 	}
 
 	public Company(int id, String name) {
@@ -70,4 +70,11 @@ public class Company implements Serializable {
 			return false;
 		return true;
 	}	
+	
+	@Override
+	public String toString() {
+		return id + "/" + name;
+	}
+
+	//TODO toString
 }

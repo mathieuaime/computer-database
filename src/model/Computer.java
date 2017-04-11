@@ -1,7 +1,10 @@
 package model;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
+import java.util.Date;
+import java.text.SimpleDateFormat;
+
+import config.Config;
 
 public class Computer implements Serializable {
 	/**
@@ -21,18 +24,17 @@ public class Computer implements Serializable {
 	
 	private String name;
 	
-	private Timestamp introduced;
+	private Date introduced;
 	
-	private Timestamp discontinued;
+	private Date discontinued;
 
 	private int company_id;
 	
 	public Computer() {
-		
+		this(0,null,null,null,0);
 	}
 	
-	public Computer(int id, String name, Timestamp introduced, Timestamp discontinued, int company_id) {
-		super();
+	public Computer(int id, String name, Date introduced, Date discontinued, int company_id) {
 		this.id = id;
 		this.name = name;
 		this.introduced = introduced;
@@ -56,19 +58,19 @@ public class Computer implements Serializable {
 		this.name = name;
 	}
 
-	public Timestamp getIntroduced() {
+	public Date getIntroduced() {
 		return introduced;
 	}
 
-	public void setIntroduced(Timestamp introduced) {
+	public void setIntroduced(Date introduced) {
 		this.introduced = introduced;
 	}
 
-	public Timestamp getDiscontinued() {
+	public Date getDiscontinued() {
 		return discontinued;
 	}
 
-	public void setDiscontinued(Timestamp discontinued) {
+	public void setDiscontinued(Date discontinued) {
 		this.discontinued = discontinued;
 	}
 
@@ -123,5 +125,15 @@ public class Computer implements Serializable {
 		} else if (!name.equals(other.name))
 			return false;
 		return true;
+	}
+	
+	@Override
+	public String toString() {
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(Config.DATE_FORMAT);
+		return id + "/" 
+				+ name + "/" 
+				+ (introduced != null ? simpleDateFormat.format(introduced) : "") + "/"
+				+ (discontinued != null ? simpleDateFormat.format(discontinued) : "") + "/" 
+				+ company_id;
 	}
 }
