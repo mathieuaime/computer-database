@@ -174,7 +174,7 @@ public class CompanyDAO extends DefaultDAO implements ICompanyDAO {
             add = res == 1;
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            add = false;
         } finally {
 
             if (stmt != null) {

@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import exceptions.ComputerNotFoundException;
 import interfaces.IComputerDAO;
 import model.Company;
 import model.Computer;
@@ -146,12 +147,11 @@ public class ComputerDAO extends DefaultDAO implements IComputerDAO {
             stmt.setObject(3, introduced);
             stmt.setObject(4, discontinued);
             stmt.setInt(5, companyId);
-            
             int res = stmt.executeUpdate();
             add = res == 1;
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            add = false;
         } finally {
 
             if (stmt != null) {
@@ -201,6 +201,7 @@ public class ComputerDAO extends DefaultDAO implements IComputerDAO {
             stmt = con.prepareStatement(sb.toString());
             
             int res = stmt.executeUpdate();
+            
             update = res == 1;
 
         } catch (SQLException e) {
