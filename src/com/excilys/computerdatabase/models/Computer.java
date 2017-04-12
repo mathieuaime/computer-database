@@ -4,6 +4,7 @@ import java.util.Date;
 import java.text.SimpleDateFormat;
 
 import com.excilys.computerdatabase.config.Config;
+import com.excilys.computerdatabase.exceptions.IntroducedAfterDiscontinuedException;
 
 public class Computer {
 
@@ -101,8 +102,14 @@ public class Computer {
 			return this;
 		}
 
-		public Computer build() {
-			return new Computer(this);
+		public Computer build() throws IntroducedAfterDiscontinuedException {
+		    Computer computer = new Computer(this);
+		    
+		    if (introduced.after(discontinued)) {
+		        throw new IntroducedAfterDiscontinuedException("Introduced date after Discontinued date");
+		    }
+		    
+		    return computer;
 		}
 
 	}

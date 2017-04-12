@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.Scanner;
 
 import com.excilys.computerdatabase.config.Config;
+import com.excilys.computerdatabase.exceptions.IntroducedAfterDiscontinuedException;
 import com.excilys.computerdatabase.models.Company;
 import com.excilys.computerdatabase.models.Computer;
 import com.excilys.computerdatabase.services.CompanyService;
@@ -127,6 +128,8 @@ public class CLI {
 					System.out.println("L'id doit être un nombre");
 				} catch (ParseException e) {
 					System.out.println("Mauvais format de date");
+				} catch (IntroducedAfterDiscontinuedException e) {
+					System.out.println("La date de dépot doit être inférieur à la date de retrait");
 				}
 				break;
 
@@ -171,6 +174,8 @@ public class CLI {
 					System.out.println("L'id doit être un nombre");
 				} catch (ParseException e) {
 					System.out.println("Mauvais format de date");
+				} catch (IntroducedAfterDiscontinuedException e) {
+					System.out.println("La date de dépot doit être inférieur à la date de retrait");
 				}
 				break;
 

@@ -1,16 +1,19 @@
 package com.excilys.computerdatabase.daos;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.sql.Connection;
 
+import com.excilys.computerdatabase.exceptions.IntroducedAfterDiscontinuedException;
 import com.excilys.computerdatabase.interfaces.CompanyDAO;
 import com.excilys.computerdatabase.models.Company;
 import com.excilys.computerdatabase.models.Computer;
 
-public class CompanyDAOImpl extends DefaultDAO implements CompanyDAO {
+public class CompanyDAOImpl implements CompanyDAO {
 
 	// Search all the companies
 	private final static String QUERY_FIND_COMPANIES = "SELECT * FROM " + Company.TABLE_NAME;
@@ -41,6 +44,9 @@ public class CompanyDAOImpl extends DefaultDAO implements CompanyDAO {
 			+ "." + Company.FIELD_ID
 
 			+ " WHERE " + Company.TABLE_NAME + "." + Company.FIELD_ID + " =  ?";
+	
+	private PreparedStatement stmt = null;
+	private Connection con = null;
 
 	@Override
 	/**
@@ -69,7 +75,7 @@ public class CompanyDAOImpl extends DefaultDAO implements CompanyDAO {
 		List<Company> companies = new ArrayList<>();
 
 		try {
-			con = getConnexion();
+			con = ConnectionDB.getConnexion();
 			stmt = con.prepareStatement(QUERY_FIND_COMPANIES
 					// Si on a spécifié la taille, on le spécifie
 					+ (length != -1 ? " ORDER BY " + Company.FIELD_ID + " LIMIT " + length : "")
@@ -122,7 +128,7 @@ public class CompanyDAOImpl extends DefaultDAO implements CompanyDAO {
 		Company company = null;
 
 		try {
-			con = getConnexion();
+			con = ConnectionDB.getConnexion();
 			stmt = con.prepareStatement(QUERY_FIND_COMPANY_BY_ID);
 			stmt.setInt(1, id);
 			final ResultSet rset = stmt.executeQuery();
@@ -163,7 +169,7 @@ public class CompanyDAOImpl extends DefaultDAO implements CompanyDAO {
 		List<Company> companies = new ArrayList<>();
 
 		try {
-			con = getConnexion();
+			con = ConnectionDB.getConnexion();
 			stmt = con.prepareStatement(QUERY_FIND_COMPANY_BY_NAME);
 			stmt.setString(1, name);
 			final ResultSet rset = stmt.executeQuery();
@@ -212,7 +218,7 @@ public class CompanyDAOImpl extends DefaultDAO implements CompanyDAO {
 		Company company = getById(id);
 
 		try {
-			con = getConnexion();
+			con = ConnectionDB.getConnexion();
 			stmt = con.prepareStatement(QUERY_FIND_COMPUTERS);
 			stmt.setInt(1, id);
 
@@ -232,6 +238,9 @@ public class CompanyDAOImpl extends DefaultDAO implements CompanyDAO {
 			}
 
 		} catch (SQLException e) {
+			e.printStackTrace();
+		} catch (IntroducedAfterDiscontinuedException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} finally {
 

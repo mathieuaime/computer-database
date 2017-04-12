@@ -1,17 +1,19 @@
 package com.excilys.computerdatabase.daos;
 
 import java.util.Date;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.excilys.computerdatabase.exceptions.ComputerNotFoundException;
+import com.excilys.computerdatabase.exceptions.IntroducedAfterDiscontinuedException;
 import com.excilys.computerdatabase.interfaces.ComputerDAO;
 import com.excilys.computerdatabase.models.Company;
 import com.excilys.computerdatabase.models.Computer;
 
-public class ComputerDAOImpl extends DefaultDAO implements ComputerDAO {
+public class ComputerDAOImpl implements ComputerDAO {
 
 	private final static String QUERY_FIND_COMPUTER 		= "SELECT " 
 															+ Computer.TABLE_NAME + "." + Computer.FIELD_ID + " AS " + Computer.TABLE_NAME + Computer.FIELD_ID + "," 
@@ -53,6 +55,9 @@ public class ComputerDAOImpl extends DefaultDAO implements ComputerDAO {
 															+ " ON " + Computer.FIELD_COMPANY_ID + " = " + Company.TABLE_NAME + "." + Company.FIELD_ID 
 															+ " WHERE " + Computer.TABLE_NAME + "." + Computer.FIELD_ID + " = ? ";
 
+	private PreparedStatement stmt = null;
+	private Connection con = null;
+	
 	@Override
 	public List<Computer> findAll() {
 		return findAll(-1, -1);
@@ -63,7 +68,7 @@ public class ComputerDAOImpl extends DefaultDAO implements ComputerDAO {
 		List<Computer> computers = new ArrayList<>();
 
 		try {
-			con = getConnexion();
+			con = ConnectionDB.getConnexion();
 			stmt = con.prepareStatement(
 					QUERY_FIND_COMPUTER + (length != -1 ? " ORDER BY " + Computer.FIELD_ID + " LIMIT " + length : "")
 							+ (length != -1 && offset != -1 ? " OFFSET " + offset : ""));
@@ -87,7 +92,7 @@ public class ComputerDAOImpl extends DefaultDAO implements ComputerDAO {
 				computers.add(computer);
 			}
 
-		} catch (SQLException e) {
+		} catch (SQLException | IntroducedAfterDiscontinuedException e) {
 			e.printStackTrace();
 		} finally {
 
@@ -116,7 +121,7 @@ public class ComputerDAOImpl extends DefaultDAO implements ComputerDAO {
 		Computer computer = null;
 
 		try {
-			con = getConnexion();
+			con = ConnectionDB.getConnexion();
 			stmt = con.prepareStatement(QUERY_FIND_COMPUTER_BY_ID);
 			stmt.setInt(1, id);
 			final ResultSet rset = stmt.executeQuery();
@@ -136,7 +141,7 @@ public class ComputerDAOImpl extends DefaultDAO implements ComputerDAO {
 						.discontinued(discontinuedComputer).company(company).build();
 			}
 
-		} catch (SQLException e) {
+		} catch (SQLException | IntroducedAfterDiscontinuedException e) {
 			e.printStackTrace();
 		} finally {
 
@@ -166,7 +171,7 @@ public class ComputerDAOImpl extends DefaultDAO implements ComputerDAO {
 		List<Computer> computers = new ArrayList<>();
 
 		try {
-			con = getConnexion();
+			con = ConnectionDB.getConnexion();
 			stmt = con.prepareStatement(QUERY_FIND_COMPUTER_BY_NAME);
 			stmt.setString(1, name);
 			final ResultSet rset = stmt.executeQuery();
@@ -188,7 +193,7 @@ public class ComputerDAOImpl extends DefaultDAO implements ComputerDAO {
 				computers.add(computer);
 			}
 
-		} catch (SQLException e) {
+		} catch (SQLException | IntroducedAfterDiscontinuedException e) {
 			e.printStackTrace();
 		} finally {
 
@@ -217,7 +222,7 @@ public class ComputerDAOImpl extends DefaultDAO implements ComputerDAO {
 		boolean add = false;
 
 		try {
-			con = getConnexion();
+			con = ConnectionDB.getConnexion();
 			stmt = con.prepareStatement(QUERY_ADD_COMPUTER);
 			stmt.setLong(1, computer.getId());
 			stmt.setString(2, computer.getName());
@@ -256,7 +261,7 @@ public class ComputerDAOImpl extends DefaultDAO implements ComputerDAO {
 		boolean update = false;
 		
 		try {
-			con = getConnexion();
+			con = ConnectionDB.getConnexion();
 			stmt = con.prepareStatement(QUERY_UPDATE_COMPUTER);
 			stmt.setString(1, computer.getName());
 			stmt.setObject(2, computer.getIntroduced());
@@ -295,7 +300,7 @@ public class ComputerDAOImpl extends DefaultDAO implements ComputerDAO {
 		boolean delete = false;
 
 		try {
-			con = getConnexion();
+			con = ConnectionDB.getConnexion();
 			stmt = con.prepareStatement(QUERY_DELETE_COMPUTER);
 			stmt.setInt(1, id);
 			int res = stmt.executeUpdate();
@@ -330,7 +335,7 @@ public class ComputerDAOImpl extends DefaultDAO implements ComputerDAO {
 		Company company = null;
 
 		try {
-			con = getConnexion();
+			con = ConnectionDB.getConnexion();
 			stmt = con.prepareStatement(QUERY_FIND_COMPANY);
 			stmt.setInt(1, id);
 			final ResultSet rset = stmt.executeQuery();
