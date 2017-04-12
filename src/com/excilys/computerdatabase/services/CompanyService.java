@@ -3,12 +3,12 @@ package com.excilys.computerdatabase.services;
 import java.util.List;
 
 import com.excilys.computerdatabase.daos.CompanyDAOImpl;
+import com.excilys.computerdatabase.dtos.Page;
 import com.excilys.computerdatabase.interfaces.PageServ;
 import com.excilys.computerdatabase.interfaces.ComputerServ;
 import com.excilys.computerdatabase.interfaces.CompanyServ;
 import com.excilys.computerdatabase.models.Company;
 import com.excilys.computerdatabase.models.Computer;
-import com.excilys.computerdatabase.models.Page;
 
 public class CompanyService implements CompanyServ, PageServ<Company> {
 	

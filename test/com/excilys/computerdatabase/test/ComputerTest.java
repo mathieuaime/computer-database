@@ -5,17 +5,27 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.excilys.computerdatabase.exceptions.IntroducedAfterDiscontinuedException;
+import com.excilys.computerdatabase.models.Company;
 import com.excilys.computerdatabase.models.Computer;
 import com.excilys.computerdatabase.services.ComputerService;
 
 public class ComputerTest {
 	
 	private ComputerService computerService;
-	private Computer c1 = new Computer(1000, "Computer1", null, null, 1);
-	private Computer c2 = new Computer(1001, "Computer2", null, null, 1);
+	private Company comp1;
+	private Computer c1;
+	private Computer c2;
 	
 	public ComputerTest() {
 		computerService = new ComputerService();
+		comp1 = new Company.Builder(1, "Apple Inc.").build();
+		try {
+			c1 = new Computer.Builder("Computer1").id(1000).company(comp1).build();
+			c2 = new Computer.Builder("Computer2").id(1001).company(comp1).build();
+		} catch (IntroducedAfterDiscontinuedException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	@Before	
@@ -49,9 +59,9 @@ public class ComputerTest {
 
 		    assertEquals(1, computerService.get(1).getId());
 		    
-		    assertEquals(574, computerService.get().getObjectNumber());
+		    assertEquals(574, computerService.get().size());
 		    
-		    assertEquals(10, computerService.get(5,10).getObjectNumber());
+		    assertEquals(10, computerService.getPage(5,10).getObjectNumber());
 		    
 		    assertNull(computerService.get(1000));
 
@@ -80,8 +90,8 @@ public class ComputerTest {
 		try{
 		    
 			computerService.add(c1);
-		    
-		    computerService.update(1000, c2);
+		    c1.setName(c2.getName());
+		    computerService.update(c1);
 
 		    assertEquals(c2.getName(), computerService.get(1000).getName());
 		    

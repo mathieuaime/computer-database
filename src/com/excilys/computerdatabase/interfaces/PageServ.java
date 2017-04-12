@@ -1,6 +1,6 @@
 package com.excilys.computerdatabase.interfaces;
 
-import com.excilys.computerdatabase.models.Page;
+import com.excilys.computerdatabase.dtos.Page;
 
 public interface PageServ<T> {
 	public Page<T> getPage();

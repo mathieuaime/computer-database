@@ -8,20 +8,41 @@ import com.excilys.computerdatabase.config.Config;
 
 import java.sql.PreparedStatement;
 
-public abstract class ConnectionDB {
+public enum ConnectionDB {
+	
+	INSTANCE;
+	
+	private static final String URL = Config.URL;
+	private static final String LOGIN = Config.LOGIN;
+	private static final String PASSWORD = Config.PASSWORD;
 
-	protected static Connection con = null;
-
-	protected static final String URL = Config.URL;
-	protected static final String LOGIN = Config.LOGIN;
-	protected static final String PASSWORD = Config.PASSWORD;
-
-	protected static Connection getConnexion() throws SQLException {
-
-		if (con == null || con.isClosed()) {
+	private static Connection con = null;
+	
+	public static void connect() {
+		try {
 			con = DriverManager.getConnection(URL, LOGIN, PASSWORD);
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
+	}
+	
+	public static void disconnect() {
+		try {
+			con.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
 
+	protected Connection getConnection() {
+		try {
+			if(con == null || con.isClosed()) {
+				connect();
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return con;
 	}
 

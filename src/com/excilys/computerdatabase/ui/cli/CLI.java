@@ -1,4 +1,4 @@
-package com.excilys.computerdatabase.ui;
+package com.excilys.computerdatabase.ui.cli;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -107,7 +107,9 @@ public class CLI {
 				idCompany = scanner.next();
 
 				try {
-					Computer.Builder c = new Computer.Builder(Integer.parseInt(idComputer), nameComputer);
+					Computer.Builder c = new Computer.Builder(nameComputer);
+					
+					c.id(Integer.parseInt(idComputer));
 
 					if (!introducedComputer.equals("null")) {
 						Date parsedIntroduced = simpleDateFormat.parse(introducedComputer);
@@ -152,7 +154,9 @@ public class CLI {
 				idCompany = scanner.nextLine();
 
 				try {
-					Computer.Builder c = new Computer.Builder(Integer.parseInt(idComputer), nameComputer);
+					Computer.Builder c = new Computer.Builder(nameComputer);
+					
+					c.id(Integer.parseInt(idComputer));
 
 					if (!introducedComputer.equals("null")) {
 						Date parsedIntroduced = simpleDateFormat.parse(introducedComputer);

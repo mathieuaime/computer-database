@@ -44,7 +44,7 @@ public class CompanyDAOImpl implements CompanyDAO {
 			+ "." + Company.FIELD_ID
 
 			+ " WHERE " + Company.TABLE_NAME + "." + Company.FIELD_ID + " =  ?";
-	
+
 	private PreparedStatement stmt = null;
 	private Connection con = null;
 
@@ -75,7 +75,7 @@ public class CompanyDAOImpl implements CompanyDAO {
 		List<Company> companies = new ArrayList<>();
 
 		try {
-			con = ConnectionDB.getConnexion();
+			con = ConnectionDB.INSTANCE.getConnection();
 			stmt = con.prepareStatement(QUERY_FIND_COMPANIES
 					// Si on a spécifié la taille, on le spécifie
 					+ (length != -1 ? " ORDER BY " + Company.FIELD_ID + " LIMIT " + length : "")
@@ -103,13 +103,7 @@ public class CompanyDAOImpl implements CompanyDAO {
 				}
 			}
 
-			if (con != null) {
-				try {
-					con.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
+			ConnectionDB.disconnect();
 		}
 
 		return companies;
@@ -128,7 +122,7 @@ public class CompanyDAOImpl implements CompanyDAO {
 		Company company = null;
 
 		try {
-			con = ConnectionDB.getConnexion();
+			con = ConnectionDB.INSTANCE.getConnection();
 			stmt = con.prepareStatement(QUERY_FIND_COMPANY_BY_ID);
 			stmt.setInt(1, id);
 			final ResultSet rset = stmt.executeQuery();
@@ -152,13 +146,7 @@ public class CompanyDAOImpl implements CompanyDAO {
 				}
 			}
 
-			if (con != null) {
-				try {
-					con.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
+			ConnectionDB.disconnect();
 		}
 
 		return company;
@@ -169,7 +157,7 @@ public class CompanyDAOImpl implements CompanyDAO {
 		List<Company> companies = new ArrayList<>();
 
 		try {
-			con = ConnectionDB.getConnexion();
+			con = ConnectionDB.INSTANCE.getConnection();
 			stmt = con.prepareStatement(QUERY_FIND_COMPANY_BY_NAME);
 			stmt.setString(1, name);
 			final ResultSet rset = stmt.executeQuery();
@@ -192,13 +180,7 @@ public class CompanyDAOImpl implements CompanyDAO {
 				}
 			}
 
-			if (con != null) {
-				try {
-					con.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
+			ConnectionDB.disconnect();
 		}
 
 		return companies;
@@ -218,7 +200,7 @@ public class CompanyDAOImpl implements CompanyDAO {
 		Company company = getById(id);
 
 		try {
-			con = ConnectionDB.getConnexion();
+			con = ConnectionDB.INSTANCE.getConnection();
 			stmt = con.prepareStatement(QUERY_FIND_COMPUTERS);
 			stmt.setInt(1, id);
 
@@ -231,16 +213,13 @@ public class CompanyDAOImpl implements CompanyDAO {
 				Date introducedComputer = rset.getDate(Computer.FIELD_INTRODUCED);
 				Date discontinuedComputer = rset.getDate(Computer.FIELD_INTRODUCED);
 
-				Computer computer = new Computer.Builder(idComputer, nameComputer).introduced(introducedComputer)
+				Computer computer = new Computer.Builder(nameComputer).id(idComputer).introduced(introducedComputer)
 						.discontinued(discontinuedComputer).company(company).build();
 
 				computers.add(computer);
 			}
 
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} catch (IntroducedAfterDiscontinuedException e) {
-			// TODO Auto-generated catch block
+		} catch (SQLException | IntroducedAfterDiscontinuedException e) {
 			e.printStackTrace();
 		} finally {
 
@@ -252,13 +231,7 @@ public class CompanyDAOImpl implements CompanyDAO {
 				}
 			}
 
-			if (con != null) {
-				try {
-					con.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
+			ConnectionDB.disconnect();
 		}
 
 		return computers;

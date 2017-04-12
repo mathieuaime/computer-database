@@ -82,9 +82,13 @@ public class Computer {
 		private Date discontinued;
 		private Company company;
 
-		public Builder(long id, String name) {
-			this.id = id;
+		public Builder(String name) {
 			this.name = name;
+		}
+		
+		public Builder id(long id) {
+			this.id = id;
+			return this;
 		}
 
 		public Builder introduced(Date introduced) {
@@ -105,7 +109,7 @@ public class Computer {
 		public Computer build() throws IntroducedAfterDiscontinuedException {
 		    Computer computer = new Computer(this);
 		    
-		    if (introduced.after(discontinued)) {
+		    if (introduced != null && discontinued != null && introduced.after(discontinued)) {
 		        throw new IntroducedAfterDiscontinuedException("Introduced date after Discontinued date");
 		    }
 		    
