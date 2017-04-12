@@ -2,52 +2,44 @@ package com.excilys.computerdatabase.services;
 
 import java.util.List;
 
-import com.excilys.computerdatabase.daos.CompanyDAO;
-import com.excilys.computerdatabase.interfaces.IPage;
-import com.excilys.computerdatabase.interfaces.IService;
+import com.excilys.computerdatabase.daos.CompanyDAOImpl;
+import com.excilys.computerdatabase.interfaces.PageServ;
+import com.excilys.computerdatabase.interfaces.ComputerServ;
+import com.excilys.computerdatabase.interfaces.CompanyServ;
 import com.excilys.computerdatabase.models.Company;
 import com.excilys.computerdatabase.models.Computer;
 import com.excilys.computerdatabase.models.Page;
 
-public class CompanyService implements IService<Company>, IPage<Company> {
+public class CompanyService implements CompanyServ, PageServ<Company> {
 	
-	private CompanyDAO companyDao;
+	private CompanyDAOImpl companyDao;
 	
 	public CompanyService() {
-		companyDao = new CompanyDAO();
+		companyDao = new CompanyDAOImpl();
 	}
 	
 	@Override
-	public Page<Company> get() {
-		List<Company> l = companyDao.listCompanies();
-		return new Page<Company>(l, 1);
-	}
-	
-	@Override
-	public Page<Company> get(int pageNumero, int length) {
-		return new Page<Company>(companyDao.listCompanies(pageNumero * length, length), pageNumero);
+	public List<Company> get() {
+		return companyDao.findAll();
 	}
 	
 	@Override
 	public Company get(int id) {
-		return companyDao.getCompany(id);
+		return companyDao.getById(id);
 	}
 	
 	@Override
-	public boolean add(Company company) {
-		return companyDao.addCompany(company.getId(), company.getName());
+	public Page<Company> getPage() {
+		List<Company> l = companyDao.findAll();
+		return new Page<Company>(l, 1);
 	}
 	
 	@Override
-	public boolean update(int id, Company company) {
-		return companyDao.updateCompany(id, company.getName());
+	public Page<Company> getPage(int pageNumero, int length) {
+		return new Page<Company>(companyDao.findAll(pageNumero * length, length), pageNumero);
 	}
 	
 	@Override
-	public boolean delete(int id) {
-		return companyDao.deleteCompany(id);
-	}
-	
 	public List<Computer> getComputers(int id) {
 		return companyDao.getComputers(id);
 	}

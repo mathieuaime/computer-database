@@ -2,50 +2,55 @@ package com.excilys.computerdatabase.services;
 
 import java.util.List;
 
-import com.excilys.computerdatabase.daos.ComputerDAO;
-import com.excilys.computerdatabase.interfaces.IPage;
-import com.excilys.computerdatabase.interfaces.IService;
+import com.excilys.computerdatabase.daos.ComputerDAOImpl;
+import com.excilys.computerdatabase.interfaces.PageServ;
+import com.excilys.computerdatabase.interfaces.ComputerServ;
 import com.excilys.computerdatabase.models.Company;
 import com.excilys.computerdatabase.models.Computer;
 import com.excilys.computerdatabase.models.Page;
 
-public class ComputerService implements IService<Computer>, IPage<Computer> {
+public class ComputerService implements ComputerServ, PageServ<Computer> {
 	
-	private ComputerDAO computerDao;
+	private ComputerDAOImpl computerDao;
 	
 	public ComputerService() {
-		computerDao = new ComputerDAO();
+		computerDao = new ComputerDAOImpl();
+	}
+
+	@Override
+	public List<Computer> get() {
+		return computerDao.findAll();
 	}
 	
 	@Override
-	public Page<Computer> get() {
-		List<Computer> l = computerDao.listComputers();
+	public Page<Computer> getPage() {
+		List<Computer> l = computerDao.findAll();
 		return new Page<Computer>(l, 1);
 	}
 	
 	@Override
-	public Page<Computer> get(int pageNumero, int length) {
-		return new Page<Computer>(computerDao.listComputers(pageNumero * length, length), pageNumero);
+	public Page<Computer> getPage(int pageNumero, int length) {
+		return new Page<Computer>(computerDao.findAll(pageNumero * length, length), pageNumero);
 	}
 	
 	@Override
 	public Computer get(int id) {
-		return computerDao.getComputer(id);
+		return computerDao.getById(id);
 	}
 	
 	@Override
 	public boolean add(Computer computer) {
-		return computerDao.addComputer(computer.getId(), computer.getName(), computer.getIntroduced(), computer.getDiscontinued(), computer.getCompany_id());
+		return computerDao.add(computer);
 	}
 	
 	@Override
-	public boolean update(int id, Computer computer) {
-		return computerDao.updateComputer(id, computer.getName(), computer.getIntroduced(), computer.getDiscontinued(), computer.getCompany_id());
+	public boolean update(Computer computer) {
+		return computerDao.update(computer);
 	}
 	
 	@Override
 	public boolean delete(int id) {
-		return computerDao.deleteComputer(id);
+		return computerDao.delete(id);
 	}
 	
 	public Company getCompany(int id) {

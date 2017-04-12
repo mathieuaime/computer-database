@@ -1,37 +1,25 @@
 package com.excilys.computerdatabase.models;
 
-import java.io.Serializable;
+public class Company {
 
+	public static final String TABLE_NAME = "company";
 
-public class Company implements Serializable {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID 	= -8416954786511932741L;
-	
-	public static final String TABLE_NAME 		= "company";
-	
-	public static final String FIELD_ID 		= "id";	
-	public static final String FIELD_NAME 		= "name";
-	
-	private int id;
-	
+	public static final String FIELD_ID = "id";
+	public static final String FIELD_NAME = "name";
+
+	private long id;
 	private String name;
-	
-	public Company() {
-		this(0,null);
+
+	private Company(Builder builder) {
+		this.id = builder.id;
+		this.name = builder.name;
 	}
 
-	public Company(int id, String name) {
-		this.id = id;
-		this.name = name;
-	}
-
-	public int getId() {
+	public long getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(long id) {
 		this.id = id;
 	}
 
@@ -43,11 +31,26 @@ public class Company implements Serializable {
 		this.name = name;
 	}
 
+	public static class Builder {
+
+		private long id;
+		private String name;
+
+		public Builder(long id, String name) {
+			this.id = id;
+			this.name = name;
+		}
+
+		public Company build() {
+			return new Company(this);
+		}
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + id;
+		result = prime * result + (int) (id ^ (id >>> 32));
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		return result;
 	}
@@ -69,12 +72,10 @@ public class Company implements Serializable {
 		} else if (!name.equals(other.name))
 			return false;
 		return true;
-	}	
-	
+	}
+
 	@Override
 	public String toString() {
 		return id + "/" + name;
 	}
-
-	//TODO toString
 }

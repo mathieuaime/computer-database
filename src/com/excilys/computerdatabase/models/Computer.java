@@ -1,56 +1,46 @@
 package com.excilys.computerdatabase.models;
 
-import java.io.Serializable;
 import java.util.Date;
+import java.text.SimpleDateFormat;
 
 import com.excilys.computerdatabase.config.Config;
 
-import java.text.SimpleDateFormat;
+public class Computer {
 
-public class Computer implements Serializable {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID 		= 8297703855786572960L;
-	
-	public static final String TABLE_NAME 			= "computer";
-	
-	public static final String FIELD_ID 			= "id";
-	public static final String FIELD_NAME 			= "name";
-	public static final String FIELD_INTRODUCED 	= "introduced";
-	public static final String FIELD_DISCONTINUED	= "discontinued";
-	public static final String FIELD_COMPANY_ID 	= "company_id";
-	
-	private int id;     
-	
+	public static final String TABLE_NAME = "computer";
+
+	public static final String FIELD_ID = "id";
+	public static final String FIELD_NAME = "name";
+	public static final String FIELD_INTRODUCED = "introduced";
+	public static final String FIELD_DISCONTINUED = "discontinued";
+	public static final String FIELD_COMPANY_ID = "company_id";
+
+	private long id;
+
 	private String name;
-	
+
 	private Date introduced;
-	
+
 	private Date discontinued;
 
-	private int company_id;
-	
-	public Computer() {
-		this(0,null,null,null,0);
-	}
-	
-	public Computer(int id, String name, Date introduced, Date discontinued, int company_id) {
-		this.id = id;
-		this.name = name;
-		this.introduced = introduced;
-		this.discontinued = discontinued;
-		this.company_id = company_id;
+	private Company company;
+
+	private Computer(Builder builder) {
+		this.id = builder.id;
+		this.name = builder.name;
+		this.introduced = builder.introduced;
+		this.discontinued = builder.discontinued;
+		this.company = builder.company;
 	}
 
-	public int getId() {
+	public long getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(long id) {
 		this.id = id;
 	}
-	
+
 	public String getName() {
 		return name;
 	}
@@ -75,24 +65,56 @@ public class Computer implements Serializable {
 		this.discontinued = discontinued;
 	}
 
-	public int getCompany_id() {
-		return company_id;
+	public Company getCompany() {
+		return company;
 	}
 
-	public void setCompany_id(int company_id) {
-		this.company_id = company_id;
+	public void setCompany(Company company) {
+		this.company = company;
+	}
+
+	public static class Builder {
+
+		private long id;
+		private String name;
+		private Date introduced;
+		private Date discontinued;
+		private Company company;
+
+		public Builder(long id, String name) {
+			this.id = id;
+			this.name = name;
+		}
+
+		public Builder introduced(Date introduced) {
+			this.introduced = introduced;
+			return this;
+		}
+
+		public Builder discontinued(Date discontinued) {
+			this.discontinued = discontinued;
+			return this;
+		}
+
+		public Builder company(Company company) {
+			this.company = company;
+			return this;
+		}
+
+		public Computer build() {
+			return new Computer(this);
+		}
+
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + company_id;
-		result = prime * result
-				+ ((discontinued == null) ? 0 : discontinued.hashCode());
-		result = prime * result + id;
-		result = prime * result
-				+ ((introduced == null) ? 0 : introduced.hashCode());
+		result = prime * result + ((company == null) ? 0 : company.hashCode());
+		result = prime * result + ((discontinued == null) ? 0 : discontinued.hashCode());
+		result = prime * result + (int) (id ^ (id >>> 32));
+		result = prime * result + ((introduced == null) ? 0 : introduced.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		return result;
 	}
@@ -106,7 +128,10 @@ public class Computer implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		Computer other = (Computer) obj;
-		if (company_id != other.company_id)
+		if (company == null) {
+			if (other.company != null)
+				return false;
+		} else if (!company.equals(other.company))
 			return false;
 		if (discontinued == null) {
 			if (other.discontinued != null)
@@ -127,14 +152,11 @@ public class Computer implements Serializable {
 			return false;
 		return true;
 	}
-	
+
 	@Override
 	public String toString() {
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(Config.DATE_FORMAT);
-		return id + "/" 
-				+ name + "/" 
-				+ (introduced != null ? simpleDateFormat.format(introduced) : "") + "/"
-				+ (discontinued != null ? simpleDateFormat.format(discontinued) : "") + "/" 
-				+ company_id;
+		return id + "/" + name + "/" + (introduced != null ? simpleDateFormat.format(introduced) : "") + "/"
+				+ (discontinued != null ? simpleDateFormat.format(discontinued) : "") + "/" + company;
 	}
 }
