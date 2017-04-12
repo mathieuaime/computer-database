@@ -1,8 +1,6 @@
 package com.excilys.computerdatabase.ui.cli;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.Scanner;
 
 import com.excilys.computerdatabase.config.Config;
@@ -19,7 +17,6 @@ public class CLI {
 	private static ComputerService computerService = new ComputerService();
 
 	private static String dateFormat = Config.DATE_FORMAT;
-	private static SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateFormat);
 
 	public static void printMenu() {
 		// prompt for the menu
@@ -108,16 +105,16 @@ public class CLI {
 
 				try {
 					Computer.Builder c = new Computer.Builder(nameComputer);
-					
+
 					c.id(Integer.parseInt(idComputer));
 
-					if (!introducedComputer.equals("null")) {
-						Date parsedIntroduced = simpleDateFormat.parse(introducedComputer);
+					if (!introducedComputer.equals("")) {
+						LocalDate parsedIntroduced = LocalDate.parse(introducedComputer);
 						c.introduced(parsedIntroduced);
 					}
 
-					if (!discontinuedComputer.equals("null")) {
-						Date parsedDiscontinued = simpleDateFormat.parse(discontinuedComputer);
+					if (!discontinuedComputer.equals("")) {
+						LocalDate parsedDiscontinued = LocalDate.parse(discontinuedComputer);
 						c.discontinued(parsedDiscontinued);
 					}
 
@@ -128,8 +125,6 @@ public class CLI {
 
 				} catch (NumberFormatException e) {
 					System.out.println("L'id doit être un nombre");
-				} catch (ParseException e) {
-					System.out.println("Mauvais format de date");
 				} catch (IntroducedAfterDiscontinuedException e) {
 					System.out.println("La date de dépot doit être inférieur à la date de retrait");
 				}
@@ -155,16 +150,16 @@ public class CLI {
 
 				try {
 					Computer.Builder c = new Computer.Builder(nameComputer);
-					
+
 					c.id(Integer.parseInt(idComputer));
 
-					if (!introducedComputer.equals("null")) {
-						Date parsedIntroduced = simpleDateFormat.parse(introducedComputer);
+					if (!introducedComputer.equals("")) {
+						LocalDate parsedIntroduced = LocalDate.parse(introducedComputer);
 						c.introduced(parsedIntroduced);
 					}
 
-					if (!discontinuedComputer.equals("null")) {
-						Date parsedDiscontinued = simpleDateFormat.parse(discontinuedComputer);
+					if (!discontinuedComputer.equals("")) {
+						LocalDate parsedDiscontinued = LocalDate.parse(discontinuedComputer);
 						c.discontinued(parsedDiscontinued);
 					}
 
@@ -176,8 +171,6 @@ public class CLI {
 
 				} catch (NumberFormatException e) {
 					System.out.println("L'id doit être un nombre");
-				} catch (ParseException e) {
-					System.out.println("Mauvais format de date");
 				} catch (IntroducedAfterDiscontinuedException e) {
 					System.out.println("La date de dépot doit être inférieur à la date de retrait");
 				}

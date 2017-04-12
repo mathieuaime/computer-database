@@ -1,7 +1,7 @@
 package com.excilys.computerdatabase.daos;
 
-import java.util.Date;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -57,7 +57,7 @@ public class ComputerDAOImpl implements ComputerDAO {
 
 	private PreparedStatement stmt = null;
 	private Connection con = null;
-	
+
 	@Override
 	public List<Computer> findAll() {
 		return findAll(-1, -1);
@@ -68,10 +68,13 @@ public class ComputerDAOImpl implements ComputerDAO {
 		List<Computer> computers = new ArrayList<>();
 
 		try {
-			con = ConnectionDB.INSTANCE.getConnection();
-			stmt = con.prepareStatement(
-					QUERY_FIND_COMPUTER + (length != -1 ? " ORDER BY " + Computer.TABLE_NAME + "." + Computer.FIELD_ID + " LIMIT " + length : "")
-							+ (length != -1 && offset != -1 ? " OFFSET " + offset : ""));
+			con = ConnectionMySQL.INSTANCE.getConnection();
+			stmt = con
+					.prepareStatement(
+							QUERY_FIND_COMPUTER
+									+ (length != -1 ? " ORDER BY " + Computer.TABLE_NAME + "." + Computer.FIELD_ID
+											+ " LIMIT " + length : "")
+									+ (length != -1 && offset != -1 ? " OFFSET " + offset : ""));
 
 			final ResultSet rset = stmt.executeQuery();
 
@@ -86,8 +89,8 @@ public class ComputerDAOImpl implements ComputerDAO {
 
 				Company company = new Company.Builder(idCompany, nameCompany).build();
 
-				Computer computer = new Computer.Builder(nameComputer).id(idComputer).introduced(introducedComputer)
-						.discontinued(discontinuedComputer).company(company).build();
+				Computer computer = new Computer.Builder(nameComputer).id(idComputer).introduced((introducedComputer != null ? introducedComputer.toLocalDate() : null))
+						.discontinued((discontinuedComputer != null ? discontinuedComputer.toLocalDate() : null)).company(company).build();
 
 				computers.add(computer);
 			}
@@ -104,7 +107,7 @@ public class ComputerDAOImpl implements ComputerDAO {
 				}
 			}
 
-			ConnectionDB.disconnect();
+			ConnectionMySQL.disconnect();
 		}
 
 		return computers;
@@ -115,7 +118,7 @@ public class ComputerDAOImpl implements ComputerDAO {
 		Computer computer = null;
 
 		try {
-			con = ConnectionDB.INSTANCE.getConnection();
+			con = ConnectionMySQL.INSTANCE.getConnection();
 			stmt = con.prepareStatement(QUERY_FIND_COMPUTER_BY_ID);
 			stmt.setInt(1, id);
 			final ResultSet rset = stmt.executeQuery();
@@ -131,8 +134,8 @@ public class ComputerDAOImpl implements ComputerDAO {
 
 				Company company = new Company.Builder(idCompany, nameCompany).build();
 
-				computer = new Computer.Builder(nameComputer).id(idComputer).introduced(introducedComputer)
-						.discontinued(discontinuedComputer).company(company).build();
+				computer = new Computer.Builder(nameComputer).id(idComputer).introduced((introducedComputer != null ? introducedComputer.toLocalDate() : null))
+						.discontinued((discontinuedComputer != null ? discontinuedComputer.toLocalDate() : null)).company(company).build();
 			}
 
 		} catch (SQLException | IntroducedAfterDiscontinuedException e) {
@@ -147,19 +150,18 @@ public class ComputerDAOImpl implements ComputerDAO {
 				}
 			}
 
-			ConnectionDB.disconnect();
+			ConnectionMySQL.disconnect();
 		}
 
 		return computer;
 	}
-	
 
 	@Override
 	public List<Computer> getByName(String name) {
 		List<Computer> computers = new ArrayList<>();
 
 		try {
-			con = ConnectionDB.INSTANCE.getConnection();
+			con = ConnectionMySQL.INSTANCE.getConnection();
 			stmt = con.prepareStatement(QUERY_FIND_COMPUTER_BY_NAME);
 			stmt.setString(1, name);
 			final ResultSet rset = stmt.executeQuery();
@@ -175,9 +177,9 @@ public class ComputerDAOImpl implements ComputerDAO {
 
 				Company company = new Company.Builder(idCompany, nameCompany).build();
 
-				Computer computer = new Computer.Builder(nameComputer).id(idComputer).introduced(introducedComputer)
-						.discontinued(discontinuedComputer).company(company).build();
-				
+				Computer computer = new Computer.Builder(nameComputer).id(idComputer).introduced((introducedComputer != null ? introducedComputer.toLocalDate() : null))
+						.discontinued((discontinuedComputer != null ? discontinuedComputer.toLocalDate() : null)).company(company).build();
+
 				computers.add(computer);
 			}
 
@@ -193,7 +195,7 @@ public class ComputerDAOImpl implements ComputerDAO {
 				}
 			}
 
-			ConnectionDB.disconnect();
+			ConnectionMySQL.disconnect();
 		}
 
 		return computers;
@@ -204,7 +206,7 @@ public class ComputerDAOImpl implements ComputerDAO {
 		boolean add = false;
 
 		try {
-			con = ConnectionDB.INSTANCE.getConnection();
+			con = ConnectionMySQL.INSTANCE.getConnection();
 			stmt = con.prepareStatement(QUERY_ADD_COMPUTER);
 			stmt.setLong(1, computer.getId());
 			stmt.setString(2, computer.getName());
@@ -226,7 +228,7 @@ public class ComputerDAOImpl implements ComputerDAO {
 				}
 			}
 
-			ConnectionDB.disconnect();
+			ConnectionMySQL.disconnect();
 		}
 
 		return add;
@@ -235,9 +237,9 @@ public class ComputerDAOImpl implements ComputerDAO {
 	@Override
 	public boolean update(Computer computer) {
 		boolean update = false;
-		
+
 		try {
-			con = ConnectionDB.INSTANCE.getConnection();
+			con = ConnectionMySQL.INSTANCE.getConnection();
 			stmt = con.prepareStatement(QUERY_UPDATE_COMPUTER);
 			stmt.setString(1, computer.getName());
 			stmt.setObject(2, computer.getIntroduced());
@@ -259,7 +261,7 @@ public class ComputerDAOImpl implements ComputerDAO {
 				}
 			}
 
-			ConnectionDB.disconnect();
+			ConnectionMySQL.disconnect();
 		}
 
 		return update;
@@ -270,7 +272,7 @@ public class ComputerDAOImpl implements ComputerDAO {
 		boolean delete = false;
 
 		try {
-			con = ConnectionDB.INSTANCE.getConnection();
+			con = ConnectionMySQL.INSTANCE.getConnection();
 			stmt = con.prepareStatement(QUERY_DELETE_COMPUTER);
 			stmt.setInt(1, id);
 			int res = stmt.executeUpdate();
@@ -288,7 +290,7 @@ public class ComputerDAOImpl implements ComputerDAO {
 				}
 			}
 
-			ConnectionDB.disconnect();
+			ConnectionMySQL.disconnect();
 		}
 
 		return delete;
@@ -299,7 +301,7 @@ public class ComputerDAOImpl implements ComputerDAO {
 		Company company = null;
 
 		try {
-			con = ConnectionDB.INSTANCE.getConnection();
+			con = ConnectionMySQL.INSTANCE.getConnection();
 			stmt = con.prepareStatement(QUERY_FIND_COMPANY);
 			stmt.setInt(1, id);
 			final ResultSet rset = stmt.executeQuery();
@@ -322,7 +324,7 @@ public class ComputerDAOImpl implements ComputerDAO {
 				}
 			}
 
-			ConnectionDB.disconnect();
+			ConnectionMySQL.disconnect();
 		}
 
 		return company;

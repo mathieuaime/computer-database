@@ -1,7 +1,7 @@
 package com.excilys.computerdatabase.models;
 
-import java.util.Date;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 
 import com.excilys.computerdatabase.config.Config;
 import com.excilys.computerdatabase.exceptions.IntroducedAfterDiscontinuedException;
@@ -20,9 +20,9 @@ public class Computer {
 
 	private String name;
 
-	private Date introduced;
+	private LocalDate introduced;
 
-	private Date discontinued;
+	private LocalDate discontinued;
 
 	private Company company;
 
@@ -50,19 +50,19 @@ public class Computer {
 		this.name = name;
 	}
 
-	public Date getIntroduced() {
+	public LocalDate getIntroduced() {
 		return introduced;
 	}
 
-	public void setIntroduced(Date introduced) {
+	public void setIntroduced(LocalDate introduced) {
 		this.introduced = introduced;
 	}
 
-	public Date getDiscontinued() {
+	public LocalDate getDiscontinued() {
 		return discontinued;
 	}
 
-	public void setDiscontinued(Date discontinued) {
+	public void setDiscontinued(LocalDate discontinued) {
 		this.discontinued = discontinued;
 	}
 
@@ -78,25 +78,25 @@ public class Computer {
 
 		private long id;
 		private String name;
-		private Date introduced;
-		private Date discontinued;
+		private LocalDate introduced;
+		private LocalDate discontinued;
 		private Company company;
 
 		public Builder(String name) {
 			this.name = name;
 		}
-		
+
 		public Builder id(long id) {
 			this.id = id;
 			return this;
 		}
 
-		public Builder introduced(Date introduced) {
+		public Builder introduced(LocalDate introduced) {
 			this.introduced = introduced;
 			return this;
 		}
 
-		public Builder discontinued(Date discontinued) {
+		public Builder discontinued(LocalDate discontinued) {
 			this.discontinued = discontinued;
 			return this;
 		}
@@ -107,13 +107,13 @@ public class Computer {
 		}
 
 		public Computer build() throws IntroducedAfterDiscontinuedException {
-		    Computer computer = new Computer(this);
-		    
-		    if (introduced != null && discontinued != null && introduced.after(discontinued)) {
-		        throw new IntroducedAfterDiscontinuedException("Introduced date after Discontinued date");
-		    }
-		    
-		    return computer;
+			Computer computer = new Computer(this);
+
+			if (introduced != null && discontinued != null && introduced.isAfter(discontinued)) {
+				throw new IntroducedAfterDiscontinuedException("Introduced date after Discontinued date");
+			}
+
+			return computer;
 		}
 
 	}

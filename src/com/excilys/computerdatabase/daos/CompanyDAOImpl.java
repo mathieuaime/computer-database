@@ -4,9 +4,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.sql.Connection;
+import java.sql.Date;
 
 import com.excilys.computerdatabase.exceptions.IntroducedAfterDiscontinuedException;
 import com.excilys.computerdatabase.interfaces.CompanyDAO;
@@ -16,34 +16,24 @@ import com.excilys.computerdatabase.models.Computer;
 public class CompanyDAOImpl implements CompanyDAO {
 
 	// Search all the companies
-	private final static String QUERY_FIND_COMPANIES = "SELECT * FROM " + Company.TABLE_NAME;
+	private final static String QUERY_FIND_COMPANIES 		= "SELECT * FROM " + Company.TABLE_NAME;
 
 	// Search one company by id
-	private final static String QUERY_FIND_COMPANY_BY_ID = "SELECT * FROM " + Company.TABLE_NAME + " WHERE "
-			+ Company.FIELD_ID + " = ? ";
+	private final static String QUERY_FIND_COMPANY_BY_ID 	= QUERY_FIND_COMPANIES + " WHERE " + Company.FIELD_ID + " = ? ";
 
 	// Search one company by name
-	private final static String QUERY_FIND_COMPANY_BY_NAME = "SELECT * FROM " + Company.TABLE_NAME + " WHERE "
-			+ Company.FIELD_NAME + " = ? ";
+	private final static String QUERY_FIND_COMPANY_BY_NAME 	= QUERY_FIND_COMPANIES + " WHERE " + Company.FIELD_NAME + " = ? ";
 
-	// Add a company
-	private final static String QUERY_ADD_COMPANY = "INSERT INTO " + Company.TABLE_NAME + " (" + Company.FIELD_ID + ", "
-			+ Company.FIELD_NAME + ") VALUES (?, ?)";
-
-	// Delete a company
-	private final static String QUERY_DELETE_COMPANY = "DELETE FROM " + Company.TABLE_NAME + " WHERE "
-			+ Company.FIELD_ID + " = ? ";
 	// Search the computers of a company
-	private final static String QUERY_FIND_COMPUTERS = "SELECT " + Computer.TABLE_NAME + "." + Computer.FIELD_ID + ", "
-			+ Computer.TABLE_NAME + "." + Computer.FIELD_NAME + ", " + Computer.TABLE_NAME + "."
-			+ Computer.FIELD_INTRODUCED + ", " + Computer.TABLE_NAME + "." + Computer.FIELD_DISCONTINUED
-
-			+ " FROM " + Computer.TABLE_NAME
-
-			+ " INNER JOIN " + Company.TABLE_NAME + " ON " + Computer.FIELD_COMPANY_ID + " = " + Company.TABLE_NAME
-			+ "." + Company.FIELD_ID
-
-			+ " WHERE " + Company.TABLE_NAME + "." + Company.FIELD_ID + " =  ?";
+	private final static String QUERY_FIND_COMPUTERS 		= "SELECT " 
+															+ Computer.TABLE_NAME + "." + Computer.FIELD_ID + ", "
+															+ Computer.TABLE_NAME + "." + Computer.FIELD_NAME + ", " 
+															+ Computer.TABLE_NAME + "." + Computer.FIELD_INTRODUCED + ", " 
+															+ Computer.TABLE_NAME + "." + Computer.FIELD_DISCONTINUED
+															+ " FROM " + Computer.TABLE_NAME
+															+ " INNER JOIN " + Company.TABLE_NAME 
+															+ " ON " + Computer.FIELD_COMPANY_ID + " = " + Company.TABLE_NAME + "." + Company.FIELD_ID
+															+ " WHERE " + Company.TABLE_NAME + "." + Company.FIELD_ID + " =  ?";
 
 	private PreparedStatement stmt = null;
 	private Connection con = null;
@@ -60,31 +50,25 @@ public class CompanyDAOImpl implements CompanyDAO {
 	}
 
 	@Override
-	// List the companies from offset to offset + length -1
 	/**
 	 * Return a sub-list of the companies From offset to offset + length -1
 	 *
-	 * @param offset
-	 *            the start of the list
-	 * @param length
-	 *            the length of the list
-	 * @return the list of the companies between offset & offset + length -1
-	 * @see List<Company>
+	 * @param 	offset	the start of the list
+	 * @param 	length	the length of the list
+	 * @return 	the list of the companies between offset & offset + length -1
+	 * @see 	List<Company>
 	 */
 	public List<Company> findAll(int offset, int length) {
 		List<Company> companies = new ArrayList<>();
 
 		try {
-			con = ConnectionDB.INSTANCE.getConnection();
+			con = ConnectionMySQL.INSTANCE.getConnection();
 			stmt = con.prepareStatement(QUERY_FIND_COMPANIES
-					// Si on a spécifié la taille, on le spécifie
 					+ (length != -1 ? " ORDER BY " + Company.FIELD_ID + " LIMIT " + length : "")
-					// Si on a spécifié l'offset, on le spécifie
 					+ (length != -1 && offset != -1 ? " OFFSET " + offset : ""));
 
 			final ResultSet rset = stmt.executeQuery();
 
-			// Parcours des résultats
 			while (rset.next()) {
 				Company company = new Company.Builder(rset.getInt(Company.FIELD_ID), rset.getString(Company.FIELD_NAME))
 						.build();
@@ -103,7 +87,7 @@ public class CompanyDAOImpl implements CompanyDAO {
 				}
 			}
 
-			ConnectionDB.disconnect();
+			ConnectionMySQL.disconnect();
 		}
 
 		return companies;
@@ -113,16 +97,15 @@ public class CompanyDAOImpl implements CompanyDAO {
 	/**
 	 * Return the company id in the db
 	 *
-	 * @param id
-	 *            the id of the company wanted
-	 * @return the company id
-	 * @see Company
+	 * @param 	id		the id of the company wanted
+	 * @return 			the company id
+	 * @see 	Company
 	 */
 	public Company getById(int id) {
 		Company company = null;
 
 		try {
-			con = ConnectionDB.INSTANCE.getConnection();
+			con = ConnectionMySQL.INSTANCE.getConnection();
 			stmt = con.prepareStatement(QUERY_FIND_COMPANY_BY_ID);
 			stmt.setInt(1, id);
 			final ResultSet rset = stmt.executeQuery();
@@ -146,18 +129,25 @@ public class CompanyDAOImpl implements CompanyDAO {
 				}
 			}
 
-			ConnectionDB.disconnect();
+			ConnectionMySQL.disconnect();
 		}
 
 		return company;
 	}
 
 	@Override
+	/**
+	 * Return the company name in the db
+	 *
+	 * @param 	name	the name of the company wanted
+	 * @return 	the list of the company with name name
+	 * @see 	List<Company>
+	 */
 	public List<Company> getByName(String name) {
 		List<Company> companies = new ArrayList<>();
 
 		try {
-			con = ConnectionDB.INSTANCE.getConnection();
+			con = ConnectionMySQL.INSTANCE.getConnection();
 			stmt = con.prepareStatement(QUERY_FIND_COMPANY_BY_NAME);
 			stmt.setString(1, name);
 			final ResultSet rset = stmt.executeQuery();
@@ -180,7 +170,7 @@ public class CompanyDAOImpl implements CompanyDAO {
 				}
 			}
 
-			ConnectionDB.disconnect();
+			ConnectionMySQL.disconnect();
 		}
 
 		return companies;
@@ -190,17 +180,16 @@ public class CompanyDAOImpl implements CompanyDAO {
 	/**
 	 * Return the list of the computers of the company id
 	 *
-	 * @param id
-	 *            the id of the company
-	 * @return the list of the computers
-	 * @see List<Computer>
+	 * @param 	id	the id of the company
+	 * @return 	the list of the computers
+	 * @see 	List<Computer>
 	 */
 	public List<Computer> getComputers(int id) {
 		List<Computer> computers = new ArrayList<>();
 		Company company = getById(id);
 
 		try {
-			con = ConnectionDB.INSTANCE.getConnection();
+			con = ConnectionMySQL.INSTANCE.getConnection();
 			stmt = con.prepareStatement(QUERY_FIND_COMPUTERS);
 			stmt.setInt(1, id);
 
@@ -213,8 +202,8 @@ public class CompanyDAOImpl implements CompanyDAO {
 				Date introducedComputer = rset.getDate(Computer.FIELD_INTRODUCED);
 				Date discontinuedComputer = rset.getDate(Computer.FIELD_INTRODUCED);
 
-				Computer computer = new Computer.Builder(nameComputer).id(idComputer).introduced(introducedComputer)
-						.discontinued(discontinuedComputer).company(company).build();
+				Computer computer = new Computer.Builder(nameComputer).id(idComputer).introduced((introducedComputer != null ? introducedComputer.toLocalDate() : null))
+						.discontinued((discontinuedComputer != null ? discontinuedComputer.toLocalDate() : null)).company(company).build();
 
 				computers.add(computer);
 			}
@@ -231,7 +220,7 @@ public class CompanyDAOImpl implements CompanyDAO {
 				}
 			}
 
-			ConnectionDB.disconnect();
+			ConnectionMySQL.disconnect();
 		}
 
 		return computers;
