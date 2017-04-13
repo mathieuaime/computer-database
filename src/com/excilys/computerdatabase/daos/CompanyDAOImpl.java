@@ -35,9 +35,6 @@ public class CompanyDAOImpl implements CompanyDAO {
 															+ " ON " + Computer.FIELD_COMPANY_ID + " = " + Company.TABLE_NAME + "." + Company.FIELD_ID
 															+ " WHERE " + Company.TABLE_NAME + "." + Company.FIELD_ID + " =  ?";
 
-	private PreparedStatement stmt = null;
-	private Connection con = null;
-
 	@Override
 	/**
 	 * Returns all the companies in the db
@@ -61,11 +58,10 @@ public class CompanyDAOImpl implements CompanyDAO {
 	public List<Company> findAll(int offset, int length) {
 		List<Company> companies = new ArrayList<>();
 
-		try {
-			con = ConnectionMySQL.INSTANCE.getConnection();
-			stmt = con.prepareStatement(QUERY_FIND_COMPANIES
-					+ (length != -1 ? " ORDER BY " + Company.FIELD_ID + " LIMIT " + length : "")
-					+ (length != -1 && offset != -1 ? " OFFSET " + offset : ""));
+		try (Connection con = ConnectionMySQL.INSTANCE.getConnection();
+				PreparedStatement stmt = con.prepareStatement(QUERY_FIND_COMPANIES
+						+ (length != -1 ? " ORDER BY " + Company.FIELD_ID + " LIMIT " + length : "")
+						+ (length != -1 && offset != -1 ? " OFFSET " + offset : ""));) {
 
 			final ResultSet rset = stmt.executeQuery();
 
@@ -77,17 +73,6 @@ public class CompanyDAOImpl implements CompanyDAO {
 
 		} catch (SQLException e) {
 			e.printStackTrace();
-		} finally {
-
-			if (stmt != null) {
-				try {
-					stmt.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-
-			ConnectionMySQL.disconnect();
 		}
 
 		return companies;
@@ -104,9 +89,8 @@ public class CompanyDAOImpl implements CompanyDAO {
 	public Company getById(int id) {
 		Company company = null;
 
-		try {
-			con = ConnectionMySQL.INSTANCE.getConnection();
-			stmt = con.prepareStatement(QUERY_FIND_COMPANY_BY_ID);
+		try (Connection con = ConnectionMySQL.INSTANCE.getConnection();
+				PreparedStatement stmt = con.prepareStatement(QUERY_FIND_COMPANY_BY_ID);) {
 			stmt.setInt(1, id);
 			final ResultSet rset = stmt.executeQuery();
 
@@ -119,17 +103,6 @@ public class CompanyDAOImpl implements CompanyDAO {
 
 		} catch (SQLException e) {
 			e.printStackTrace();
-		} finally {
-
-			if (stmt != null) {
-				try {
-					stmt.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-
-			ConnectionMySQL.disconnect();
 		}
 
 		return company;
@@ -146,9 +119,8 @@ public class CompanyDAOImpl implements CompanyDAO {
 	public List<Company> getByName(String name) {
 		List<Company> companies = new ArrayList<>();
 
-		try {
-			con = ConnectionMySQL.INSTANCE.getConnection();
-			stmt = con.prepareStatement(QUERY_FIND_COMPANY_BY_NAME);
+		try (Connection con = ConnectionMySQL.INSTANCE.getConnection();
+				PreparedStatement stmt = con.prepareStatement(QUERY_FIND_COMPANY_BY_NAME);) {
 			stmt.setString(1, name);
 			final ResultSet rset = stmt.executeQuery();
 
@@ -160,17 +132,6 @@ public class CompanyDAOImpl implements CompanyDAO {
 
 		} catch (SQLException e) {
 			e.printStackTrace();
-		} finally {
-
-			if (stmt != null) {
-				try {
-					stmt.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-
-			ConnectionMySQL.disconnect();
 		}
 
 		return companies;
@@ -188,9 +149,8 @@ public class CompanyDAOImpl implements CompanyDAO {
 		List<Computer> computers = new ArrayList<>();
 		Company company = getById(id);
 
-		try {
-			con = ConnectionMySQL.INSTANCE.getConnection();
-			stmt = con.prepareStatement(QUERY_FIND_COMPUTERS);
+		try (Connection con = ConnectionMySQL.INSTANCE.getConnection();
+				PreparedStatement stmt = con.prepareStatement(QUERY_FIND_COMPUTERS);) {
 			stmt.setInt(1, id);
 
 			final ResultSet rset = stmt.executeQuery();
@@ -210,17 +170,6 @@ public class CompanyDAOImpl implements CompanyDAO {
 
 		} catch (SQLException | IntroducedAfterDiscontinuedException e) {
 			e.printStackTrace();
-		} finally {
-
-			if (stmt != null) {
-				try {
-					stmt.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-
-			ConnectionMySQL.disconnect();
 		}
 
 		return computers;

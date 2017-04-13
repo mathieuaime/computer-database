@@ -55,9 +55,6 @@ public class ComputerDAOImpl implements ComputerDAO {
 															+ " ON " + Computer.FIELD_COMPANY_ID + " = " + Company.TABLE_NAME + "." + Company.FIELD_ID 
 															+ " WHERE " + Computer.TABLE_NAME + "." + Computer.FIELD_ID + " = ? ";
 
-	private PreparedStatement stmt = null;
-	private Connection con = null;
-
 	@Override
 	public List<Computer> findAll() {
 		return findAll(-1, -1);
@@ -67,14 +64,12 @@ public class ComputerDAOImpl implements ComputerDAO {
 	public List<Computer> findAll(int offset, int length) {
 		List<Computer> computers = new ArrayList<>();
 
-		try {
-			con = ConnectionMySQL.INSTANCE.getConnection();
-			stmt = con
-					.prepareStatement(
-							QUERY_FIND_COMPUTER
-									+ (length != -1 ? " ORDER BY " + Computer.TABLE_NAME + "." + Computer.FIELD_ID
-											+ " LIMIT " + length : "")
-									+ (length != -1 && offset != -1 ? " OFFSET " + offset : ""));
+		try (Connection con = ConnectionMySQL.INSTANCE.getConnection();
+				PreparedStatement stmt = con
+						.prepareStatement(QUERY_FIND_COMPUTER
+								+ (length != -1 ? " ORDER BY " + Computer.TABLE_NAME + "." + Computer.FIELD_ID
+										+ " LIMIT " + length : "")
+								+ (length != -1 && offset != -1 ? " OFFSET " + offset : ""));) {
 
 			final ResultSet rset = stmt.executeQuery();
 
@@ -97,17 +92,6 @@ public class ComputerDAOImpl implements ComputerDAO {
 
 		} catch (SQLException | IntroducedAfterDiscontinuedException e) {
 			e.printStackTrace();
-		} finally {
-
-			if (stmt != null) {
-				try {
-					stmt.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-
-			ConnectionMySQL.disconnect();
 		}
 
 		return computers;
@@ -117,9 +101,9 @@ public class ComputerDAOImpl implements ComputerDAO {
 	public Computer getById(int id) {
 		Computer computer = null;
 
-		try {
-			con = ConnectionMySQL.INSTANCE.getConnection();
-			stmt = con.prepareStatement(QUERY_FIND_COMPUTER_BY_ID);
+		try (Connection con = ConnectionMySQL.INSTANCE.getConnection();
+				PreparedStatement stmt = con.prepareStatement(QUERY_FIND_COMPUTER_BY_ID);) {
+
 			stmt.setInt(1, id);
 			final ResultSet rset = stmt.executeQuery();
 
@@ -140,17 +124,6 @@ public class ComputerDAOImpl implements ComputerDAO {
 
 		} catch (SQLException | IntroducedAfterDiscontinuedException e) {
 			e.printStackTrace();
-		} finally {
-
-			if (stmt != null) {
-				try {
-					stmt.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-
-			ConnectionMySQL.disconnect();
 		}
 
 		return computer;
@@ -160,9 +133,9 @@ public class ComputerDAOImpl implements ComputerDAO {
 	public List<Computer> getByName(String name) {
 		List<Computer> computers = new ArrayList<>();
 
-		try {
-			con = ConnectionMySQL.INSTANCE.getConnection();
-			stmt = con.prepareStatement(QUERY_FIND_COMPUTER_BY_NAME);
+		try (Connection con = ConnectionMySQL.INSTANCE.getConnection();
+				PreparedStatement stmt = con.prepareStatement(QUERY_FIND_COMPUTER_BY_NAME);
+				){
 			stmt.setString(1, name);
 			final ResultSet rset = stmt.executeQuery();
 
@@ -185,17 +158,6 @@ public class ComputerDAOImpl implements ComputerDAO {
 
 		} catch (SQLException | IntroducedAfterDiscontinuedException e) {
 			e.printStackTrace();
-		} finally {
-
-			if (stmt != null) {
-				try {
-					stmt.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-
-			ConnectionMySQL.disconnect();
 		}
 
 		return computers;
@@ -205,9 +167,9 @@ public class ComputerDAOImpl implements ComputerDAO {
 	public boolean add(Computer computer) {
 		boolean add = false;
 
-		try {
-			con = ConnectionMySQL.INSTANCE.getConnection();
-			stmt = con.prepareStatement(QUERY_ADD_COMPUTER);
+		try (Connection con = ConnectionMySQL.INSTANCE.getConnection();
+				PreparedStatement stmt = con.prepareStatement(QUERY_ADD_COMPUTER);) {
+
 			stmt.setLong(1, computer.getId());
 			stmt.setString(2, computer.getName());
 			stmt.setObject(3, computer.getIntroduced());
@@ -218,17 +180,6 @@ public class ComputerDAOImpl implements ComputerDAO {
 
 		} catch (SQLException e) {
 			add = false;
-		} finally {
-
-			if (stmt != null) {
-				try {
-					stmt.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-
-			ConnectionMySQL.disconnect();
 		}
 
 		return add;
@@ -238,9 +189,8 @@ public class ComputerDAOImpl implements ComputerDAO {
 	public boolean update(Computer computer) {
 		boolean update = false;
 
-		try {
-			con = ConnectionMySQL.INSTANCE.getConnection();
-			stmt = con.prepareStatement(QUERY_UPDATE_COMPUTER);
+		try (Connection con = ConnectionMySQL.INSTANCE.getConnection();
+				PreparedStatement stmt = con.prepareStatement(QUERY_UPDATE_COMPUTER);) {
 			stmt.setString(1, computer.getName());
 			stmt.setObject(2, computer.getIntroduced());
 			stmt.setObject(3, computer.getDiscontinued());
@@ -251,17 +201,6 @@ public class ComputerDAOImpl implements ComputerDAO {
 
 		} catch (SQLException e) {
 			update = false;
-		} finally {
-
-			if (stmt != null) {
-				try {
-					stmt.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-
-			ConnectionMySQL.disconnect();
 		}
 
 		return update;
@@ -271,26 +210,15 @@ public class ComputerDAOImpl implements ComputerDAO {
 	public boolean delete(int id) {
 		boolean delete = false;
 
-		try {
-			con = ConnectionMySQL.INSTANCE.getConnection();
-			stmt = con.prepareStatement(QUERY_DELETE_COMPUTER);
+		try (Connection con = ConnectionMySQL.INSTANCE.getConnection();
+				PreparedStatement stmt = con.prepareStatement(QUERY_DELETE_COMPUTER);) {
+
 			stmt.setInt(1, id);
 			int res = stmt.executeUpdate();
 			delete = res == 1;
 
 		} catch (SQLException e) {
 			e.printStackTrace();
-		} finally {
-
-			if (stmt != null) {
-				try {
-					stmt.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-
-			ConnectionMySQL.disconnect();
 		}
 
 		return delete;
@@ -300,9 +228,8 @@ public class ComputerDAOImpl implements ComputerDAO {
 	public Company getCompany(int id) {
 		Company company = null;
 
-		try {
-			con = ConnectionMySQL.INSTANCE.getConnection();
-			stmt = con.prepareStatement(QUERY_FIND_COMPANY);
+		try (Connection con = ConnectionMySQL.INSTANCE.getConnection();
+				PreparedStatement stmt = con.prepareStatement(QUERY_FIND_COMPANY);) {
 			stmt.setInt(1, id);
 			final ResultSet rset = stmt.executeQuery();
 
@@ -314,17 +241,6 @@ public class ComputerDAOImpl implements ComputerDAO {
 
 		} catch (SQLException e) {
 			e.printStackTrace();
-		} finally {
-
-			if (stmt != null) {
-				try {
-					stmt.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-
-			ConnectionMySQL.disconnect();
 		}
 
 		return company;
