@@ -165,6 +165,12 @@ public class ComputerDAOImpl implements ComputerDAO {
             }
         }
 
+        if (add) {
+            LOGGER.info("Info: " + computer + " sucessfully added");
+        } else {
+            LOGGER.error("Error: " + computer + " not added");
+        }
+
         return add;
     }
 
@@ -189,6 +195,12 @@ public class ComputerDAOImpl implements ComputerDAO {
             }
         }
 
+        if (update) {
+            LOGGER.info("Info: " + computer + " sucessfully updated");
+        } else {
+            LOGGER.error("Error: " + computer + " not updated");
+        }
+
         return update;
     }
 
@@ -207,6 +219,12 @@ public class ComputerDAOImpl implements ComputerDAO {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Exception: " + e);
             }
+        }
+
+        if (delete) {
+            LOGGER.info("Info: Computer " + id + " sucessfully deleted");
+        } else {
+            LOGGER.error("Error: Computer " + id + " not deleted");
         }
 
         return delete;
