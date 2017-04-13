@@ -1,11 +1,14 @@
 package main.com.excilys.computerdatabase.daos;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.sql.Connection;
+
+import org.slf4j.Logger;
 
 import main.com.excilys.computerdatabase.interfaces.CompanyDAO;
 import main.com.excilys.computerdatabase.mappers.CompanyMapper;
@@ -36,6 +39,8 @@ public class CompanyDAOImpl implements CompanyDAO {
                                                             + " INNER JOIN " + Company.TABLE_NAME
                                                             + " ON " + Computer.FIELD_COMPANY_ID + " = " + Company.TABLE_NAME + "." + Company.FIELD_ID
                                                             + " WHERE " + Company.TABLE_NAME + "." + Company.FIELD_ID + " =  ?";
+
+    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(CompanyDAOImpl.class);
 
     @Override
     /**
@@ -73,7 +78,9 @@ public class CompanyDAOImpl implements CompanyDAO {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Exception: " + e);
+            }
         }
 
         return companies;
@@ -100,7 +107,9 @@ public class CompanyDAOImpl implements CompanyDAO {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Exception: " + e);
+            }
         }
 
         return company;
@@ -128,7 +137,9 @@ public class CompanyDAOImpl implements CompanyDAO {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Exception: " + e);
+            }
         }
 
         return companies;
@@ -159,7 +170,9 @@ public class CompanyDAOImpl implements CompanyDAO {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Exception: " + e);
+            }
         }
 
         return computers;

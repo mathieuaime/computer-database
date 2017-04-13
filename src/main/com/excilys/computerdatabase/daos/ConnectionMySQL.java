@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+import org.slf4j.Logger;
+
 import main.com.excilys.computerdatabase.config.Config;
 
 public enum ConnectionMySQL {
@@ -16,6 +18,8 @@ public enum ConnectionMySQL {
 
     private static Connection con = null;
 
+    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(ConnectionMySQL.class);
+
     /**
      * Open the connection.
      */
@@ -23,7 +27,9 @@ public enum ConnectionMySQL {
         try {
             con = DriverManager.getConnection(URL, USER, PASSWORD);
         } catch (SQLException e) {
-            e.printStackTrace();
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Exception: " + e);
+            }
         }
     }
 
@@ -34,7 +40,9 @@ public enum ConnectionMySQL {
         try {
             con.close();
         } catch (SQLException e) {
-            e.printStackTrace();
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Exception: " + e);
+            }
         }
     }
 
@@ -48,7 +56,9 @@ public enum ConnectionMySQL {
                 connect();
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Exception: " + e);
+            }
         }
         return con;
     }

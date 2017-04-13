@@ -4,11 +4,15 @@ import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import org.slf4j.Logger;
+
 import main.com.excilys.computerdatabase.exceptions.IntroducedAfterDiscontinuedException;
 import main.com.excilys.computerdatabase.models.Company;
 import main.com.excilys.computerdatabase.models.Computer;
 
 public class ComputerMapper {
+
+    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(ComputerMapper.class);
 
     /**
      * Create a computer from a ResultSet.
@@ -35,7 +39,9 @@ public class ComputerMapper {
                     .company(company).build();
 
         } catch (SQLException | IntroducedAfterDiscontinuedException e) {
-            e.printStackTrace();
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Exception: " + e);
+            }
         }
 
         return computer;

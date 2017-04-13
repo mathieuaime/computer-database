@@ -7,6 +7,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+
 import main.com.excilys.computerdatabase.interfaces.ComputerDAO;
 import main.com.excilys.computerdatabase.mappers.CompanyMapper;
 import main.com.excilys.computerdatabase.mappers.ComputerMapper;
@@ -55,6 +57,8 @@ public class ComputerDAOImpl implements ComputerDAO {
                                                             + " ON " + Computer.FIELD_COMPANY_ID + " = " + Company.TABLE_NAME + "." + Company.FIELD_ID
                                                             + " WHERE " + Computer.TABLE_NAME + "." + Computer.FIELD_ID + " = ? ";
 
+    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(ComputerDAOImpl.class);
+
     @Override
     public List<Computer> findAll() {
         return findAll(-1, -1);
@@ -81,7 +85,9 @@ public class ComputerDAOImpl implements ComputerDAO {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Exception: " + e);
+            }
         }
 
         return computers;
@@ -103,7 +109,9 @@ public class ComputerDAOImpl implements ComputerDAO {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Exception: " + e);
+            }
         }
 
         return computer;
@@ -127,7 +135,9 @@ public class ComputerDAOImpl implements ComputerDAO {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Exception: " + e);
+            }
         }
 
         return computers;
@@ -150,6 +160,9 @@ public class ComputerDAOImpl implements ComputerDAO {
 
         } catch (SQLException e) {
             add = false;
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Exception: " + e);
+            }
         }
 
         return add;
@@ -171,6 +184,9 @@ public class ComputerDAOImpl implements ComputerDAO {
 
         } catch (SQLException e) {
             update = false;
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Exception: " + e);
+            }
         }
 
         return update;
@@ -188,7 +204,9 @@ public class ComputerDAOImpl implements ComputerDAO {
             delete = res == 1;
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Exception: " + e);
+            }
         }
 
         return delete;
@@ -208,7 +226,9 @@ public class ComputerDAOImpl implements ComputerDAO {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Exception: " + e);
+            }
         }
 
         return company;

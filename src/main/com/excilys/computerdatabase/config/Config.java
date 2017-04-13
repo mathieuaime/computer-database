@@ -4,10 +4,13 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.Properties;
 
+import org.slf4j.Logger;
+
 public class Config {
 
     private static Properties properties;
     private static final String PROPERTIES_FILE = "config.properties";
+    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(Config.class);
 
     InputStream inputStream;
 
@@ -23,7 +26,9 @@ public class Config {
             }
 
         } catch (Exception e) {
-            System.out.println("Exception: " + e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Exception: " + e);
+            }
         }
     }
 

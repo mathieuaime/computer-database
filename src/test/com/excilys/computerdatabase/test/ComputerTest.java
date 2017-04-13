@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNull;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
 
 import main.com.excilys.computerdatabase.exceptions.IntroducedAfterDiscontinuedException;
 import main.com.excilys.computerdatabase.models.Company;
@@ -18,6 +19,8 @@ public class ComputerTest {
     private Computer c1;
     private Computer c2;
 
+    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(ComputerTest.class);
+
     /**
      * ComputerTest constructor.
      */
@@ -28,7 +31,9 @@ public class ComputerTest {
             c1 = new Computer.Builder("Computer1").id(1000).company(comp1).build();
             c2 = new Computer.Builder("Computer2").id(1001).company(comp1).build();
         } catch (IntroducedAfterDiscontinuedException e) {
-            e.printStackTrace();
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Exception: " + e);
+            }
         }
     }
 
@@ -57,7 +62,9 @@ public class ComputerTest {
             assertNull(computerService.get(1000));
 
         } catch (Exception e) {
-            e.printStackTrace();
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Exception: " + e);
+            }
         }
     }
 
@@ -78,7 +85,9 @@ public class ComputerTest {
             assertNull(computerService.get(1000));
 
         } catch (Exception e) {
-            e.printStackTrace();
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Exception: " + e);
+            }
         }
     }
 
@@ -94,7 +103,9 @@ public class ComputerTest {
             assertEquals(c1, computerService.get(1000));
 
         } catch (Exception e) {
-            e.printStackTrace();
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Exception: " + e);
+            }
         }
     }
 
@@ -113,7 +124,9 @@ public class ComputerTest {
             assertEquals(c2.getName(), computerService.get(1000).getName());
 
         } catch (Exception e) {
-            e.printStackTrace();
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Exception: " + e);
+            }
         }
     }
 
@@ -128,7 +141,9 @@ public class ComputerTest {
             assertEquals(1, computerService.getCompany(1).getId());
 
         } catch (Exception e) {
-            e.printStackTrace();
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Exception: " + e);
+            }
         }
     }
 }

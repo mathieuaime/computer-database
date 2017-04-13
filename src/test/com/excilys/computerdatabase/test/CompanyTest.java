@@ -4,12 +4,14 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 import org.junit.Test;
+import org.slf4j.Logger;
 
 import main.com.excilys.computerdatabase.services.CompanyService;
 
 public class CompanyTest {
 
     private CompanyService companyService = new CompanyService();
+    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(CompanyTest.class);
 
     /**
      * CompanyTest constructor.
@@ -35,7 +37,9 @@ public class CompanyTest {
             assertNull(companyService.get(1000));
 
         } catch (Exception e) {
-            e.printStackTrace();
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Exception: " + e);
+            }
         }
     }
 
@@ -50,7 +54,9 @@ public class CompanyTest {
             assertEquals(40, companyService.getComputers(1).size());
 
         } catch (Exception e) {
-            e.printStackTrace();
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Exception: " + e);
+            }
         }
     }
 
