@@ -1,7 +1,7 @@
 package com.excilys.computerdatabase.models;
 
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 import com.excilys.computerdatabase.config.Config;
 import com.excilys.computerdatabase.exceptions.IntroducedAfterDiscontinuedException;
@@ -15,6 +15,8 @@ public class Computer {
 	public static final String FIELD_INTRODUCED = "introduced";
 	public static final String FIELD_DISCONTINUED = "discontinued";
 	public static final String FIELD_COMPANY_ID = "company_id";
+	
+	private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern(Config.getProperties().getProperty("date_format"));
 
 	private long id;
 
@@ -166,8 +168,11 @@ public class Computer {
 
 	@Override
 	public String toString() {
-		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(Config.DATE_FORMAT);
-		return id + "/" + name + "/" + (introduced != null ? simpleDateFormat.format(introduced) : "") + "/"
-				+ (discontinued != null ? simpleDateFormat.format(discontinued) : "") + "/" + company;
+		
+		return id + "/" 
+				+ name + "/" 
+				+ (introduced != null ? introduced.format(DATE_FORMATTER) : "") + "/"
+				+ (discontinued != null ? discontinued.format(DATE_FORMATTER) : "") + "/" 
+				+ company;
 	}
 }

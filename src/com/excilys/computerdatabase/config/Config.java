@@ -1,12 +1,33 @@
 package com.excilys.computerdatabase.config;
 
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.util.Properties;
+
 public class Config {
-	//URL de la bdd
-	public final static String URL = "jdbc:mysql://localhost:3306/computer-database-db?zeroDateTimeBehavior=convertToNull";
-	//Login de la bdd
-	public final static String LOGIN = "root";
-	//Password de la bdd
-	public final static String PASSWORD = "root";
-	//Format de date utilisé
-	public static final String DATE_FORMAT = "yyyy-MM-dd";
+	
+	private static Properties properties;
+	private final static String PROPERTIES_FILE = "config.properties";
+	
+	InputStream inputStream;
+	
+	static {
+		properties = new Properties();
+		
+		try (InputStream inputStream = Config.class.getClassLoader().getResourceAsStream(PROPERTIES_FILE);){
+ 
+			if (inputStream != null) {
+				properties.load(inputStream);
+			} else {
+				throw new FileNotFoundException("property file '" + PROPERTIES_FILE + "' not found in the classpath");
+			}
+			
+		} catch (Exception e) {
+			System.out.println("Exception: " + e);
+		}
+	}
+ 
+	public static Properties getProperties() {
+		return properties;
+	}
 }

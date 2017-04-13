@@ -16,7 +16,7 @@ public class CLI {
 	private static CompanyService companyService = new CompanyService();
 	private static ComputerService computerService = new ComputerService();
 
-	private static String dateFormat = Config.DATE_FORMAT;
+	private static final String DATE_FORMAT = Config.getProperties().getProperty("date_format");
 
 	public static void printMenu() {
 		// prompt for the menu
@@ -94,10 +94,10 @@ public class CLI {
 				System.out.println("Nom ?");
 				nameComputer = scanner.nextLine();
 
-				System.out.println("Date d'ajout ? (" + dateFormat + ")");
+				System.out.println("Date d'ajout ? (" + DATE_FORMAT + ")");
 				introducedComputer = scanner.nextLine();
 
-				System.out.println("Date de retrait ? (" + dateFormat + ")");
+				System.out.println("Date de retrait ? (" + DATE_FORMAT + ")");
 				discontinuedComputer = scanner.nextLine();
 
 				System.out.println("Marque ?");

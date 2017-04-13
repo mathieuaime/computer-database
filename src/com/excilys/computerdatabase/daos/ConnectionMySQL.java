@@ -10,15 +10,15 @@ public enum ConnectionMySQL {
 
 	INSTANCE;
 
-	private static final String URL = Config.URL;
-	private static final String LOGIN = Config.LOGIN;
-	private static final String PASSWORD = Config.PASSWORD;
+	private static final String URL = Config.getProperties().getProperty("url");
+	private static final String USER = Config.getProperties().getProperty("user");
+	private static final String PASSWORD = Config.getProperties().getProperty("password");
 
 	private static Connection con = null;
 
 	public static void connect() {
 		try {
-			con = DriverManager.getConnection(URL, LOGIN, PASSWORD);
+			con = DriverManager.getConnection(URL, USER, PASSWORD);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
