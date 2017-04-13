@@ -6,10 +6,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.sql.Connection;
-import java.sql.Date;
 
-import com.excilys.computerdatabase.exceptions.IntroducedAfterDiscontinuedException;
 import com.excilys.computerdatabase.interfaces.CompanyDAO;
+import com.excilys.computerdatabase.mappers.CompanyMapper;
+import com.excilys.computerdatabase.mappers.ComputerMapper;
 import com.excilys.computerdatabase.models.Company;
 import com.excilys.computerdatabase.models.Computer;
 
@@ -26,10 +26,12 @@ public class CompanyDAOImpl implements CompanyDAO {
 
 	// Search the computers of a company
 	private final static String QUERY_FIND_COMPUTERS 		= "SELECT " 
-															+ Computer.TABLE_NAME + "." + Computer.FIELD_ID + ", "
-															+ Computer.TABLE_NAME + "." + Computer.FIELD_NAME + ", " 
-															+ Computer.TABLE_NAME + "." + Computer.FIELD_INTRODUCED + ", " 
-															+ Computer.TABLE_NAME + "." + Computer.FIELD_DISCONTINUED
+															+ Computer.TABLE_NAME + "." + Computer.FIELD_ID + " AS " + Computer.TABLE_NAME + Computer.FIELD_ID + ", "
+															+ Computer.TABLE_NAME + "." + Computer.FIELD_NAME + " AS " + Computer.TABLE_NAME + Computer.FIELD_NAME + ", " 
+															+ Computer.TABLE_NAME + "." + Computer.FIELD_INTRODUCED + " AS " + Computer.TABLE_NAME + Computer.FIELD_INTRODUCED + ", " 
+															+ Computer.TABLE_NAME + "." + Computer.FIELD_DISCONTINUED + " AS " + Computer.TABLE_NAME + Computer.FIELD_DISCONTINUED + ", "
+															+ Company.TABLE_NAME + "." + Company.FIELD_ID + " AS " + Company.TABLE_NAME + Company.FIELD_ID + ", "
+															+ Company.TABLE_NAME + "." + Company.FIELD_NAME + " AS " + Company.TABLE_NAME + Company.FIELD_NAME
 															+ " FROM " + Computer.TABLE_NAME
 															+ " INNER JOIN " + Company.TABLE_NAME 
 															+ " ON " + Computer.FIELD_COMPANY_ID + " = " + Company.TABLE_NAME + "." + Company.FIELD_ID
@@ -66,8 +68,7 @@ public class CompanyDAOImpl implements CompanyDAO {
 			final ResultSet rset = stmt.executeQuery();
 
 			while (rset.next()) {
-				Company company = new Company.Builder(rset.getInt(Company.FIELD_ID), rset.getString(Company.FIELD_NAME))
-						.build();
+				Company company = CompanyMapper.getCompany(rset);
 				companies.add(company);
 			}
 
@@ -95,10 +96,7 @@ public class CompanyDAOImpl implements CompanyDAO {
 			final ResultSet rset = stmt.executeQuery();
 
 			if (rset.next()) {
-				int idCompany = rset.getInt(Company.FIELD_ID);
-				String nameCompany = rset.getString(Company.FIELD_NAME);
-
-				company = new Company.Builder(idCompany, nameCompany).build();
+				company = CompanyMapper.getCompany(rset);
 			}
 
 		} catch (SQLException e) {
@@ -125,8 +123,7 @@ public class CompanyDAOImpl implements CompanyDAO {
 			final ResultSet rset = stmt.executeQuery();
 
 			if (rset.next()) {
-				Company company = new Company.Builder(rset.getInt(Company.FIELD_ID), rset.getString(Company.FIELD_NAME))
-						.build();
+				Company company = CompanyMapper.getCompany(rset);
 				companies.add(company);
 			}
 
@@ -147,7 +144,6 @@ public class CompanyDAOImpl implements CompanyDAO {
 	 */
 	public List<Computer> getComputers(int id) {
 		List<Computer> computers = new ArrayList<>();
-		Company company = getById(id);
 
 		try (Connection con = ConnectionMySQL.INSTANCE.getConnection();
 				PreparedStatement stmt = con.prepareStatement(QUERY_FIND_COMPUTERS);) {
@@ -157,18 +153,12 @@ public class CompanyDAOImpl implements CompanyDAO {
 
 			while (rset.next()) {
 
-				long idComputer = rset.getLong(Computer.FIELD_ID);
-				String nameComputer = rset.getString(Computer.FIELD_NAME);
-				Date introducedComputer = rset.getDate(Computer.FIELD_INTRODUCED);
-				Date discontinuedComputer = rset.getDate(Computer.FIELD_INTRODUCED);
-
-				Computer computer = new Computer.Builder(nameComputer).id(idComputer).introduced((introducedComputer != null ? introducedComputer.toLocalDate() : null))
-						.discontinued((discontinuedComputer != null ? discontinuedComputer.toLocalDate() : null)).company(company).build();
+				Computer computer = ComputerMapper.getComputer(rset);
 
 				computers.add(computer);
 			}
 
-		} catch (SQLException | IntroducedAfterDiscontinuedException e) {
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 

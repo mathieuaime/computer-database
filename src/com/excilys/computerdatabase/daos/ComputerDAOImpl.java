@@ -1,15 +1,15 @@
 package com.excilys.computerdatabase.daos;
 
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.excilys.computerdatabase.exceptions.IntroducedAfterDiscontinuedException;
 import com.excilys.computerdatabase.interfaces.ComputerDAO;
+import com.excilys.computerdatabase.mappers.CompanyMapper;
+import com.excilys.computerdatabase.mappers.ComputerMapper;
 import com.excilys.computerdatabase.models.Company;
 import com.excilys.computerdatabase.models.Computer;
 
@@ -75,22 +75,12 @@ public class ComputerDAOImpl implements ComputerDAO {
 
 			while (rset.next()) {
 
-				long idComputer = rset.getLong(Computer.TABLE_NAME + Computer.FIELD_ID);
-				String nameComputer = rset.getString(Computer.TABLE_NAME + Computer.FIELD_NAME);
-				Date introducedComputer = rset.getDate(Computer.TABLE_NAME + Computer.FIELD_INTRODUCED);
-				Date discontinuedComputer = rset.getDate(Computer.TABLE_NAME + Computer.FIELD_DISCONTINUED);
-				long idCompany = rset.getLong(Company.TABLE_NAME + Company.FIELD_ID);
-				String nameCompany = rset.getString(Company.TABLE_NAME + Company.FIELD_NAME);
-
-				Company company = new Company.Builder(idCompany, nameCompany).build();
-
-				Computer computer = new Computer.Builder(nameComputer).id(idComputer).introduced((introducedComputer != null ? introducedComputer.toLocalDate() : null))
-						.discontinued((discontinuedComputer != null ? discontinuedComputer.toLocalDate() : null)).company(company).build();
+				Computer computer = ComputerMapper.getComputer(rset);
 
 				computers.add(computer);
 			}
 
-		} catch (SQLException | IntroducedAfterDiscontinuedException e) {
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 
@@ -109,20 +99,10 @@ public class ComputerDAOImpl implements ComputerDAO {
 
 			if (rset.next()) {
 
-				long idComputer = rset.getLong(Computer.TABLE_NAME + Computer.FIELD_ID);
-				String nameComputer = rset.getString(Computer.TABLE_NAME + Computer.FIELD_NAME);
-				Date introducedComputer = rset.getDate(Computer.TABLE_NAME + Computer.FIELD_INTRODUCED);
-				Date discontinuedComputer = rset.getDate(Computer.TABLE_NAME + Computer.FIELD_DISCONTINUED);
-				long idCompany = rset.getLong(Company.TABLE_NAME + Company.FIELD_ID);
-				String nameCompany = rset.getString(Company.TABLE_NAME + Company.FIELD_NAME);
-
-				Company company = new Company.Builder(idCompany, nameCompany).build();
-
-				computer = new Computer.Builder(nameComputer).id(idComputer).introduced((introducedComputer != null ? introducedComputer.toLocalDate() : null))
-						.discontinued((discontinuedComputer != null ? discontinuedComputer.toLocalDate() : null)).company(company).build();
+				computer = ComputerMapper.getComputer(rset);
 			}
 
-		} catch (SQLException | IntroducedAfterDiscontinuedException e) {
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 
@@ -141,22 +121,12 @@ public class ComputerDAOImpl implements ComputerDAO {
 
 			if (rset.next()) {
 
-				long idComputer = rset.getLong(Computer.TABLE_NAME + Computer.FIELD_ID);
-				String nameComputer = rset.getString(Computer.TABLE_NAME + Computer.FIELD_NAME);
-				Date introducedComputer = rset.getDate(Computer.TABLE_NAME + Computer.FIELD_INTRODUCED);
-				Date discontinuedComputer = rset.getDate(Computer.TABLE_NAME + Computer.FIELD_DISCONTINUED);
-				long idCompany = rset.getLong(Company.TABLE_NAME + Company.FIELD_ID);
-				String nameCompany = rset.getString(Company.TABLE_NAME + Company.FIELD_NAME);
-
-				Company company = new Company.Builder(idCompany, nameCompany).build();
-
-				Computer computer = new Computer.Builder(nameComputer).id(idComputer).introduced((introducedComputer != null ? introducedComputer.toLocalDate() : null))
-						.discontinued((discontinuedComputer != null ? discontinuedComputer.toLocalDate() : null)).company(company).build();
+				Computer computer = ComputerMapper.getComputer(rset);
 
 				computers.add(computer);
 			}
 
-		} catch (SQLException | IntroducedAfterDiscontinuedException e) {
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 
@@ -234,9 +204,7 @@ public class ComputerDAOImpl implements ComputerDAO {
 			final ResultSet rset = stmt.executeQuery();
 
 			if (rset.next()) {
-				long idCompany = rset.getLong(Company.FIELD_ID);
-				String nameCompany = rset.getString(Company.FIELD_NAME);
-				company = new Company.Builder(idCompany, nameCompany).build();
+				company = CompanyMapper.getCompany(rset);
 			}
 
 		} catch (SQLException e) {
