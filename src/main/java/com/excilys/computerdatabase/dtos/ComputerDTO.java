@@ -57,4 +57,9 @@ public class ComputerDTO {
     public void setCompanyName(String companyName) {
         this.companyName = companyName;
     }
+
+    @Override
+    public String toString() {
+        return id + "/" + name + "/" + introduced + "/" + discontinued + "/" + companyName;
+    }
 }

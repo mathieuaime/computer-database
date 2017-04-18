@@ -7,17 +7,16 @@ import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 
-import com.excilys.computerdatabase.exceptions.IntroducedAfterDiscontinuedException;
+import com.excilys.computerdatabase.dtos.ComputerDTO;
 import com.excilys.computerdatabase.models.Company;
-import com.excilys.computerdatabase.models.Computer;
 import com.excilys.computerdatabase.services.ComputerServiceImpl;
 
 public class ComputerTest {
 
     private ComputerServiceImpl computerService;
     private Company comp1;
-    private Computer c1;
-    private Computer c2;
+    private ComputerDTO c1;
+    private ComputerDTO c2;
 
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(ComputerTest.class);
 
@@ -27,14 +26,16 @@ public class ComputerTest {
     public ComputerTest() {
         computerService = new ComputerServiceImpl();
         comp1 = new Company.Builder("Apple Inc.").id(1).build();
-        try {
-            c1 = new Computer.Builder("Computer1").id(1000).company(comp1).build();
-            c2 = new Computer.Builder("Computer2").id(1001).company(comp1).build();
-        } catch (IntroducedAfterDiscontinuedException e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Exception: " + e);
-            }
-        }
+        
+        c1 = new ComputerDTO();
+        c1.setName("Computer1");
+        c1.setId(1000);
+        c1.setCompanyId(comp1.getId());
+
+        c2 = new ComputerDTO();
+        c2.setName("Computer2");
+        c2.setId(1001);
+        c2.setCompanyId(comp1.getId());
     }
 
     /**

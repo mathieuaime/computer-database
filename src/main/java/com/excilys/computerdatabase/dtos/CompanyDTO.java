@@ -25,4 +25,9 @@ public class CompanyDTO {
     public void setComputersList(List<Long> computersList) {
         this.computersList = computersList;
     }
+
+    @Override
+    public String toString() {
+        return id + "/" + name;
+    }
 }

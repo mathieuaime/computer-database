@@ -4,9 +4,8 @@ import java.time.LocalDate;
 import java.util.Scanner;
 
 import com.excilys.computerdatabase.config.Config;
-import com.excilys.computerdatabase.exceptions.IntroducedAfterDiscontinuedException;
-import com.excilys.computerdatabase.models.Company;
-import com.excilys.computerdatabase.models.Computer;
+import com.excilys.computerdatabase.dtos.CompanyDTO;
+import com.excilys.computerdatabase.dtos.ComputerDTO;
 import com.excilys.computerdatabase.services.CompanyServiceImpl;
 import com.excilys.computerdatabase.services.ComputerServiceImpl;
 
@@ -37,7 +36,7 @@ public class CLI {
      * Print the list of the companies.
      */
     public static void printListCompanies() {
-        for (Company c : companyService.get()) {
+        for (CompanyDTO c : companyService.get()) {
             System.out.println(c);
         }
     }
@@ -46,7 +45,7 @@ public class CLI {
      * Print the list of the computers.
      */
     public static void printListComputers() {
-        for (Computer c : computerService.get()) {
+        for (ComputerDTO c : computerService.get()) {
             System.out.println(c);
         }
     }
@@ -56,7 +55,7 @@ public class CLI {
      * @param id the id of the computer
      */
     public static void printComputer(int id) {
-        Computer c = computerService.get(id);
+        ComputerDTO c = computerService.get(id);
         System.out.println(c != null ? c : "Pas de pc trouvé");
     }
 
@@ -121,29 +120,29 @@ public class CLI {
                 idCompany = scanner.next();
 
                 try {
-                    Computer.Builder c = new Computer.Builder(nameComputer);
+                    ComputerDTO c = new ComputerDTO();
 
-                    c.id(Integer.parseInt(idComputer));
+                    c.setName(nameComputer);
+
+                    c.setId(Long.parseLong(idComputer));
 
                     if (!introducedComputer.equals("")) {
                         LocalDate parsedIntroduced = LocalDate.parse(introducedComputer);
-                        c.introduced(parsedIntroduced);
+                        c.setIntroduced(parsedIntroduced);
                     }
 
                     if (!discontinuedComputer.equals("")) {
                         LocalDate parsedDiscontinued = LocalDate.parse(discontinuedComputer);
-                        c.discontinued(parsedDiscontinued);
+                        c.setDiscontinued(parsedDiscontinued);
                     }
 
-                    c.company(companyService.get(Integer.parseInt(idCompany)));
+                    c.setCompanyId(Long.parseLong(idCompany));
 
-                    boolean add = computerService.add(c.build());
+                    boolean add = computerService.add(c);
                     System.out.println(add ? "Pc ajouté" : "Erreur dans l'ajout du pc");
 
                 } catch (NumberFormatException e) {
                     System.out.println("L'id doit être un nombre");
-                } catch (IntroducedAfterDiscontinuedException e) {
-                    System.out.println("La date de dépot doit être inférieur à la date de retrait");
                 }
                 break;
 
@@ -166,30 +165,30 @@ public class CLI {
                 idCompany = scanner.nextLine();
 
                 try {
-                    Computer.Builder c = new Computer.Builder(nameComputer);
+                    ComputerDTO c = new ComputerDTO();
 
-                    c.id(Integer.parseInt(idComputer));
+                    c.setName(nameComputer);
+
+                    c.setId(Long.parseLong(idComputer));
 
                     if (!introducedComputer.equals("")) {
                         LocalDate parsedIntroduced = LocalDate.parse(introducedComputer);
-                        c.introduced(parsedIntroduced);
+                        c.setIntroduced(parsedIntroduced);
                     }
 
                     if (!discontinuedComputer.equals("")) {
                         LocalDate parsedDiscontinued = LocalDate.parse(discontinuedComputer);
-                        c.discontinued(parsedDiscontinued);
+                        c.setDiscontinued(parsedDiscontinued);
                     }
 
-                    c.company(companyService.get(Integer.parseInt(idCompany)));
+                    c.setCompanyId(Long.parseLong(idCompany));
 
-                    boolean update = computerService.update(c.build());
+                    boolean update = computerService.update(c);
 
                     System.out.println(update ? "Pc modifié" : "Erreur dans la modification");
 
                 } catch (NumberFormatException e) {
                     System.out.println("L'id doit être un nombre");
-                } catch (IntroducedAfterDiscontinuedException e) {
-                    System.out.println("La date de dépot doit être inférieur à la date de retrait");
                 }
                 break;
 

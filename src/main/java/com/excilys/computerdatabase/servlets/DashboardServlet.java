@@ -12,6 +12,7 @@ import com.excilys.computerdatabase.services.ComputerServiceImpl;
 
 public class DashboardServlet extends HttpServlet {
 
+    private static final long serialVersionUID = 6465944299510271447L;
     private int page = 1;
     private int length = 10;
 

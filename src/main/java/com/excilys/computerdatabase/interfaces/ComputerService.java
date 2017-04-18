@@ -2,37 +2,37 @@ package com.excilys.computerdatabase.interfaces;
 
 import java.util.List;
 
-import com.excilys.computerdatabase.models.Company;
-import com.excilys.computerdatabase.models.Computer;
+import com.excilys.computerdatabase.dtos.CompanyDTO;
+import com.excilys.computerdatabase.dtos.ComputerDTO;
 
 public interface ComputerService {
 
     /**
      * Returns the list of the computers.
-     * @return List<Computer>
+     * @return List<ComputerDTO>
      */
-    List<Computer> get();
+    List<ComputerDTO> get();
 
     /**
      * Returns the computer id.
      * @param id the id of the computer
-     * @return Computer
+     * @return ComputerDTO
      */
-    Computer get(int id);
+    ComputerDTO get(int id);
 
     /**
      * Add a computer.
-     * @param computer the computer to add
+     * @param computerDTO the computer to add
      * @return true if the computer is successfully added
      */
-    boolean add(Computer computer);
+    boolean add(ComputerDTO computerDTO);
 
     /**
      * Update a computer.
-     * @param computer the computer to update
+     * @param computerDTO the computer to update
      * @return boolean true if the computer is successfully updated
      */
-    boolean update(Computer computer);
+    boolean update(ComputerDTO computerDTO);
 
     /**
      * Delete a computer.
@@ -52,5 +52,5 @@ public interface ComputerService {
      * @param id the id of the computer
      * @return Company
      */
-    Company getCompany(int id);
+    CompanyDTO getCompany(int id);
 }

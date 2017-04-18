@@ -10,6 +10,8 @@ import javax.servlet.http.HttpServletResponse;
 
 public class ComputerServlet extends HttpServlet {
 
+    private static final long serialVersionUID = -82009216108348436L;
+
     /**
      * GET Computer.
      * @param request request
