@@ -1,11 +1,16 @@
 package com.excilys.computerdatabase.dtos;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class CompanyDTO {
     private long id;
     private String name;
     private List<Long> computersList;
+    
+    public CompanyDTO() {
+        computersList = new ArrayList<Long>();
+    }
 
     public long getId() {
         return id;

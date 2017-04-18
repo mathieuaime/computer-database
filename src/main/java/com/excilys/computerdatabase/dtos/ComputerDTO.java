@@ -5,7 +5,7 @@ import java.time.LocalDate;
 public class ComputerDTO {
     private long id;
     private String name;
-    private LocalDate introduced;
+    private LocalDate introduced; //TODO en string
     private LocalDate discontinued;
     private long companyId;
     private String companyName;

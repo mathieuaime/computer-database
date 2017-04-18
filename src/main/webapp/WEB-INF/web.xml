@@ -23,30 +23,23 @@
 	</jsp-config>
 
 	<servlet>
-		<servlet-name>Computer</servlet-name>
-		<servlet-class>com.excilys.computerdatabase.servlets.ComputerServlet</servlet-class>
-	</servlet>
-
-	<servlet>
 		<servlet-name>Dashboard</servlet-name>
 		<servlet-class>com.excilys.computerdatabase.servlets.DashboardServlet</servlet-class>
-		<init-param>
-			<param-name>page</param-name>
-			<param-value>1</param-value>
-		</init-param>
-		<init-param>
-			<param-name>length</param-name>
-			<param-value>10</param-value>
-		</init-param>
 	</servlet>
-
-	<servlet-mapping>
-		<servlet-name>Computer</servlet-name>
-		<url-pattern>/computer</url-pattern>
-	</servlet-mapping>
 
 	<servlet-mapping>
 		<servlet-name>Dashboard</servlet-name>
 		<url-pattern>/home</url-pattern>
 	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>AddComputer</servlet-name>
+		<servlet-class>com.excilys.computerdatabase.servlets.AddComputerServlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>AddComputer</servlet-name>
+		<url-pattern>/addComputer</url-pattern>
+	</servlet-mapping>
+
 </web-app>
