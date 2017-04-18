@@ -17,14 +17,14 @@
 <body>
 	<header class="navbar navbar-inverse navbar-fixed-top">
 		<div class="container">
-			<a class="navbar-brand" href="home"> Application -
-				Computer Database </a>
+			<a class="navbar-brand" href="home"> Application - Computer
+				Database </a>
 		</div>
 	</header>
 
 	<section id="main">
 		<div class="container">
-			<h1 id="homeTitle">${computerCount} Computers found</h1>
+			<h1 id="homeTitle">${computerCount} Computer${computerCount > 1 ? 's' : ''} found</h1>
 			<div id="actions" class="form-horizontal">
 				<div class="pull-left">
 					<form id="searchForm" action="#" method="GET" class="form-inline">
@@ -90,23 +90,50 @@
 	<footer class="navbar-fixed-bottom">
 		<div class="container text-center">
 			<ul class="pagination">
-				<li><a href="#" aria-label="Previous"> <span
-						aria-hidden="true">&laquo;</span>
-				</a></li>
-				<li><a href="#">1</a></li>
-				<li><a href="#">2</a></li>
-				<li><a href="#">3</a></li>
-				<li><a href="#">4</a></li>
-				<li><a href="#">5</a></li>
-				<li><a href="#" aria-label="Next"> <span aria-hidden="true">&raquo;</span>
-				</a></li>
-			</ul>
-		</div>
+				<c:if test="${page > 1}">
+					<li><a href="home?page=${page-1}&length=${length}"
+						aria-label="Previous"> <span aria-hidden="true">&laquo;</span>
+					</a></li>
+				</c:if>
 
-		<div class="btn-group btn-group-sm pull-right" role="group">
-			<button type="button" class="btn btn-default">10</button>
-			<button type="button" class="btn btn-default">50</button>
-			<button type="button" class="btn btn-default">100</button>
+				<c:forEach var="i" begin="${page > 5 ? page - 5 : 1}"
+					end="${page + 5 <= nbPage ? page + 5 : nbPage}">
+
+					<c:choose>
+						<c:when test="${page == i}">
+							<li class="active"><a href="home?page=${i}&length=${length}">${i}</a></li>
+						</c:when>
+						<c:otherwise>
+							<li><a href="home?page=${i}&length=${length}">${i}</a></li>
+						</c:otherwise>
+					</c:choose>
+
+
+				</c:forEach>
+
+				<c:if test="${page < nbPage}">
+					<li><a href="home?page=${page+1}&length=${length}"
+						aria-label="Next"> <span aria-hidden="true">&raquo;</span>
+					</a></li>
+				</c:if>
+			</ul>
+
+			<div class="btn-group btn-group-sm pull-right" role="group">
+
+				<c:forEach items="${lengths}" var="i">
+					<c:choose>
+						<c:when test="${length == i}">
+							<a href="home?page=1&length=${i}"><button type="button"
+									class="btn btn-primary">${i}</button></a>
+						</c:when>
+						<c:otherwise>
+							<a href="home?page=1&length=${i}"><button type="button"
+									class="btn btn-default">${i}</button></a>
+						</c:otherwise>
+					</c:choose>
+				</c:forEach>
+			</div>
+
 		</div>
 
 	</footer>

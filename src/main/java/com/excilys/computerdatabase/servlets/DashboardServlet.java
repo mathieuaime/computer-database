@@ -13,8 +13,6 @@ import com.excilys.computerdatabase.services.ComputerServiceImpl;
 public class DashboardServlet extends HttpServlet {
 
     private static final long serialVersionUID = 6465944299510271447L;
-    private int page = 1;
-    private int length = 10;
 
     /**
      * GET Dashboard.
@@ -28,8 +26,22 @@ public class DashboardServlet extends HttpServlet {
 
         ComputerServiceImpl computerService = new ComputerServiceImpl();
 
+        //TODO valeurs par défaut dans config.properties
+        int page = (request.getParameter("page") != null ? Integer.parseInt(request.getParameter("page")) : 1);
+        int length = (request.getParameter("length") != null ? Integer.parseInt(request.getParameter("length")) : 10);
+
+        int computerCount = computerService.count();
+        
+        double nbPage = Math.ceil(computerCount / length);
+
+        int[] lengths = new int[]{10, 50, 100};
+
         request.setAttribute("computerPage", computerService.getPage(page, length));
-        request.setAttribute("computerCount", computerService.count());
+        request.setAttribute("computerCount", computerCount);
+        request.setAttribute("page", page);
+        request.setAttribute("length", length);
+        request.setAttribute("nbPage", nbPage);
+        request.setAttribute("lengths", lengths);
 
         view.forward(request, response);
 
