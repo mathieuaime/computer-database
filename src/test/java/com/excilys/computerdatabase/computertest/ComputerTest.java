@@ -10,11 +10,11 @@ import org.slf4j.Logger;
 import com.excilys.computerdatabase.exceptions.IntroducedAfterDiscontinuedException;
 import com.excilys.computerdatabase.models.Company;
 import com.excilys.computerdatabase.models.Computer;
-import com.excilys.computerdatabase.services.ComputerService;
+import com.excilys.computerdatabase.services.ComputerServiceImpl;
 
 public class ComputerTest {
 
-    private ComputerService computerService;
+    private ComputerServiceImpl computerService;
     private Company comp1;
     private Computer c1;
     private Computer c2;
@@ -25,8 +25,8 @@ public class ComputerTest {
      * ComputerTest constructor.
      */
     public ComputerTest() {
-        computerService = new ComputerService();
-        comp1 = new Company.Builder(1, "Apple Inc.").build();
+        computerService = new ComputerServiceImpl();
+        comp1 = new Company.Builder("Apple Inc.").id(1).build();
         try {
             c1 = new Computer.Builder("Computer1").id(1000).company(comp1).build();
             c2 = new Computer.Builder("Computer2").id(1001).company(comp1).build();

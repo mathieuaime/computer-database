@@ -31,7 +31,7 @@ public class ComputerMapper {
             long idCompany              = rset.getLong(Company.TABLE_NAME + Company.FIELD_ID);
             String nameCompany          = rset.getString(Company.TABLE_NAME + Company.FIELD_NAME);
 
-            Company company = new Company.Builder(idCompany, nameCompany).build();
+            Company company = new Company.Builder(nameCompany).id(idCompany).build();
 
             computer = new Computer.Builder(nameComputer).id(idComputer)
                     .introduced((introducedComputer != null ? introducedComputer.toLocalDate() : null))

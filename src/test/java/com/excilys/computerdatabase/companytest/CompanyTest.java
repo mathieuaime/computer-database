@@ -6,18 +6,18 @@ import static org.junit.Assert.assertNull;
 import org.junit.Test;
 import org.slf4j.Logger;
 
-import com.excilys.computerdatabase.services.CompanyService;
+import com.excilys.computerdatabase.services.CompanyServiceImpl;
 
 public class CompanyTest {
 
-    private CompanyService companyService = new CompanyService();
+    private CompanyServiceImpl companyService = new CompanyServiceImpl();
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(CompanyTest.class);
 
     /**
      * CompanyTest constructor.
      */
     public CompanyTest() {
-        companyService = new CompanyService();
+        companyService = new CompanyServiceImpl();
     }
 
     /**

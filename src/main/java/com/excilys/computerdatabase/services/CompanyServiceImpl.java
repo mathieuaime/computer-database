@@ -4,19 +4,19 @@ import java.util.List;
 
 import com.excilys.computerdatabase.daos.CompanyDAOImpl;
 import com.excilys.computerdatabase.dtos.Page;
-import com.excilys.computerdatabase.interfaces.CompanyServ;
+import com.excilys.computerdatabase.interfaces.CompanyService;
 import com.excilys.computerdatabase.interfaces.PageServ;
 import com.excilys.computerdatabase.models.Company;
 import com.excilys.computerdatabase.models.Computer;
 
-public class CompanyService implements CompanyServ, PageServ<Company> {
+public class CompanyServiceImpl implements CompanyService, PageServ<Company> {
 
     private CompanyDAOImpl companyDao;
 
     /**
      * CompanyService constructor.
      */
-    public CompanyService() {
+    public CompanyServiceImpl() {
         companyDao = new CompanyDAOImpl();
     }
 

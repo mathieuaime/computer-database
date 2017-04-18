@@ -5,7 +5,7 @@ import java.util.List;
 import com.excilys.computerdatabase.models.Company;
 import com.excilys.computerdatabase.models.Computer;
 
-public interface CompanyServ {
+public interface CompanyService {
 
     /**
      * Returns the list of the companies.

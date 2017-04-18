@@ -25,8 +25,9 @@ public enum ConnectionMySQL {
      */
     public static void connect() {
         try {
+            Class.forName("com.mysql.jdbc.Driver").newInstance();
             con = DriverManager.getConnection(URL, USER, PASSWORD);
-        } catch (SQLException e) {
+        } catch (SQLException | InstantiationException | IllegalAccessException | ClassNotFoundException e) {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Exception: " + e);
             }

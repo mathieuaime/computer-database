@@ -2,6 +2,7 @@ package com.excilys.computerdatabase.interfaces;
 
 import java.util.List;
 
+import com.excilys.computerdatabase.dtos.CompanyDTO;
 import com.excilys.computerdatabase.models.Company;
 import com.excilys.computerdatabase.models.Computer;
 
@@ -26,7 +27,7 @@ public interface CompanyDAO {
      * @param id id of the company
      * @return Company
      */
-    Company getById(int id);
+    Company getById(long id);
 
     /**
      * Returns the list of the companies found by their names.
@@ -40,5 +41,19 @@ public interface CompanyDAO {
      * @param id id of the company
      * @return List<Computer>
      */
-    List<Computer> getComputers(int id);
+    List<Computer> getComputers(long id);
+
+    /**
+     * Create a DTO from a company.
+     * @param company the company
+     * @return CompanyDTO
+     */
+    CompanyDTO createDTO(Company company);
+
+    /**
+     * Create a company from a DTO.
+     * @param companyDTO the companyDTO
+     * @return Company
+     */
+    Company createBean(CompanyDTO companyDTO);
 }

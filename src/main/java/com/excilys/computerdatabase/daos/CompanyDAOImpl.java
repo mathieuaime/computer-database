@@ -10,6 +10,7 @@ import java.util.List;
 
 import org.slf4j.Logger;
 
+import com.excilys.computerdatabase.dtos.CompanyDTO;
 import com.excilys.computerdatabase.interfaces.CompanyDAO;
 import com.excilys.computerdatabase.mappers.CompanyMapper;
 import com.excilys.computerdatabase.mappers.ComputerMapper;
@@ -43,25 +44,11 @@ public class CompanyDAOImpl implements CompanyDAO {
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(CompanyDAOImpl.class);
 
     @Override
-    /**
-     * Returns all the companies in the db
-     *
-     * @return the list of the companies
-     * @see List<Company>
-     */
     public List<Company> findAll() {
         return findAll(-1, -1);
     }
 
     @Override
-    /**
-     * Return a sub-list of the companies From offset to offset + length -1
-     *
-     * @param     offset    the start of the list
-     * @param     length    the length of the list
-     * @return     the list of the companies between offset & offset + length -1
-     * @see     List<Company>
-     */
     public List<Company> findAll(int offset, int length) {
         List<Company> companies = new ArrayList<>();
 
@@ -87,19 +74,12 @@ public class CompanyDAOImpl implements CompanyDAO {
     }
 
     @Override
-    /**
-     * Return the company id in the db
-     *
-     * @param     id        the id of the company wanted
-     * @return             the company id
-     * @see     Company
-     */
-    public Company getById(int id) {
+    public Company getById(long id) {
         Company company = null;
 
         try (Connection con = ConnectionMySQL.INSTANCE.getConnection();
                 PreparedStatement stmt = con.prepareStatement(QUERY_FIND_COMPANY_BY_ID);) {
-            stmt.setInt(1, id);
+            stmt.setLong(1, id);
             final ResultSet rset = stmt.executeQuery();
 
             if (rset.next()) {
@@ -116,13 +96,6 @@ public class CompanyDAOImpl implements CompanyDAO {
     }
 
     @Override
-    /**
-     * Return the company name in the db
-     *
-     * @param     name    the name of the company wanted
-     * @return     the list of the company with name name
-     * @see     List<Company>
-     */
     public List<Company> getByName(String name) {
         List<Company> companies = new ArrayList<>();
 
@@ -146,19 +119,12 @@ public class CompanyDAOImpl implements CompanyDAO {
     }
 
     @Override
-    /**
-     * Return the list of the computers of the company id
-     *
-     * @param     id    the id of the company
-     * @return     the list of the computers
-     * @see     List<Computer>
-     */
-    public List<Computer> getComputers(int id) {
+    public List<Computer> getComputers(long id) {
         List<Computer> computers = new ArrayList<>();
 
         try (Connection con = ConnectionMySQL.INSTANCE.getConnection();
                 PreparedStatement stmt = con.prepareStatement(QUERY_FIND_COMPUTERS);) {
-            stmt.setInt(1, id);
+            stmt.setLong(1, id);
 
             final ResultSet rset = stmt.executeQuery();
 
@@ -177,4 +143,24 @@ public class CompanyDAOImpl implements CompanyDAO {
 
         return computers;
     }
+
+    @Override
+    public CompanyDTO createDTO(Company company) {
+        CompanyDTO companyDTO = new CompanyDTO();
+
+        companyDTO.setId(company.getId());
+        companyDTO.setName(company.getName());
+
+        for (Computer c : getComputers(company.getId())) {
+            companyDTO.getComputersList().add(c.getId());
+        }
+
+        return companyDTO;
+    }
+
+    @Override
+    public Company createBean(CompanyDTO companyDTO) {
+        return new Company.Builder(companyDTO.getName()).id(companyDTO.getId()).build();
+    }
+
 }

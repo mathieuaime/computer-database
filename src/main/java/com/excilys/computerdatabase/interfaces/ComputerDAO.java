@@ -2,6 +2,7 @@ package com.excilys.computerdatabase.interfaces;
 
 import java.util.List;
 
+import com.excilys.computerdatabase.dtos.ComputerDTO;
 import com.excilys.computerdatabase.models.Company;
 import com.excilys.computerdatabase.models.Computer;
 
@@ -26,7 +27,7 @@ public interface ComputerDAO {
      * @param id the id of the computer
      * @return Computer
      */
-    Computer getById(int id);
+    Computer getById(long id);
 
     /**
      * Returns the list of the computers found by its name.
@@ -54,12 +55,32 @@ public interface ComputerDAO {
      * @param id the id of the computer
      * @return boolean true if the computer is successfully deleted
      */
-    boolean delete(int id);
+    boolean delete(long id);
+
+    /**
+     * Return the number of computers.
+     * @return int number of computers
+     */
+    int count();
 
     /**
      * Returns the Company of the computer id.
      * @param id the id of the computer
      * @return Company
      */
-    Company getCompany(int id);
+    Company getCompany(long id);
+
+    /**
+     * Create a DTO from a computer.
+     * @param computer the computer
+     * @return ComputerDTO
+     */
+    ComputerDTO createDTO(Computer computer);
+
+    /**
+     * Create a computer from a DTO.
+     * @param computerDTO the computerDTO
+     * @return Computer
+     */
+    Computer createBean(ComputerDTO computerDTO);
 }

@@ -5,7 +5,7 @@ import java.util.List;
 import com.excilys.computerdatabase.models.Company;
 import com.excilys.computerdatabase.models.Computer;
 
-public interface ComputerServ {
+public interface ComputerService {
 
     /**
      * Returns the list of the computers.
@@ -40,6 +40,12 @@ public interface ComputerServ {
      * @return boolean true if the computer is successfully deleted
      */
     boolean delete(int id);
+
+    /**
+     * Return the number of computers.
+     * @return int number of computers
+     */
+    int count();
 
     /**
      * Returns the company of the computer id.

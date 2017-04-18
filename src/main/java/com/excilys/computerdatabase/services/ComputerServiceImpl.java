@@ -1,22 +1,24 @@
 package com.excilys.computerdatabase.services;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.excilys.computerdatabase.daos.ComputerDAOImpl;
+import com.excilys.computerdatabase.dtos.ComputerDTO;
 import com.excilys.computerdatabase.dtos.Page;
-import com.excilys.computerdatabase.interfaces.ComputerServ;
+import com.excilys.computerdatabase.interfaces.ComputerService;
 import com.excilys.computerdatabase.interfaces.PageServ;
 import com.excilys.computerdatabase.models.Company;
 import com.excilys.computerdatabase.models.Computer;
 
-public class ComputerService implements ComputerServ, PageServ<Computer> {
+public class ComputerServiceImpl implements ComputerService, PageServ<ComputerDTO> {
 
     private ComputerDAOImpl computerDao;
 
     /**
      * ComputerService constructor.
      */
-    public ComputerService() {
+    public ComputerServiceImpl() {
         computerDao = new ComputerDAOImpl();
     }
 
@@ -26,14 +28,21 @@ public class ComputerService implements ComputerServ, PageServ<Computer> {
     }
 
     @Override
-    public Page<Computer> getPage() {
-        List<Computer> l = computerDao.findAll();
-        return new Page<Computer>(l, 1);
+    public Page<ComputerDTO> getPage() {
+
+        List<ComputerDTO> l = computerDao.findAll().stream().map(it -> computerDao.createDTO(it))
+                .collect(Collectors.toList());
+
+        return new Page<ComputerDTO>(l, 1);
     }
 
     @Override
-    public Page<Computer> getPage(int pageNumero, int length) {
-        return new Page<Computer>(computerDao.findAll(pageNumero * length, length), pageNumero);
+    public Page<ComputerDTO> getPage(int pageNumero, int length) {
+
+        List<ComputerDTO> l = computerDao.findAll(pageNumero * length, length).stream()
+                .map(it -> computerDao.createDTO(it)).collect(Collectors.toList());
+
+        return new Page<ComputerDTO>(l, pageNumero);
     }
 
     @Override
@@ -54,6 +63,11 @@ public class ComputerService implements ComputerServ, PageServ<Computer> {
     @Override
     public boolean delete(int id) {
         return computerDao.delete(id);
+    }
+
+    @Override
+    public int count() {
+        return computerDao.count();
     }
 
     @Override

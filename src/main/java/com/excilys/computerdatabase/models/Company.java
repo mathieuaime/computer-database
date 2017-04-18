@@ -8,6 +8,7 @@ public class Company {
 
     private long id;
     private String name;
+
     /**
      * Company private constructor.
      * @param builder company builder
@@ -40,13 +41,22 @@ public class Company {
 
         /**
          * Builder constructor.
-         * @param id id
          * @param name name
          */
-        public Builder(long id, String name) {
-            this.id = id;
+        public Builder(String name) {
             this.name = name;
         }
+
+        /**
+         * Add an id.
+         * @param id id
+         * @return Builder
+         */
+        public Builder id(long id) {
+            this.id = id;
+            return this;
+        }
+
         /**
          * Build the company.
          * @return Company

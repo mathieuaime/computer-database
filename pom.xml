@@ -5,10 +5,15 @@
 	<artifactId>computer-database</artifactId>
 	<version>0.0.2-SNAPSHOT</version>
 
-	<packaging>jar</packaging>
+	<packaging>war</packaging>
 
 	<properties>
 		<slf4jVersion>1.6.1</slf4jVersion>
+		<mysqlConnectorJavaVersion>5.1.39</mysqlConnectorJavaVersion>
+		<junitVersion>4.12</junitVersion>
+		<mockitoVersion>1.10.19</mockitoVersion>
+		<javaxServletVersion>3.1.0</javaxServletVersion>
+		<javaxServletJspVersion>2.3.1</javaxServletJspVersion>
 	</properties>
 
 	<dependencies>
@@ -21,20 +26,40 @@
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
-			<version>5.1.39</version>
+			<version>${mysqlConnectorJavaVersion}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.12</version>
+			<version>${junitVersion}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-all</artifactId>
-			<version>1.10.19</version>
+			<version>${mockitoVersion}</version>
 		</dependency>
+
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>${javaxServletVersion}</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>javax.servlet.jsp</groupId>
+			<artifactId>javax.servlet.jsp-api</artifactId>
+			<version>${javaxServletJspVersion}</version>
+			<scope>provided</scope>
+		</dependency>
+		
+		<dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>jstl</artifactId>
+            <version>1.2</version>
+        </dependency>
 	</dependencies>
 
 	<build>
@@ -76,6 +101,16 @@
 					</configuration>
 
 				</plugin>
+				
+				<plugin>
+					<artifactId>maven-war-plugin</artifactId>
+					<version>2.1-beta-1</version>
+					<configuration>
+						<warSourceDirectory>src/main/webapp</warSourceDirectory>
+						<failOnMissingWebXml>false</failOnMissingWebXml> 
+					</configuration>
+				</plugin>
+				
 			</plugins>
 		</pluginManagement>
 	</build>

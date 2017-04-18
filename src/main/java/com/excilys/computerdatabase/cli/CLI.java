@@ -7,14 +7,14 @@ import com.excilys.computerdatabase.config.Config;
 import com.excilys.computerdatabase.exceptions.IntroducedAfterDiscontinuedException;
 import com.excilys.computerdatabase.models.Company;
 import com.excilys.computerdatabase.models.Computer;
-import com.excilys.computerdatabase.services.CompanyService;
-import com.excilys.computerdatabase.services.ComputerService;
+import com.excilys.computerdatabase.services.CompanyServiceImpl;
+import com.excilys.computerdatabase.services.ComputerServiceImpl;
 
 public class CLI {
 
     private static Scanner scanner;
-    private static CompanyService companyService = new CompanyService();
-    private static ComputerService computerService = new ComputerService();
+    private static CompanyServiceImpl companyService = new CompanyServiceImpl();
+    private static ComputerServiceImpl computerService = new ComputerServiceImpl();
 
     private static final String DATE_FORMAT = Config.getProperties().getProperty("date_format");
 
