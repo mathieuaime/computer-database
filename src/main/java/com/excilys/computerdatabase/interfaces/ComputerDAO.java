@@ -3,6 +3,9 @@ package com.excilys.computerdatabase.interfaces;
 import java.util.List;
 
 import com.excilys.computerdatabase.dtos.ComputerDTO;
+import com.excilys.computerdatabase.exceptions.ComputerNotFoundException;
+import com.excilys.computerdatabase.exceptions.IntroducedAfterDiscontinuedException;
+import com.excilys.computerdatabase.exceptions.NameEmptyException;
 import com.excilys.computerdatabase.models.Company;
 import com.excilys.computerdatabase.models.Computer;
 
@@ -39,23 +42,22 @@ public interface ComputerDAO {
     /**
      * Add a computer.
      * @param computer the computer to add
-     * @return boolean true if the computer is successfully added
      */
-    boolean add(Computer computer);
+    void add(Computer computer);
 
     /**
      * Update a computer.
      * @param computer the computer to update
-     * @return boolean true if the computer is successfully updated
+     * @throws ComputerNotFoundException exception when the computer is not found
      */
-    boolean update(Computer computer);
+    void update(Computer computer) throws ComputerNotFoundException;
 
     /**
      * Delete a computer.
      * @param id the id of the computer
-     * @return boolean true if the computer is successfully deleted
+     * @throws ComputerNotFoundException exception when the computer is not found
      */
-    boolean delete(long id);
+    void delete(long id) throws ComputerNotFoundException;
 
     /**
      * Return the number of computers.
@@ -81,6 +83,8 @@ public interface ComputerDAO {
      * Create a computer from a DTO.
      * @param computerDTO the computerDTO
      * @return Computer
+     * @throws IntroducedAfterDiscontinuedException exception when the introduced date is before the dicontinued date
+     * @throws NameEmptyException exception when the name is empty
      */
-    Computer createBean(ComputerDTO computerDTO);
+    Computer createBean(ComputerDTO computerDTO) throws IntroducedAfterDiscontinuedException, NameEmptyException;
 }

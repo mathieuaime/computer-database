@@ -1,9 +1,6 @@
 package com.excilys.computerdatabase.servlets;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import javax.servlet.RequestDispatcher;
@@ -12,9 +9,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.excilys.computerdatabase.config.Config;
 import com.excilys.computerdatabase.dtos.CompanyDTO;
 import com.excilys.computerdatabase.dtos.ComputerDTO;
+import com.excilys.computerdatabase.exceptions.IntroducedAfterDiscontinuedException;
+import com.excilys.computerdatabase.exceptions.NameEmptyException;
 import com.excilys.computerdatabase.services.CompanyServiceImpl;
 import com.excilys.computerdatabase.services.ComputerServiceImpl;
 
@@ -26,44 +24,61 @@ public class AddComputerServlet extends HttpServlet {
 
     private CompanyServiceImpl companyService;
 
-    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern(Config.getProperties().getProperty("date_format"));
-
+    /**
+     * AddComputerServlet default constructor : initialize the daos.
+     */
     public AddComputerServlet() {
         super();
         computerService = new ComputerServiceImpl();
         companyService = new CompanyServiceImpl();
     }
 
+    /**
+     * GET addComputer.
+     * @param request request
+     * @param response response
+     * @throws ServletException servelt exception
+     * @throws IOException io exception
+     */
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         RequestDispatcher view = request.getRequestDispatcher("WEB-INF/views/addComputer.jsp");
-        
-        List<CompanyDTO> companies = companyService.get();
-        
+
+        List<CompanyDTO> companies = companyService.get(); // TODO voir si trier les companies
+
         request.setAttribute("companies", companies);
 
         view.forward(request, response);
 
     }
 
+    /**
+     * POST addComputer.
+     * @param request request
+     * @param response response
+     * @throws ServletException servelt exception
+     * @throws IOException io exception
+     */
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
-        ComputerDTO computerDTO = new ComputerDTO();
-        computerDTO.setId(Long.parseLong(request.getParameter("id")));
-        computerDTO.setName(request.getParameter("name"));
 
-        
-        LocalDate introduced = LocalDate.parse(request.getParameter("introduced"), DATE_FORMATTER);
-        LocalDate discontinued = LocalDate.parse(request.getParameter("discontinued"), DATE_FORMATTER);
-        
-        computerDTO.setIntroduced(introduced);
-        computerDTO.setDiscontinued(discontinued);
-        
+        ComputerDTO computerDTO = new ComputerDTO();
+
+        computerDTO.setName(request.getParameter("name"));
+        computerDTO.setIntroduced(request.getParameter("introduced"));
+        computerDTO.setDiscontinued(request.getParameter("discontinued"));
         computerDTO.setCompanyId(Long.parseLong(request.getParameter("companyId")));
-        
-        computerService.add(computerDTO);
+
+        try {
+            computerService.add(computerDTO);
+        } catch (IntroducedAfterDiscontinuedException e) {
+            //TODO envoyer erreur au user
+        } catch (NameEmptyException e) {
+            // TODO envoyer erreur au user
+        }
+
+        response.sendRedirect("dashboard");
     }
 
 }

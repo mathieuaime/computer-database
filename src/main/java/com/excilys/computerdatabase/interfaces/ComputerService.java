@@ -4,6 +4,9 @@ import java.util.List;
 
 import com.excilys.computerdatabase.dtos.CompanyDTO;
 import com.excilys.computerdatabase.dtos.ComputerDTO;
+import com.excilys.computerdatabase.exceptions.ComputerNotFoundException;
+import com.excilys.computerdatabase.exceptions.IntroducedAfterDiscontinuedException;
+import com.excilys.computerdatabase.exceptions.NameEmptyException;
 
 public interface ComputerService {
 
@@ -17,29 +20,33 @@ public interface ComputerService {
      * Returns the computer id.
      * @param id the id of the computer
      * @return ComputerDTO
+     * @throws ComputerNotFoundException exception when the computer is not found
      */
-    ComputerDTO get(int id);
+    ComputerDTO get(int id) throws ComputerNotFoundException;
 
     /**
      * Add a computer.
      * @param computerDTO the computer to add
-     * @return true if the computer is successfully added
+     * @throws IntroducedAfterDiscontinuedException exception when the introduced date is before the dicontinued date
+     * @throws NameEmptyException exception when the name is empty
      */
-    boolean add(ComputerDTO computerDTO);
+    void add(ComputerDTO computerDTO) throws IntroducedAfterDiscontinuedException, NameEmptyException;
 
     /**
      * Update a computer.
      * @param computerDTO the computer to update
-     * @return boolean true if the computer is successfully updated
+     * @throws ComputerNotFoundException exception when the computer is not found
+     * @throws IntroducedAfterDiscontinuedException exception when the introduced date is before the dicontinued date
+     * @throws NameEmptyException exception when the name is empty
      */
-    boolean update(ComputerDTO computerDTO);
+    void update(ComputerDTO computerDTO) throws IntroducedAfterDiscontinuedException, ComputerNotFoundException, NameEmptyException;
 
     /**
      * Delete a computer.
      * @param id the id of the computer
-     * @return boolean true if the computer is successfully deleted
+     * @throws ComputerNotFoundException exception when the computer is not found
      */
-    boolean delete(int id);
+    void delete(int id) throws ComputerNotFoundException;
 
     /**
      * Return the number of computers.

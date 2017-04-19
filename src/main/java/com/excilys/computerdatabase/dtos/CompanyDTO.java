@@ -7,7 +7,10 @@ public class CompanyDTO {
     private long id;
     private String name;
     private List<Long> computersList;
-    
+
+    /**
+     * CompanyDTO default constructor : initialize the list.
+     */
     public CompanyDTO() {
         computersList = new ArrayList<Long>();
     }

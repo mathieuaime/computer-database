@@ -4,13 +4,18 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
 
+import com.excilys.computerdatabase.config.Config;
 import com.excilys.computerdatabase.dtos.ComputerDTO;
+import com.excilys.computerdatabase.exceptions.ComputerNotFoundException;
 import com.excilys.computerdatabase.exceptions.IntroducedAfterDiscontinuedException;
+import com.excilys.computerdatabase.exceptions.NameEmptyException;
 import com.excilys.computerdatabase.interfaces.ComputerDAO;
 import com.excilys.computerdatabase.mappers.CompanyMapper;
 import com.excilys.computerdatabase.mappers.ComputerMapper;
@@ -35,9 +40,8 @@ public class ComputerDAOImpl implements ComputerDAO {
     private static final String QUERY_FIND_COMPUTER_BY_NAME     = QUERY_FIND_COMPUTER + " WHERE " + Computer.TABLE_NAME
                                                                 + "." + Computer.FIELD_NAME + " = ?";
 
-    private static final String QUERY_ADD_COMPUTER              = "INSERT INTO " + Computer.TABLE_NAME + " (" + Computer.FIELD_ID
-                                                                + ", " + Computer.FIELD_NAME + ", " + Computer.FIELD_INTRODUCED + ", " + Computer.FIELD_DISCONTINUED + ", "
-                                                                + Computer.FIELD_COMPANY_ID + ") VALUES(?, ?, ?, ?, ?)";
+    private static final String QUERY_ADD_COMPUTER              = "INSERT INTO " + Computer.TABLE_NAME + " (" + Computer.FIELD_NAME + ", " + Computer.FIELD_INTRODUCED + ", " + Computer.FIELD_DISCONTINUED + ", "
+                                                                + Computer.FIELD_COMPANY_ID + ") VALUES(?, ?, ?, ?)";
 
     private static final String QUERY_UPDATE_COMPUTER           = "UPDATE " + Computer.TABLE_NAME + " SET " + Computer.FIELD_NAME
                                                                 + " = ?, " + Computer.FIELD_INTRODUCED + " = ?, " + Computer.FIELD_DISCONTINUED + " = ?, "
@@ -54,6 +58,8 @@ public class ComputerDAOImpl implements ComputerDAO {
     private static final String QUERY_COUNT_COMPUTERS           = "SELECT COUNT(*) AS count FROM " + Computer.TABLE_NAME;
 
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(ComputerDAOImpl.class);
+
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern(Config.getProperties().getProperty("date_format"));
 
     private CompanyDAOImpl cDAO = new CompanyDAOImpl();
 
@@ -141,17 +147,16 @@ public class ComputerDAOImpl implements ComputerDAO {
     }
 
     @Override
-    public boolean add(Computer computer) {
+    public void add(Computer computer) {
         boolean add = false;
 
         try (Connection con = ConnectionMySQL.INSTANCE.getConnection();
                 PreparedStatement stmt = con.prepareStatement(QUERY_ADD_COMPUTER);) {
 
-            stmt.setLong(1, computer.getId());
-            stmt.setString(2, computer.getName());
-            stmt.setObject(3, computer.getIntroduced());
-            stmt.setObject(4, computer.getDiscontinued());
-            stmt.setLong(5, computer.getCompany().getId());
+            stmt.setString(1, computer.getName());
+            stmt.setObject(2, computer.getIntroduced());
+            stmt.setObject(3, computer.getDiscontinued());
+            stmt.setLong(4, computer.getCompany().getId());
             int res = stmt.executeUpdate();
             add = res == 1;
 
@@ -167,16 +172,15 @@ public class ComputerDAOImpl implements ComputerDAO {
         } else {
             LOGGER.error("Error: " + computer + " not added");
         }
-
-        return add;
     }
 
     @Override
-    public boolean update(Computer computer) {
+    public void update(Computer computer) throws ComputerNotFoundException {
         boolean update = false;
 
         try (Connection con = ConnectionMySQL.INSTANCE.getConnection();
                 PreparedStatement stmt = con.prepareStatement(QUERY_UPDATE_COMPUTER);) {
+
             stmt.setString(1, computer.getName());
             stmt.setObject(2, computer.getIntroduced());
             stmt.setObject(3, computer.getDiscontinued());
@@ -196,13 +200,12 @@ public class ComputerDAOImpl implements ComputerDAO {
             LOGGER.info("Info: " + computer + " sucessfully updated");
         } else {
             LOGGER.error("Error: " + computer + " not updated");
+            throw new ComputerNotFoundException("Computer Not Found");
         }
-
-        return update;
     }
 
     @Override
-    public boolean delete(long id) {
+    public void delete(long id) throws ComputerNotFoundException {
         boolean delete = false;
 
         try (Connection con = ConnectionMySQL.INSTANCE.getConnection();
@@ -222,9 +225,8 @@ public class ComputerDAOImpl implements ComputerDAO {
             LOGGER.info("Info: Computer " + id + " sucessfully deleted");
         } else {
             LOGGER.error("Error: Computer " + id + " not deleted");
+            throw new ComputerNotFoundException("Computer Not Found");
         }
-
-        return delete;
     }
 
     @Override
@@ -274,10 +276,13 @@ public class ComputerDAOImpl implements ComputerDAO {
     public ComputerDTO createDTO(Computer computer) {
         ComputerDTO computerDTO = new ComputerDTO();
 
+        LocalDate introduced = computer.getIntroduced();
+        LocalDate discontinued = computer.getDiscontinued();
+
         computerDTO.setId(computer.getId());
         computerDTO.setName(computer.getName());
-        computerDTO.setIntroduced(computer.getIntroduced());
-        computerDTO.setDiscontinued(computer.getDiscontinued());
+        computerDTO.setIntroduced((introduced != null ? introduced.format(DATE_FORMATTER) : ""));
+        computerDTO.setDiscontinued((discontinued != null ? discontinued.format(DATE_FORMATTER) : ""));
         computerDTO.setCompanyId(computer.getCompany().getId());
         computerDTO.setCompanyName(computer.getCompany().getName());
 
@@ -285,16 +290,24 @@ public class ComputerDAOImpl implements ComputerDAO {
     }
 
     @Override
-    public Computer createBean(ComputerDTO computerDTO) {
+    public Computer createBean(ComputerDTO computerDTO) throws IntroducedAfterDiscontinuedException, NameEmptyException {
         Computer computer = null;
 
-        try {
-            computer = new Computer.Builder(computerDTO.getName()).id(computerDTO.getId())
-                    .introduced(computerDTO.getIntroduced()).discontinued(computerDTO.getDiscontinued())
-                    .company(cDAO.getById(computerDTO.getCompanyId())).build();
-        } catch (IntroducedAfterDiscontinuedException e) {
-            LOGGER.debug("Exception: " + e);
+        if (computerDTO.getName().equals("")) {
+            throw new NameEmptyException("Name Empty");
         }
+
+        LocalDate introduced = (computerDTO.getIntroduced().equals("") ? null
+                : LocalDate.parse(computerDTO.getIntroduced(), DATE_FORMATTER));
+        LocalDate discontinued = (computerDTO.getDiscontinued().equals("") ? null
+                : LocalDate.parse(computerDTO.getDiscontinued(), DATE_FORMATTER));
+
+        if (introduced != null && discontinued != null && introduced.isAfter(discontinued)) {
+            throw new IntroducedAfterDiscontinuedException("Introduced date after Discontinued date");
+        }
+
+        computer = new Computer.Builder(computerDTO.getName()).id(computerDTO.getId()).introduced(introduced)
+                .discontinued(discontinued).company(cDAO.getById(computerDTO.getCompanyId())).build();
 
         return computer;
     }

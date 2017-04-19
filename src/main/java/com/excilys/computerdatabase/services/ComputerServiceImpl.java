@@ -8,8 +8,12 @@ import com.excilys.computerdatabase.daos.ComputerDAOImpl;
 import com.excilys.computerdatabase.dtos.CompanyDTO;
 import com.excilys.computerdatabase.dtos.ComputerDTO;
 import com.excilys.computerdatabase.dtos.Page;
+import com.excilys.computerdatabase.exceptions.ComputerNotFoundException;
+import com.excilys.computerdatabase.exceptions.IntroducedAfterDiscontinuedException;
+import com.excilys.computerdatabase.exceptions.NameEmptyException;
 import com.excilys.computerdatabase.interfaces.ComputerService;
 import com.excilys.computerdatabase.interfaces.PageServ;
+import com.excilys.computerdatabase.models.Computer;
 
 public class ComputerServiceImpl implements ComputerService, PageServ<ComputerDTO> {
 
@@ -25,8 +29,7 @@ public class ComputerServiceImpl implements ComputerService, PageServ<ComputerDT
 
     @Override
     public List<ComputerDTO> get() {
-        return computerDAO.findAll().stream().map(it -> computerDAO.createDTO(it))
-                .collect(Collectors.toList());
+        return computerDAO.findAll().stream().map(it -> computerDAO.createDTO(it)).collect(Collectors.toList());
     }
 
     @Override
@@ -44,23 +47,31 @@ public class ComputerServiceImpl implements ComputerService, PageServ<ComputerDT
     }
 
     @Override
-    public ComputerDTO get(int id) {
-        return computerDAO.createDTO(computerDAO.getById(id));
+    public ComputerDTO get(int id) throws ComputerNotFoundException {
+        Computer computer = computerDAO.getById(id);
+
+        if (computer == null) {
+            throw new ComputerNotFoundException("Computer Not Found");
+        }
+
+        return computerDAO.createDTO(computer);
     }
 
     @Override
-    public boolean add(ComputerDTO computerDTO) {
-        return computerDAO.add(computerDAO.createBean(computerDTO));
+    public void add(ComputerDTO computerDTO) throws IntroducedAfterDiscontinuedException, NameEmptyException {
+        Computer computer = computerDAO.createBean(computerDTO);
+        computerDAO.add(computer);
     }
 
     @Override
-    public boolean update(ComputerDTO computerDTO) {
-        return computerDAO.update(computerDAO.createBean(computerDTO));
+    public void update(ComputerDTO computerDTO) throws IntroducedAfterDiscontinuedException, ComputerNotFoundException, NameEmptyException {
+        Computer computer = computerDAO.createBean(computerDTO);
+        computerDAO.update(computer);
     }
 
     @Override
-    public boolean delete(int id) {
-        return computerDAO.delete(id);
+    public void delete(int id) throws ComputerNotFoundException {
+        computerDAO.delete(id);
     }
 
     @Override

@@ -8,6 +8,7 @@ import org.junit.Test;
 import org.slf4j.Logger;
 
 import com.excilys.computerdatabase.dtos.ComputerDTO;
+import com.excilys.computerdatabase.exceptions.ComputerNotFoundException;
 import com.excilys.computerdatabase.models.Company;
 import com.excilys.computerdatabase.services.ComputerServiceImpl;
 
@@ -43,8 +44,12 @@ public class ComputerTest {
      */
     @Before
     public void executedBeforeEach() {
-        computerService.delete(1000);
-        computerService.delete(1001);
+        try {
+            computerService.delete(1000);
+            computerService.delete(1001);
+        } catch (ComputerNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     /**

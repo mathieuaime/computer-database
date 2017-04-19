@@ -12,7 +12,7 @@
 	</context-param>
 
 	<welcome-file-list>
-		<welcome-file>home</welcome-file>
+		<welcome-file>dashboard</welcome-file>
 	</welcome-file-list>
 
 	<jsp-config>
@@ -29,7 +29,7 @@
 
 	<servlet-mapping>
 		<servlet-name>Dashboard</servlet-name>
-		<url-pattern>/home</url-pattern>
+		<url-pattern>/dashboard</url-pattern>
 	</servlet-mapping>
 
 	<servlet>

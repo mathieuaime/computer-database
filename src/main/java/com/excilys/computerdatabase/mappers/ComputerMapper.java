@@ -8,7 +8,6 @@ import org.slf4j.Logger;
 
 import com.excilys.computerdatabase.models.Company;
 import com.excilys.computerdatabase.models.Computer;
-import com.excilys.computerdatabase.exceptions.IntroducedAfterDiscontinuedException;
 
 public class ComputerMapper {
 
@@ -38,7 +37,7 @@ public class ComputerMapper {
                     .discontinued((discontinuedComputer != null ? discontinuedComputer.toLocalDate() : null))
                     .company(company).build();
 
-        } catch (SQLException | IntroducedAfterDiscontinuedException e) {
+        } catch (SQLException e) {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Exception: " + e);
             }

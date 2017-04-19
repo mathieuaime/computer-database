@@ -1,11 +1,13 @@
 package com.excilys.computerdatabase.cli;
 
-import java.time.LocalDate;
 import java.util.Scanner;
 
 import com.excilys.computerdatabase.config.Config;
 import com.excilys.computerdatabase.dtos.CompanyDTO;
 import com.excilys.computerdatabase.dtos.ComputerDTO;
+import com.excilys.computerdatabase.exceptions.ComputerNotFoundException;
+import com.excilys.computerdatabase.exceptions.IntroducedAfterDiscontinuedException;
+import com.excilys.computerdatabase.exceptions.NameEmptyException;
 import com.excilys.computerdatabase.services.CompanyServiceImpl;
 import com.excilys.computerdatabase.services.ComputerServiceImpl;
 
@@ -55,8 +57,12 @@ public class CLI {
      * @param id the id of the computer
      */
     public static void printComputer(int id) {
-        ComputerDTO c = computerService.get(id);
-        System.out.println(c != null ? c : "Pas de pc trouvé");
+        try {
+            ComputerDTO c = computerService.get(id);
+            System.out.println(c);
+        } catch (ComputerNotFoundException e) {
+            System.out.println("Pas de pc trouvé");
+        }
     }
 
     /**
@@ -123,31 +129,26 @@ public class CLI {
                     ComputerDTO c = new ComputerDTO();
 
                     c.setName(nameComputer);
-
                     c.setId(Long.parseLong(idComputer));
-
-                    if (!introducedComputer.equals("")) {
-                        LocalDate parsedIntroduced = LocalDate.parse(introducedComputer);
-                        c.setIntroduced(parsedIntroduced);
-                    }
-
-                    if (!discontinuedComputer.equals("")) {
-                        LocalDate parsedDiscontinued = LocalDate.parse(discontinuedComputer);
-                        c.setDiscontinued(parsedDiscontinued);
-                    }
-
+                    c.setIntroduced(introducedComputer);
+                    c.setDiscontinued(discontinuedComputer);
                     c.setCompanyId(Long.parseLong(idCompany));
 
-                    boolean add = computerService.add(c);
-                    System.out.println(add ? "Pc ajouté" : "Erreur dans l'ajout du pc");
+                    computerService.add(c);
+
+                    System.out.println("Computer ajouté");
 
                 } catch (NumberFormatException e) {
                     System.out.println("L'id doit être un nombre");
+                } catch (IntroducedAfterDiscontinuedException e) {
+                    System.out.println("La date d'ajout doit être antérieure à la date de retrait");
+                } catch (NameEmptyException e) {
+                    System.out.println("Le nom doit être non nul");
                 }
                 break;
 
             case "5":
-                System.out.println("Modification d'un pc");
+                System.out.println("Modification d'un computer");
 
                 System.out.println("Id ?");
                 idComputer = scanner.nextLine();
@@ -168,27 +169,21 @@ public class CLI {
                     ComputerDTO c = new ComputerDTO();
 
                     c.setName(nameComputer);
-
                     c.setId(Long.parseLong(idComputer));
-
-                    if (!introducedComputer.equals("")) {
-                        LocalDate parsedIntroduced = LocalDate.parse(introducedComputer);
-                        c.setIntroduced(parsedIntroduced);
-                    }
-
-                    if (!discontinuedComputer.equals("")) {
-                        LocalDate parsedDiscontinued = LocalDate.parse(discontinuedComputer);
-                        c.setDiscontinued(parsedDiscontinued);
-                    }
-
+                    c.setIntroduced(introducedComputer);
+                    c.setDiscontinued(discontinuedComputer);
                     c.setCompanyId(Long.parseLong(idCompany));
 
-                    boolean update = computerService.update(c);
-
-                    System.out.println(update ? "Pc modifié" : "Erreur dans la modification");
+                    computerService.update(c);
 
                 } catch (NumberFormatException e) {
                     System.out.println("L'id doit être un nombre");
+                } catch (ComputerNotFoundException e) {
+                    System.out.println("Le computer n'existe pas");
+                } catch (IntroducedAfterDiscontinuedException e) {
+                    System.out.println("La date d'ajout doit être antérieure à la date de retrait");
+                } catch (NameEmptyException e) {
+                    System.out.println("Le nom doit être non nul");
                 }
                 break;
 
@@ -197,10 +192,12 @@ public class CLI {
                 idComputer = scanner.next();
 
                 try {
-                    boolean res = computerService.delete(Integer.parseInt(idComputer));
-                    System.out.println((res ? "Pc supprimé" : "Erreur dans la supression"));
+                    computerService.delete(Integer.parseInt(idComputer));
+                    System.out.println("Computer supprimé");
                 } catch (NumberFormatException e) {
                     System.out.println("L'id doit être un nombre");
+                } catch (ComputerNotFoundException e) {
+                    System.out.println("Le computer n'existe pas");
                 }
                 break;
 

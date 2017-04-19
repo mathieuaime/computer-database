@@ -31,7 +31,7 @@ public class DashboardServlet extends HttpServlet {
         int length = (request.getParameter("length") != null ? Integer.parseInt(request.getParameter("length")) : 10);
 
         int computerCount = computerService.count();
-        
+
         double nbPage = Math.ceil(computerCount / length);
 
         int[] lengths = new int[]{10, 50, 100};

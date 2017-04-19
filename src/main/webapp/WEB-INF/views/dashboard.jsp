@@ -17,7 +17,7 @@
 <body>
 	<header class="navbar navbar-inverse navbar-fixed-top">
 		<div class="container">
-			<a class="navbar-brand" href="home"> Application - Computer
+			<a class="navbar-brand" href="dashboard"> Application - Computer
 				Database </a>
 		</div>
 	</header>
@@ -91,7 +91,7 @@
 		<div class="container text-center">
 			<ul class="pagination">
 				<c:if test="${page > 1}">
-					<li><a href="home?page=${page-1}&length=${length}"
+					<li><a href="dashboard?page=${page-1}&length=${length}"
 						aria-label="Previous"> <span aria-hidden="true">&laquo;</span>
 					</a></li>
 				</c:if>
@@ -104,7 +104,7 @@
 							<li class="active"><a href="home?page=${i}&length=${length}">${i}</a></li>
 						</c:when>
 						<c:otherwise>
-							<li><a href="home?page=${i}&length=${length}">${i}</a></li>
+							<li><a href="dashboard?page=${i}&length=${length}">${i}</a></li>
 						</c:otherwise>
 					</c:choose>
 
@@ -112,7 +112,7 @@
 				</c:forEach>
 
 				<c:if test="${page < nbPage}">
-					<li><a href="home?page=${page+1}&length=${length}"
+					<li><a href="dashboard?page=${page+1}&length=${length}"
 						aria-label="Next"> <span aria-hidden="true">&raquo;</span>
 					</a></li>
 				</c:if>
@@ -123,11 +123,11 @@
 				<c:forEach items="${lengths}" var="i">
 					<c:choose>
 						<c:when test="${length == i}">
-							<a href="home?page=1&length=${i}"><button type="button"
+							<a href="dashboard?page=1&length=${i}"><button type="button"
 									class="btn btn-primary">${i}</button></a>
 						</c:when>
 						<c:otherwise>
-							<a href="home?page=1&length=${i}"><button type="button"
+							<a href="dashboard?page=1&length=${i}"><button type="button"
 									class="btn btn-default">${i}</button></a>
 						</c:otherwise>
 					</c:choose>

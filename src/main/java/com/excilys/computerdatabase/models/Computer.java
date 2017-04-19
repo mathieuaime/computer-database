@@ -5,6 +5,7 @@ import java.time.format.DateTimeFormatter;
 
 import com.excilys.computerdatabase.config.Config;
 import com.excilys.computerdatabase.exceptions.IntroducedAfterDiscontinuedException;
+import com.excilys.computerdatabase.exceptions.NameEmptyException;
 
 public class Computer {
 
@@ -134,15 +135,10 @@ public class Computer {
          * Build the Company.
          * @return Computer
          * @throws IntroducedAfterDiscontinuedException exception when introduced date > discontinued date
+         * @throws NameEmptyException exception when the name is empty
          */
-        public Computer build() throws IntroducedAfterDiscontinuedException {
-            Computer computer = new Computer(this);
-
-            if (introduced != null && discontinued != null && introduced.isAfter(discontinued)) {
-                throw new IntroducedAfterDiscontinuedException("Introduced date after Discontinued date");
-            }
-
-            return computer;
+        public Computer build() {
+            return new Computer(this);
         }
     }
 
