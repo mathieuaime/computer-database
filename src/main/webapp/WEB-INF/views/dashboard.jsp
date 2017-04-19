@@ -1,6 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
-<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib tagdir="/WEB-INF/tags" prefix="utils"%>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -17,14 +19,26 @@
 <body>
 	<header class="navbar navbar-inverse navbar-fixed-top">
 		<div class="container">
-			<a class="navbar-brand" href="dashboard"> Application - Computer
-				Database </a>
+			<utils:link href="dashboard" text=" Application - Computer Database "
+				classe="navbar-brand"></utils:link>
 		</div>
 	</header>
 
 	<section id="main">
 		<div class="container">
-			<h1 id="homeTitle">${computerCount} Computer${computerCount > 1 ? 's' : ''} found</h1>
+			<c:if test="${info != null}">
+				<div class="row">
+					<div class="col-xs-8 col-xs-offset-2 box">
+						<br />
+						<div class="alert alert-danger">
+							<strong>Info </strong>${info}
+						</div>
+					</div>
+				</div>
+			</c:if>
+			<h1 id="homeTitle">${computerCount}Computer${computerCount > 1 ? 's' : ''}
+				found</h1>
+
 			<div id="actions" class="form-horizontal">
 				<div class="pull-left">
 					<form id="searchForm" action="#" method="GET" class="form-inline">
@@ -91,9 +105,8 @@
 		<div class="container text-center">
 			<ul class="pagination">
 				<c:if test="${page > 1}">
-					<li><a href="dashboard?page=${page-1}&length=${length}"
-						aria-label="Previous"> <span aria-hidden="true">&laquo;</span>
-					</a></li>
+					<utils:link href="dashboard" page="${page}"
+							length="${length}" previous="true" li="default"></utils:link>
 				</c:if>
 
 				<c:forEach var="i" begin="${page > 5 ? page - 5 : 1}"
@@ -101,10 +114,12 @@
 
 					<c:choose>
 						<c:when test="${page == i}">
-							<li class="active"><a href="home?page=${i}&length=${length}">${i}</a></li>
+							<utils:link href="dashboard" page="${i}" length="${length}"
+								text="${i}" li="active"></utils:link>
 						</c:when>
 						<c:otherwise>
-							<li><a href="dashboard?page=${i}&length=${length}">${i}</a></li>
+							<utils:link href="dashboard" page="${i}" length="${length}"
+								text="${i}" li="default"></utils:link>
 						</c:otherwise>
 					</c:choose>
 
@@ -112,9 +127,8 @@
 				</c:forEach>
 
 				<c:if test="${page < nbPage}">
-					<li><a href="dashboard?page=${page+1}&length=${length}"
-						aria-label="Next"> <span aria-hidden="true">&raquo;</span>
-					</a></li>
+					<utils:link href="dashboard" page="${page}"
+							length="${length}" next="true" li="default"></utils:link>
 				</c:if>
 			</ul>
 
@@ -123,12 +137,10 @@
 				<c:forEach items="${lengths}" var="i">
 					<c:choose>
 						<c:when test="${length == i}">
-							<a href="dashboard?page=1&length=${i}"><button type="button"
-									class="btn btn-primary">${i}</button></a>
+							<utils:link href="dashboard" page="1" length="${i}" text="${i}" button="primary"></utils:link>
 						</c:when>
 						<c:otherwise>
-							<a href="dashboard?page=1&length=${i}"><button type="button"
-									class="btn btn-default">${i}</button></a>
+							<utils:link href="dashboard" page="1" length="${i}" text="${i}" button="default"></utils:link>
 						</c:otherwise>
 					</c:choose>
 				</c:forEach>

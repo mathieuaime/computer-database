@@ -16,8 +16,8 @@
 <body>
 	<header class="navbar navbar-inverse navbar-fixed-top">
 		<div class="container">
-			<a class="navbar-brand" href="dashboard"> Application -
-				Computer Database </a>
+			<a class="navbar-brand" href="dashboard"> Application - Computer
+				Database </a>
 		</div>
 	</header>
 
@@ -31,7 +31,7 @@
 							<div class="form-group">
 								<label for="computerName">Computer name</label> <input
 									type="text" class="form-control" id="computerName"
-									placeholder="Computer name" name="name">
+									placeholder="Computer name" name="name" required>
 							</div>
 							<div class="form-group">
 								<label for="introduced">Introduced date</label> <input
@@ -41,7 +41,8 @@
 							<div class="form-group">
 								<label for="discontinued">Discontinued date</label> <input
 									type="date" class="form-control" id="discontinued"
-									placeholder="Discontinued date" name="discontinued">
+									placeholder="Discontinued date" name="discontinued"
+									min="<%=request.getParameter("introduced")%>">
 							</div>
 							<div class="form-group">
 								<label for="companyId">Company</label> <select
@@ -59,7 +60,24 @@
 					</form>
 				</div>
 			</div>
+			<c:if test="${error != null}">
+				<div class="row">
+					<div class="col-xs-8 col-xs-offset-2 box">
+						<br />
+						<div class="alert alert-danger">
+							<strong>Erreur </strong>${error}
+						</div>
+					</div>
+				</div>
+			</c:if>
 		</div>
 	</section>
+	<script>
+		window.onload = function() {
+			document.getElementById('introduced').onchange = function() {
+			    document.getElementById("discontinued").setAttribute("min", this.value);
+			}
+		};
+	</script>
 </body>
 </html>
