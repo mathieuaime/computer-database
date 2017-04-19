@@ -72,13 +72,14 @@ public class AddComputerServlet extends HttpServlet {
 
         try {
             computerService.add(computerDTO);
+            response.sendRedirect("dashboard");
         } catch (IntroducedAfterDiscontinuedException e) {
-            //TODO envoyer erreur au user
+            request.setAttribute("error", "La date d'ajout doit être antérieure à la date de retrait");
+            doGet(request, response);
         } catch (NameEmptyException e) {
-            // TODO envoyer erreur au user
+            request.setAttribute("error", "Le nom doit être spécifié");
+            doGet(request, response);
         }
-
-        response.sendRedirect("dashboard");
     }
 
 }
