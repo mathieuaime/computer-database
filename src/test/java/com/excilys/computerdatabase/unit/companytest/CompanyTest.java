@@ -1,4 +1,4 @@
-package com.excilys.computerdatabase.companytest;
+package com.excilys.computerdatabase.unit.companytest;
 
 import java.io.File;
 import java.sql.Connection;
