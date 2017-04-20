@@ -15,13 +15,6 @@
 		<welcome-file>dashboard</welcome-file>
 	</welcome-file-list>
 
-	<jsp-config>
-		<taglib>
-			<taglib-uri>myTags</taglib-uri>
-			<taglib-location>/WEB-INF/jsp/myTagLib.tld</taglib-location>
-		</taglib>
-	</jsp-config>
-
 	<servlet>
 		<servlet-name>Dashboard</servlet-name>
 		<servlet-class>com.excilys.computerdatabase.servlets.DashboardServlet</servlet-class>

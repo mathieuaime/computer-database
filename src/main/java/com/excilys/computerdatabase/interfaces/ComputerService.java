@@ -17,12 +17,20 @@ public interface ComputerService {
     List<ComputerDTO> get();
 
     /**
-     * Returns the computer id.
+     * Returns the computer of id id.
      * @param id the id of the computer
      * @return ComputerDTO
      * @throws ComputerNotFoundException exception when the computer is not found
      */
-    ComputerDTO get(int id) throws ComputerNotFoundException;
+    ComputerDTO getById(long id) throws ComputerNotFoundException;
+
+    /**
+     * Returns the list of computers of name name.
+     * @param name the name of the computer
+     * @return List<ComputerDTO>
+     * @throws ComputerNotFoundException exception when the computer is not found
+     */
+    List<ComputerDTO> getByName(String name) throws ComputerNotFoundException;
 
     /**
      * Add a computer.
@@ -46,7 +54,7 @@ public interface ComputerService {
      * @param id the id of the computer
      * @throws ComputerNotFoundException exception when the computer is not found
      */
-    void delete(int id) throws ComputerNotFoundException;
+    void delete(long id) throws ComputerNotFoundException;
 
     /**
      * Return the number of computers.
@@ -57,7 +65,7 @@ public interface ComputerService {
     /**
      * Returns the company of the computer id.
      * @param id the id of the computer
-     * @return Company
+     * @return CompanyDTO
      */
-    CompanyDTO getCompany(int id);
+    CompanyDTO getCompany(long id);
 }

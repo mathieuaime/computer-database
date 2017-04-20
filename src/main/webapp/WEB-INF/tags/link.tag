@@ -6,6 +6,7 @@
 <%@ attribute name="text" required="false" type="java.lang.String"%>
 <%@ attribute name="previous" required="false" type="java.lang.Boolean"%>
 <%@ attribute name="next" required="false" type="java.lang.Boolean"%>
+<%@ attribute name="home" required="false" type="java.lang.Boolean"%>
 <%@ attribute name="classe" required="false" type="java.lang.String"%>
 <%@ attribute name="button" required="false" type="java.lang.String"%>
 <%@ attribute name="li" required="false" type="java.lang.String"%>
@@ -18,10 +19,10 @@
     String pageAdresse = "";
     String lengthAdresse = "";
     String adresse = "";
-    String textA = (text != null ? text : "");
+    String textA = (text != null ? text : (home != null && home ? " Application - Computer Database " : ""));
     
     if (button != null) {
-        text = "<button type=\"button\" class=\"btn btn-" + button + "\">" + text + "</button>";
+        textA = "<button type=\"button\" class=\"btn btn-" + button + "\">" + textA + "</button>";
     }
 
     if (previousA || nextA) {

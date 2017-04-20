@@ -12,7 +12,7 @@ public enum ConnectionMySQL {
 
     INSTANCE;
 
-    private static final String URL = Config.getProperties().getProperty("url");
+    private static final String URL_PROD = Config.getProperties().getProperty("urlProd");
     private static final String USER = Config.getProperties().getProperty("user");
     private static final String PASSWORD = Config.getProperties().getProperty("password");
 
@@ -24,9 +24,17 @@ public enum ConnectionMySQL {
      * Open the connection.
      */
     public static void connect() {
+        connect(URL_PROD);
+    }
+
+    /**
+     * Open the connection with a custom URL.
+     * @param url the url of the bdd
+     */
+    public static void connect(String url) {
         try {
             Class.forName("com.mysql.jdbc.Driver").newInstance();
-            con = DriverManager.getConnection(URL, USER, PASSWORD);
+            con = DriverManager.getConnection(url, USER, PASSWORD);
         } catch (SQLException | InstantiationException | IllegalAccessException | ClassNotFoundException e) {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Exception: " + e);
@@ -49,12 +57,13 @@ public enum ConnectionMySQL {
 
     /**
      * Returns the connection and create it if its null.
+     * @param url the url of the connexion.
      * @return Connection
      */
-    protected Connection getConnection() {
+    public Connection getConnection(String url) {
         try {
             if (con == null || con.isClosed()) {
-                connect();
+                connect(url);
             }
         } catch (SQLException e) {
             if (LOGGER.isDebugEnabled()) {

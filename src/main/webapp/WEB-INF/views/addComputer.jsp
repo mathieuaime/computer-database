@@ -17,8 +17,7 @@
 <body>
 	<header class="navbar navbar-inverse navbar-fixed-top">
 		<div class="container">
-			<utils:link href="dashboard" text=" Application - Computer Database "
-				classe="navbar-brand"></utils:link>
+			<utils:link home="true" href="dashboard" classe="navbar-brand" />
 		</div>
 	</header>
 

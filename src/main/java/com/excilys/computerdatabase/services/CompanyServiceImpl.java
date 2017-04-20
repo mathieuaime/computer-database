@@ -23,14 +23,27 @@ public class CompanyServiceImpl implements CompanyService, PageServ<CompanyDTO> 
         companyDAO = new CompanyDAOImpl();
     }
 
+    /**
+     * CompanyService constructor with a custom url.
+     * @param url the url of the connexion.
+     */
+    public CompanyServiceImpl(String url) {
+        companyDAO = new CompanyDAOImpl(url);
+    }
+
     @Override
     public List<CompanyDTO> get() {
         return companyDAO.findAll().stream().map(it -> companyDAO.createDTO(it)).collect(Collectors.toList());
     }
 
     @Override
-    public CompanyDTO get(int id) {
+    public CompanyDTO getById(long id) {
         return companyDAO.createDTO(companyDAO.getById(id));
+    }
+
+    @Override
+    public List<CompanyDTO> getByName(String name) {
+        return companyDAO.getByName(name).stream().map(it -> companyDAO.createDTO(it)).collect(Collectors.toList());
     }
 
     @Override
@@ -47,7 +60,7 @@ public class CompanyServiceImpl implements CompanyService, PageServ<CompanyDTO> 
     }
 
     @Override
-    public List<ComputerDTO> getComputers(int id) {
+    public List<ComputerDTO> getComputers(long id) {
         return companyDAO.getComputers(id).stream().map(it -> computerDAO.createDTO(it)).collect(Collectors.toList());
     }
 }

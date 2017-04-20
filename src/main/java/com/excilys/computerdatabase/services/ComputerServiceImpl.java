@@ -27,6 +27,14 @@ public class ComputerServiceImpl implements ComputerService, PageServ<ComputerDT
         computerDAO = new ComputerDAOImpl();
     }
 
+    /**
+     * ComputerService constructor with a custom url.
+     * @param url the url of the connexion.
+     */
+    public ComputerServiceImpl(String url) {
+        computerDAO = new ComputerDAOImpl(url);
+    }
+
     @Override
     public List<ComputerDTO> get() {
         return computerDAO.findAll().stream().map(it -> computerDAO.createDTO(it)).collect(Collectors.toList());
@@ -47,7 +55,7 @@ public class ComputerServiceImpl implements ComputerService, PageServ<ComputerDT
     }
 
     @Override
-    public ComputerDTO get(int id) throws ComputerNotFoundException {
+    public ComputerDTO getById(long id) throws ComputerNotFoundException {
         Computer computer = computerDAO.getById(id);
 
         if (computer == null) {
@@ -55,6 +63,11 @@ public class ComputerServiceImpl implements ComputerService, PageServ<ComputerDT
         }
 
         return computerDAO.createDTO(computer);
+    }
+
+    @Override
+    public List<ComputerDTO> getByName(String name) {
+        return computerDAO.getByName(name).stream().map(it -> computerDAO.createDTO(it)).collect(Collectors.toList());
     }
 
     @Override
@@ -70,7 +83,7 @@ public class ComputerServiceImpl implements ComputerService, PageServ<ComputerDT
     }
 
     @Override
-    public void delete(int id) throws ComputerNotFoundException {
+    public void delete(long id) throws ComputerNotFoundException {
         computerDAO.delete(id);
     }
 
@@ -80,7 +93,7 @@ public class ComputerServiceImpl implements ComputerService, PageServ<ComputerDT
     }
 
     @Override
-    public CompanyDTO getCompany(int id) {
+    public CompanyDTO getCompany(long id) {
         return companyDAO.createDTO(computerDAO.getCompany(id));
     }
 }

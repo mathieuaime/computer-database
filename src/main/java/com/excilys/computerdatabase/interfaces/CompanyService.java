@@ -9,21 +9,28 @@ public interface CompanyService {
 
     /**
      * Returns the list of the companies.
-     * @return List<Company>
+     * @return List<CompanyDTO>
      */
     List<CompanyDTO> get();
 
     /**
      * Returns the company id.
      * @param id the id of the company
-     * @return Company
+     * @return CompanyDTO
      */
-    CompanyDTO get(int id);
+    CompanyDTO getById(long id);
+
+    /**
+     * Returns the list of companies named name.
+     * @param name the name of the company
+     * @return List<CompanyDTO>
+     */
+    List<CompanyDTO> getByName(String name);
 
     /**
      * Returns the list of the computers of the company id.
      * @param id the id of the company
-     * @return List<Computer>
+     * @return List<ComputerDTO>
      */
-    List<ComputerDTO> getComputers(int id);
+    List<ComputerDTO> getComputers(long id);
 }

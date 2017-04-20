@@ -56,9 +56,9 @@ public class CLI {
      * Print the computer id.
      * @param id the id of the computer
      */
-    public static void printComputer(int id) {
+    public static void printComputer(long id) {
         try {
-            ComputerDTO c = computerService.get(id);
+            ComputerDTO c = computerService.getById(id);
             System.out.println(c);
         } catch (ComputerNotFoundException e) {
             System.out.println("Pas de pc trouvé");

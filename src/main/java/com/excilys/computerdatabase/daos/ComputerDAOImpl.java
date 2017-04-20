@@ -61,7 +61,24 @@ public class ComputerDAOImpl implements ComputerDAO {
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern(Config.getProperties().getProperty("date_format"));
 
+    private String url;
+
     private CompanyDAOImpl cDAO = new CompanyDAOImpl();
+
+    /**
+     * ComputerDAO constructor.
+     */
+    public ComputerDAOImpl() {
+        this(Config.getProperties().getProperty("urlProd"));
+    }
+
+    /**
+     * ComputerDAO constructor with a custom url.
+     * @param url the url of the connexion.
+     */
+    public ComputerDAOImpl(String url) {
+        this.url = url;
+    }
 
     @Override
     public List<Computer> findAll() {
@@ -72,7 +89,7 @@ public class ComputerDAOImpl implements ComputerDAO {
     public List<Computer> findAll(int offset, int length) {
         List<Computer> computers = new ArrayList<>();
 
-        try (Connection con = ConnectionMySQL.INSTANCE.getConnection();
+        try (Connection con = ConnectionMySQL.INSTANCE.getConnection(url);
                 PreparedStatement stmt = con
                         .prepareStatement(QUERY_FIND_COMPUTER
                                 + (length != -1 ? " ORDER BY " + Computer.TABLE_NAME + "." + Computer.FIELD_ID
@@ -101,7 +118,7 @@ public class ComputerDAOImpl implements ComputerDAO {
     public Computer getById(long id) {
         Computer computer = null;
 
-        try (Connection con = ConnectionMySQL.INSTANCE.getConnection();
+        try (Connection con = ConnectionMySQL.INSTANCE.getConnection(url);
                 PreparedStatement stmt = con.prepareStatement(QUERY_FIND_COMPUTER_BY_ID);) {
 
             stmt.setLong(1, id);
@@ -125,12 +142,12 @@ public class ComputerDAOImpl implements ComputerDAO {
     public List<Computer> getByName(String name) {
         List<Computer> computers = new ArrayList<>();
 
-        try (Connection con = ConnectionMySQL.INSTANCE.getConnection();
+        try (Connection con = ConnectionMySQL.INSTANCE.getConnection(url);
                 PreparedStatement stmt = con.prepareStatement(QUERY_FIND_COMPUTER_BY_NAME);) {
             stmt.setString(1, name);
             final ResultSet rset = stmt.executeQuery();
 
-            if (rset.next()) {
+            while (rset.next()) {
 
                 Computer computer = ComputerMapper.getComputer(rset);
 
@@ -150,7 +167,7 @@ public class ComputerDAOImpl implements ComputerDAO {
     public void add(Computer computer) {
         boolean add = false;
 
-        try (Connection con = ConnectionMySQL.INSTANCE.getConnection();
+        try (Connection con = ConnectionMySQL.INSTANCE.getConnection(url);
                 PreparedStatement stmt = con.prepareStatement(QUERY_ADD_COMPUTER);) {
 
             stmt.setString(1, computer.getName());
@@ -178,7 +195,7 @@ public class ComputerDAOImpl implements ComputerDAO {
     public void update(Computer computer) throws ComputerNotFoundException {
         boolean update = false;
 
-        try (Connection con = ConnectionMySQL.INSTANCE.getConnection();
+        try (Connection con = ConnectionMySQL.INSTANCE.getConnection(url);
                 PreparedStatement stmt = con.prepareStatement(QUERY_UPDATE_COMPUTER);) {
 
             stmt.setString(1, computer.getName());
@@ -208,7 +225,7 @@ public class ComputerDAOImpl implements ComputerDAO {
     public void delete(long id) throws ComputerNotFoundException {
         boolean delete = false;
 
-        try (Connection con = ConnectionMySQL.INSTANCE.getConnection();
+        try (Connection con = ConnectionMySQL.INSTANCE.getConnection(url);
                 PreparedStatement stmt = con.prepareStatement(QUERY_DELETE_COMPUTER);) {
 
             stmt.setLong(1, id);
@@ -233,7 +250,7 @@ public class ComputerDAOImpl implements ComputerDAO {
     public int count() {
         int count = 0;
 
-        try (Connection con = ConnectionMySQL.INSTANCE.getConnection();
+        try (Connection con = ConnectionMySQL.INSTANCE.getConnection(url);
                 PreparedStatement stmt = con.prepareStatement(QUERY_COUNT_COMPUTERS);) {
             final ResultSet rset = stmt.executeQuery();
 
@@ -254,7 +271,7 @@ public class ComputerDAOImpl implements ComputerDAO {
     public Company getCompany(long id) {
         Company company = null;
 
-        try (Connection con = ConnectionMySQL.INSTANCE.getConnection();
+        try (Connection con = ConnectionMySQL.INSTANCE.getConnection(url);
                 PreparedStatement stmt = con.prepareStatement(QUERY_FIND_COMPANY);) {
             stmt.setLong(1, id);
             final ResultSet rset = stmt.executeQuery();

@@ -1,18 +1,23 @@
 package com.excilys.computerdatabase.computertest;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import java.io.File;
+import java.sql.Connection;
+import java.sql.DriverManager;
 
-import org.junit.Before;
+import org.dbunit.DatabaseTestCase;
+import org.dbunit.database.DatabaseConnection;
+import org.dbunit.database.IDatabaseConnection;
+import org.dbunit.dataset.IDataSet;
+import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
 import org.junit.Test;
 import org.slf4j.Logger;
 
+import com.excilys.computerdatabase.config.Config;
 import com.excilys.computerdatabase.dtos.ComputerDTO;
-import com.excilys.computerdatabase.exceptions.ComputerNotFoundException;
 import com.excilys.computerdatabase.models.Company;
 import com.excilys.computerdatabase.services.ComputerServiceImpl;
 
-public class ComputerTest {
+public class ComputerTest extends DatabaseTestCase {
 
     private ComputerServiceImpl computerService;
     private Company comp1;
@@ -21,13 +26,20 @@ public class ComputerTest {
 
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(ComputerTest.class);
 
+    private static final String SAMPLE_TEST_XML = "src/test/resources/db-sample.xml";
+
+    private static final String URL = Config.getProperties().getProperty("urlTest");
+    private static final String USER = Config.getProperties().getProperty("user");
+    private static final String PASSWORD = Config.getProperties().getProperty("password");
+
     /**
      * ComputerTest constructor.
      */
     public ComputerTest() {
-        computerService = new ComputerServiceImpl();
+        computerService = new ComputerServiceImpl(URL);
+
         comp1 = new Company.Builder("Apple Inc.").id(1).build();
-        
+
         c1 = new ComputerDTO();
         c1.setName("Computer1");
         c1.setId(1000);
@@ -40,32 +52,39 @@ public class ComputerTest {
     }
 
     /**
-     * Delete the computers used in the test.
-     */
-    @Before
-    public void executedBeforeEach() {
-        try {
-            computerService.delete(1000);
-            computerService.delete(1001);
-        } catch (ComputerNotFoundException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Test delete.
+     * Test get by id.
      */
     @Test
-    public void testDelete() {
+    public void testGetById() {
+
         try {
 
-            computerService.add(c1);
+            assertEquals(1, computerService.getById(1).getId());
 
-            assertEquals(c1, computerService.get(1000));
+            assertNull(computerService.getById(1000));
 
-            computerService.delete(1000);
+        } catch (Exception e) {
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Exception: " + e);
+            }
+        }
+    }
+    
 
-            assertNull(computerService.get(1000));
+    /**
+     * Test get by name.
+     */
+    @Test
+    public void testGetByName() {
+
+        try {
+
+            assertEquals(1, computerService.getByName("Computer1").size());
+            assertEquals(1, computerService.getByName("Computer1").get(0).getId());
+            
+            assertEquals(2, computerService.getByName("Computer2").size());
+
+            assertEquals(0, computerService.getByName("Computer1000").size());
 
         } catch (Exception e) {
             if (LOGGER.isDebugEnabled()) {
@@ -78,23 +97,16 @@ public class ComputerTest {
      * Test get.
      */
     @Test
-    public void testGet() {
+    public void testGetAll() {
+        assertEquals(4, computerService.get().size());
+    }
 
-        try {
-
-            assertEquals(1, computerService.get(1).getId());
-
-            assertEquals(574, computerService.get().size());
-
-            assertEquals(10, computerService.getPage(5, 10).getObjectNumber());
-
-            assertNull(computerService.get(1000));
-
-        } catch (Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Exception: " + e);
-            }
-        }
+    /**
+     * Test getPage.
+     */
+    @Test
+    public void testGetPage() {
+        assertEquals(2, computerService.getPage(1, 2).getObjectNumber());
     }
 
     /**
@@ -106,7 +118,26 @@ public class ComputerTest {
         try {
             computerService.add(c1);
 
-            assertEquals(c1, computerService.get(1000));
+            assertEquals(c1, computerService.getById(c1.getId()));
+
+        } catch (Exception e) {
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Exception: " + e);
+            }
+        }
+    }
+    
+    /**
+     * Test update.
+     */
+    @Test
+    public void testUpdate() {
+
+        try {
+            c1.setId(1);
+            computerService.update(c1);
+
+            assertEquals(c1, computerService.getById(c1.getId()));
 
         } catch (Exception e) {
             if (LOGGER.isDebugEnabled()) {
@@ -116,18 +147,15 @@ public class ComputerTest {
     }
 
     /**
-     * Test update.
+     * Test delete.
      */
     @Test
-    public void testUpdate() {
-
+    public void testDelete() {
         try {
 
-            computerService.add(c1);
-            c1.setName(c2.getName());
-            computerService.update(c1);
+            computerService.delete(1);
 
-            assertEquals(c2.getName(), computerService.get(1000).getName());
+            assertNull(computerService.getById(1));
 
         } catch (Exception e) {
             if (LOGGER.isDebugEnabled()) {
@@ -151,5 +179,20 @@ public class ComputerTest {
                 LOGGER.debug("Exception: " + e);
             }
         }
+    }
+
+    @Override
+    protected IDatabaseConnection getConnection() throws Exception {
+        Connection jdbcConnection = DriverManager.getConnection(URL, USER, PASSWORD);
+
+        return new DatabaseConnection(jdbcConnection);
+    }
+
+    @Override
+    protected IDataSet getDataSet() throws Exception {
+        FlatXmlDataSetBuilder builder = new FlatXmlDataSetBuilder();
+        IDataSet dataSet = builder.build(new File(SAMPLE_TEST_XML));
+
+        return dataSet;
     }
 }
