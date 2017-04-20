@@ -7,7 +7,9 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 
@@ -48,7 +50,7 @@ public class ComputerDAOImpl implements ComputerDAO {
                                                                 + Computer.FIELD_COMPANY_ID + " = ? " + " WHERE " + Computer.FIELD_ID + " = ?";
 
     private static final String QUERY_DELETE_COMPUTER           = "DELETE FROM " + Computer.TABLE_NAME + " WHERE "
-                                                                + Computer.FIELD_ID + " = ? ";
+                                                                + Computer.FIELD_ID + " IN (?) ";
 
     private static final String QUERY_FIND_COMPANY              = "SELECT " + Company.TABLE_NAME + "." + Company.FIELD_ID + ", "
                                                                 + Company.TABLE_NAME + "." + Company.FIELD_NAME + " FROM " + Company.TABLE_NAME + " INNER JOIN "
@@ -95,6 +97,11 @@ public class ComputerDAOImpl implements ComputerDAO {
                                 + (length != -1 ? " ORDER BY " + Computer.TABLE_NAME + "." + order
                                         + " LIMIT " + length : "")
                                 + (length != -1 && offset != -1 ? " OFFSET " + offset : ""));) {
+            
+            LOGGER.debug(QUERY_FIND_COMPUTER
+                                + (length != -1 ? " ORDER BY " + Computer.TABLE_NAME + "." + order
+                                        + " LIMIT " + length : "")
+                                + (length != -1 && offset != -1 ? " OFFSET " + offset : ""));
 
             final ResultSet rset = stmt.executeQuery();
 
@@ -223,27 +230,7 @@ public class ComputerDAOImpl implements ComputerDAO {
 
     @Override
     public void delete(long id) throws ComputerNotFoundException {
-        boolean delete = false;
-
-        try (Connection con = ConnectionMySQL.INSTANCE.getConnection(url);
-                PreparedStatement stmt = con.prepareStatement(QUERY_DELETE_COMPUTER);) {
-
-            stmt.setLong(1, id);
-            int res = stmt.executeUpdate();
-            delete = res == 1;
-
-        } catch (SQLException e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Exception: " + e);
-            }
-        }
-
-        if (delete) {
-            LOGGER.info("Info: Computer " + id + " sucessfully deleted");
-        } else {
-            LOGGER.error("Error: Computer " + id + " not deleted");
-            throw new ComputerNotFoundException("Computer Not Found");
-        }
+        delete(new ArrayList<Long>(Arrays.asList(id)));
     }
 
     @Override
@@ -327,6 +314,34 @@ public class ComputerDAOImpl implements ComputerDAO {
                 .discontinued(discontinued).company(cDAO.getById(computerDTO.getCompanyId())).build();
 
         return computer;
+    }
+
+    @Override
+    public void delete(List<Long> listId) throws ComputerNotFoundException {
+        boolean delete = false;
+        String ids = "";
+
+        try (Connection con = ConnectionMySQL.INSTANCE.getConnection(url);
+                PreparedStatement stmt = con.prepareStatement(QUERY_DELETE_COMPUTER);) {
+
+            ids = listId.stream().map(Object::toString).collect(Collectors.joining(", "));
+            
+            stmt.setString(1, ids);
+            int res = stmt.executeUpdate();
+            delete = res == 1;
+
+        } catch (SQLException e) {
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Exception: " + e);
+            }
+        }
+
+        if (delete) {
+            LOGGER.info("Info: Computer " + ids + " sucessfully deleted");
+        } else {
+            LOGGER.error("Error: Computer " + ids + " not deleted");
+            throw new ComputerNotFoundException("Computer Not Found");
+        }
     }
 
 }

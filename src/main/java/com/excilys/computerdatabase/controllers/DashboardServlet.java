@@ -46,5 +46,9 @@ public class DashboardServlet extends HttpServlet {
         view.forward(request, response);
 
     }
+    
+    public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String[] listStatus = request.getParameterValues("cb");
+    }
 
 }

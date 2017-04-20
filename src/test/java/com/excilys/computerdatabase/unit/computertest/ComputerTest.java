@@ -3,6 +3,8 @@ package com.excilys.computerdatabase.unit.computertest;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.dbunit.DatabaseTestCase;
 import org.dbunit.database.DatabaseConnection;
@@ -38,16 +40,16 @@ public class ComputerTest extends DatabaseTestCase {
     public ComputerTest() {
         computerService = new ComputerServiceImpl(URL);
 
-        comp1 = new Company.Builder("Apple Inc.").id(1).build();
+        comp1 = new Company.Builder("Apple Inc.").id(1L).build();
 
         c1 = new ComputerDTO();
         c1.setName("Computer1");
-        c1.setId(1000);
+        c1.setId(1000L);
         c1.setCompanyId(comp1.getId());
 
         c2 = new ComputerDTO();
         c2.setName("Computer2");
-        c2.setId(1001);
+        c2.setId(1001L);
         c2.setCompanyId(comp1.getId());
     }
 
@@ -59,9 +61,9 @@ public class ComputerTest extends DatabaseTestCase {
 
         try {
 
-            assertEquals(1, computerService.getById(1).getId());
+            assertEquals(1, computerService.getById(1L).getId());
 
-            assertNull(computerService.getById(1000));
+            assertNull(computerService.getById(1000L));
 
         } catch (Exception e) {
             if (LOGGER.isDebugEnabled()) {
@@ -69,7 +71,6 @@ public class ComputerTest extends DatabaseTestCase {
             }
         }
     }
-    
 
     /**
      * Test get by name.
@@ -81,7 +82,7 @@ public class ComputerTest extends DatabaseTestCase {
 
             assertEquals(1, computerService.getByName("Computer1").size());
             assertEquals(1, computerService.getByName("Computer1").get(0).getId());
-            
+
             assertEquals(2, computerService.getByName("Computer2").size());
 
             assertEquals(0, computerService.getByName("Computer1000").size());
@@ -126,7 +127,7 @@ public class ComputerTest extends DatabaseTestCase {
             }
         }
     }
-    
+
     /**
      * Test update.
      */
@@ -152,10 +153,34 @@ public class ComputerTest extends DatabaseTestCase {
     @Test
     public void testDelete() {
         try {
+            
+            assertEquals(1L, computerService.getById(1L).getId());
 
-            computerService.delete(1);
+            computerService.delete(1L);
 
-            assertNull(computerService.getById(1));
+            assertNull(computerService.getById(1L));
+
+        } catch (Exception e) {
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Exception: " + e);
+            }
+        }
+    }
+
+    /**
+     * Test delete.
+     */
+    @Test
+    public void testDeleteList() {
+        try {
+            
+            assertEquals(1L, computerService.getById(1L).getId());
+            assertEquals(2L, computerService.getById(2L).getId());
+
+            computerService.delete(new ArrayList<Long>(Arrays.asList(1L, 2L)));
+
+            assertNull(computerService.getById(1L));
+            assertNull(computerService.getById(2L));
 
         } catch (Exception e) {
             if (LOGGER.isDebugEnabled()) {
@@ -172,7 +197,7 @@ public class ComputerTest extends DatabaseTestCase {
 
         try {
 
-            assertEquals(1, computerService.getCompany(1).getId());
+            assertEquals(1L, computerService.getCompany(1L).getId());
 
         } catch (Exception e) {
             if (LOGGER.isDebugEnabled()) {

@@ -57,6 +57,13 @@ public interface ComputerService {
     void delete(long id) throws ComputerNotFoundException;
 
     /**
+     * Delete a computer.
+     * @param ids the ids of the computers
+     * @throws ComputerNotFoundException exception when the computer is not found
+     */
+    void delete(List<Long> ids) throws ComputerNotFoundException;
+
+    /**
      * Return the number of computers.
      * @return int number of computers
      */

@@ -92,6 +92,11 @@ public class ComputerServiceImpl implements ComputerService, PageServ<ComputerDT
     public void delete(long id) throws ComputerNotFoundException {
         computerDAO.delete(id);
     }
+    
+    @Override
+    public void delete(List<Long> ids) throws ComputerNotFoundException {
+        computerDAO.delete(ids);
+    }
 
     @Override
     public int count() {
