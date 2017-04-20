@@ -20,7 +20,6 @@
     String lengthAdresse = "";
     String adresse = "";
     String textA = (text != null ? text : (home != null && home ? " Application - Computer Database " : ""));
-    
     if (button != null) {
         textA = "<button type=\"button\" class=\"btn btn-" + button + "\">" + textA + "</button>";
     }
@@ -41,7 +40,7 @@
 
         output = "<a class=\"" + classe + "\" href=\"" + adresse + "\">" + textA + "</a>";
     }
-    
+
     if(li != null) {
         output = "<li" + (!li.equals("default") ? " class=" + li + " " : "") + ">" + output + "</li>";
     }

@@ -37,7 +37,7 @@
 				</div>
 			</c:if>
 
-			<h1 id="homeTitle">${computerCount} Computer${computerCount > 1 ? 's' : ''}
+			<h1 id="homeTitle">${computerCount}Computer${computerCount > 1 ? 's' : ''}
 				found</h1>
 
 			<div id="actions" class="form-horizontal">
@@ -104,10 +104,8 @@
 
 	<footer class="navbar-fixed-bottom">
 		<div class="container text-center">
-
 			<utils:pagination nbPage="${nbPage}" length="${length}"
 				page="${page}" />
-
 		</div>
 
 	</footer>
