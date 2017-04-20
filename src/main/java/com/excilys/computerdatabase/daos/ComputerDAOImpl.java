@@ -82,17 +82,17 @@ public class ComputerDAOImpl implements ComputerDAO {
 
     @Override
     public List<Computer> findAll() {
-        return findAll(-1, -1);
+        return findAll(-1, -1, Computer.FIELD_ID);
     }
 
     @Override
-    public List<Computer> findAll(int offset, int length) {
+    public List<Computer> findAll(int offset, int length, String order) {
         List<Computer> computers = new ArrayList<>();
 
         try (Connection con = ConnectionMySQL.INSTANCE.getConnection(url);
                 PreparedStatement stmt = con
                         .prepareStatement(QUERY_FIND_COMPUTER
-                                + (length != -1 ? " ORDER BY " + Computer.TABLE_NAME + "." + Computer.FIELD_ID
+                                + (length != -1 ? " ORDER BY " + Computer.TABLE_NAME + "." + order
                                         + " LIMIT " + length : "")
                                 + (length != -1 && offset != -1 ? " OFFSET " + offset : ""));) {
 

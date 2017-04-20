@@ -21,9 +21,10 @@ public interface ComputerDAO {
      * Returns the list of the computers between offset and offset + length -1.
      * @param offset the first computer
      * @param length the number of computers
+     * @param order the field for order by
      * @return List<Computer>
      */
-    List<Computer> findAll(int offset, int length);
+    List<Computer> findAll(int offset, int length, String order);
 
     /**
      * Return the computer found by its id.

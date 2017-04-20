@@ -17,4 +17,13 @@ public interface PageServ<T> {
      * @return Page<T>
      */
     Page<T> getPage(int pageNumero, int length);
+
+    /**
+     * Returns the page numero pageNumero of length length.
+     * @param pageNumero the numero of the page
+     * @param length the length of the page
+     * @param order the field for order by
+     * @return Page<T>
+     */
+    Page<T> getPage(int pageNumero, int length, String order);
 }

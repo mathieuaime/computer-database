@@ -63,16 +63,16 @@ public class CompanyDAOImpl implements CompanyDAO {
 
     @Override
     public List<Company> findAll() {
-        return findAll(-1, -1);
+        return findAll(-1, -1, Company.FIELD_ID);
     }
 
     @Override
-    public List<Company> findAll(int offset, int length) {
+    public List<Company> findAll(int offset, int length, String order) {
         List<Company> companies = new ArrayList<>();
 
         try (Connection con = ConnectionMySQL.INSTANCE.getConnection(url);
                 PreparedStatement stmt = con.prepareStatement(QUERY_FIND_COMPANIES
-                        + (length != -1 ? " ORDER BY " + Company.FIELD_ID + " LIMIT " + length : "")
+                        + (length != -1 ? " ORDER BY " + order + " LIMIT " + length : "")
                         + (length != -1 && offset != -1 ? " OFFSET " + offset : ""));) {
 
             final ResultSet rset = stmt.executeQuery();
