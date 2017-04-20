@@ -6,6 +6,19 @@
 
 	<display-name>computer-database</display-name>
 
+	<error-page>
+		<error-code>403</error-code>
+		<location>/WEB-INF/views/403.jsp</location>
+	</error-page>
+	<error-page>
+		<error-code>404</error-code>
+		<location>/WEB-INF/views/404.jsp</location>
+	</error-page>
+	<error-page>
+		<error-code>500</error-code>
+		<location>/WEB-INF/views/500.jsp</location>
+	</error-page>
+
 	<context-param>
 		<param-name>javax.faces.PROJECT_STAGE</param-name>
 		<param-value>Development</param-value>
@@ -17,7 +30,7 @@
 
 	<servlet>
 		<servlet-name>Dashboard</servlet-name>
-		<servlet-class>com.excilys.computerdatabase.servlets.DashboardServlet</servlet-class>
+		<servlet-class>com.excilys.computerdatabase.controllers.DashboardServlet</servlet-class>
 	</servlet>
 
 	<servlet-mapping>
@@ -27,12 +40,22 @@
 
 	<servlet>
 		<servlet-name>AddComputer</servlet-name>
-		<servlet-class>com.excilys.computerdatabase.servlets.AddComputerServlet</servlet-class>
+		<servlet-class>com.excilys.computerdatabase.controllers.AddComputerServlet</servlet-class>
 	</servlet>
 
 	<servlet-mapping>
 		<servlet-name>AddComputer</servlet-name>
 		<url-pattern>/addComputer</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>EditComputer</servlet-name>
+		<servlet-class>com.excilys.computerdatabase.controllers.EditComputerServlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>EditComputer</servlet-name>
+		<url-pattern>/editComputer</url-pattern>
 	</servlet-mapping>
 
 </web-app>

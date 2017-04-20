@@ -1,4 +1,4 @@
-package com.excilys.computerdatabase.servlets;
+package com.excilys.computerdatabase.controllers;
 
 import java.io.IOException;
 
@@ -32,7 +32,7 @@ public class DashboardServlet extends HttpServlet {
 
         int computerCount = computerService.count();
 
-        double nbPage = Math.ceil(computerCount / length);
+        double nbPage = Math.ceil((float) computerCount / length);
 
         int[] lengths = new int[]{10, 50, 100};
 

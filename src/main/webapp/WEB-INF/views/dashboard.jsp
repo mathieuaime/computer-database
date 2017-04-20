@@ -37,7 +37,7 @@
 				</div>
 			</c:if>
 
-			<h1 id="homeTitle">${computerCount}Computer${computerCount > 1 ? 's' : ''}
+			<h1 id="homeTitle">${computerCount} Computer${computerCount > 1 ? 's' : ''}
 				found</h1>
 
 			<div id="actions" class="form-horizontal">
@@ -91,7 +91,7 @@
 						<tr>
 							<td class="editMode"><input type="checkbox" name="cb"
 								class="cb" value="0"></td>
-							<td><a href="editComputer.html" onclick="">${computer.name}</a></td>
+							<td><a href="editComputer?id=${computer.id}" onclick="">${computer.name}</a></td>
 							<td>${computer.introduced}</td>
 							<td>${computer.discontinued}</td>
 							<td>${computer.companyName}</td>

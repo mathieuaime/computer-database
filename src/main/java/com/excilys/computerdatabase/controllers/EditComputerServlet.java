@@ -1,4 +1,4 @@
-package com.excilys.computerdatabase.servlets;
+package com.excilys.computerdatabase.controllers;
 
 import java.io.IOException;
 import java.util.List;
@@ -11,12 +11,13 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.excilys.computerdatabase.dtos.CompanyDTO;
 import com.excilys.computerdatabase.dtos.ComputerDTO;
+import com.excilys.computerdatabase.exceptions.ComputerNotFoundException;
 import com.excilys.computerdatabase.exceptions.IntroducedAfterDiscontinuedException;
 import com.excilys.computerdatabase.exceptions.NameEmptyException;
 import com.excilys.computerdatabase.services.CompanyServiceImpl;
 import com.excilys.computerdatabase.services.ComputerServiceImpl;
 
-public class AddComputerServlet extends HttpServlet {
+public class EditComputerServlet extends HttpServlet {
 
     private static final long serialVersionUID = -82009216108348436L;
 
@@ -27,14 +28,14 @@ public class AddComputerServlet extends HttpServlet {
     /**
      * AddComputerServlet default constructor : initialize the daos.
      */
-    public AddComputerServlet() {
+    public EditComputerServlet() {
         super();
         computerService = new ComputerServiceImpl();
         companyService = new CompanyServiceImpl();
     }
 
     /**
-     * GET addComputer.
+     * GET editComputer.
      * @param request request
      * @param response response
      * @throws ServletException servelt exception
@@ -42,8 +43,20 @@ public class AddComputerServlet extends HttpServlet {
      */
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        
+        int idComputer = (request.getParameter("id") != null ? Integer.parseInt(request.getParameter("id")) : 0);
+        
+        ComputerDTO computerDTO = null;
 
-        RequestDispatcher view = request.getRequestDispatcher("WEB-INF/views/addComputer.jsp");
+        try {
+            computerDTO = computerService.getById(idComputer);
+        } catch (ComputerNotFoundException e) {
+            request.setAttribute("error", "Computer inconnu");
+        }
+
+        RequestDispatcher view = request.getRequestDispatcher("WEB-INF/views/editComputer.jsp");
+        
+        request.setAttribute("computer", computerDTO);
 
         List<CompanyDTO> companies = companyService.get(); // TODO voir si trier les companies
 
@@ -54,7 +67,7 @@ public class AddComputerServlet extends HttpServlet {
     }
 
     /**
-     * POST addComputer.
+     * POST editComputer.
      * @param request request
      * @param response response
      * @throws ServletException servelt exception
@@ -65,19 +78,23 @@ public class AddComputerServlet extends HttpServlet {
 
         ComputerDTO computerDTO = new ComputerDTO();
 
+        computerDTO.setId(Long.parseLong(request.getParameter("id")));
         computerDTO.setName(request.getParameter("name"));
         computerDTO.setIntroduced(request.getParameter("introduced"));
         computerDTO.setDiscontinued(request.getParameter("discontinued"));
         computerDTO.setCompanyId(Long.parseLong(request.getParameter("companyId")));
 
         try {
-            computerService.add(computerDTO);
+            computerService.update(computerDTO);
             response.sendRedirect("dashboard");
         } catch (IntroducedAfterDiscontinuedException e) {
             request.setAttribute("error", "La date d'ajout doit être antérieure à la date de retrait");
             doGet(request, response);
         } catch (NameEmptyException e) {
             request.setAttribute("error", "Le nom doit être spécifié");
+            doGet(request, response);
+        } catch (ComputerNotFoundException e) {
+            request.setAttribute("error", "Le computer n'existe pas");
             doGet(request, response);
         }
     }
