@@ -71,7 +71,6 @@
 				<thead>
 					<tr>
 						<!-- Variable declarations for passing labels as parameters -->
-						<!-- Table header for Computer Name -->
 
 						<th class="editMode" style="width: 60px; height: 22px;"><input
 							type="checkbox" id="selectall" /> <span
@@ -140,7 +139,7 @@
 					<c:forEach items="${computerPage.objects}" var="computer">
 						<tr>
 							<td class="editMode"><input type="checkbox" name="cb"
-								class="cb" value="0"></td>
+								class="cb" value="${computer.id}"></td>
 							<td><a href="editComputer?id=${computer.id}" onclick="">${computer.name}</a></td>
 							<td>${computer.introduced}</td>
 							<td>${computer.discontinued}</td>

@@ -1,6 +1,8 @@
 package com.excilys.computerdatabase.controllers;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -8,6 +10,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.excilys.computerdatabase.exceptions.ComputerNotFoundException;
 import com.excilys.computerdatabase.services.ComputerServiceImpl;
 
 public class DashboardServlet extends HttpServlet {
@@ -55,7 +58,22 @@ public class DashboardServlet extends HttpServlet {
     }
     
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String[] listComputersToDelete = request.getParameterValues("cb");
+        String[] listComputersToDelete = request.getParameter("selection").split(",");
+        List<Long> ids = new ArrayList<Long>();
+
+        ComputerServiceImpl computerService = new ComputerServiceImpl();
+
+        for(String s : listComputersToDelete) {
+            ids.add(Long.parseLong(s));
+        }
+        
+        try {
+            computerService.delete(ids);
+        } catch (ComputerNotFoundException e) {
+            request.setAttribute("error", "Computer inconnu");
+        }
+
+        doGet(request, response);
     }
 
 }
