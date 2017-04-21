@@ -27,12 +27,8 @@ public class Computer {
      * Computer private constructor.
      * @param builder Computer builder
      */
-    private Computer(Builder builder) {
-        this.id = builder.id;
-        this.name = builder.name;
-        this.introduced = builder.introduced;
-        this.discontinued = builder.discontinued;
-        this.company = builder.company;
+    public Computer(String name) {
+        this.name = name;
     }
 
     public long getId() {
@@ -76,19 +72,15 @@ public class Computer {
     }
 
     public static class Builder {
-
-        private long id;
-        private String name;
-        private LocalDate introduced;
-        private LocalDate discontinued;
-        private Company company;
+        
+        private Computer computer;
 
         /**
          * Builder constructor.
          * @param name name
          */
         public Builder(String name) {
-            this.name = name;
+            computer = new Computer(name);
         }
 
         /**
@@ -97,7 +89,7 @@ public class Computer {
          * @return Builder
          */
         public Builder id(long id) {
-            this.id = id;
+            computer.id = id;
             return this;
         }
 
@@ -107,7 +99,7 @@ public class Computer {
          * @return Builder
          */
         public Builder introduced(LocalDate introduced) {
-            this.introduced = introduced;
+            computer.introduced = introduced;
             return this;
         }
 
@@ -117,7 +109,7 @@ public class Computer {
          * @return Builder
          */
         public Builder discontinued(LocalDate discontinued) {
-            this.discontinued = discontinued;
+            computer.discontinued = discontinued;
             return this;
         }
 
@@ -127,7 +119,7 @@ public class Computer {
          * @return Builder
          */
         public Builder company(Company company) {
-            this.company = company;
+            computer.company = company;
             return this;
         }
 
@@ -138,7 +130,7 @@ public class Computer {
          * @throws NameEmptyException exception when the name is empty
          */
         public Computer build() {
-            return new Computer(this);
+            return computer;
         }
     }
 

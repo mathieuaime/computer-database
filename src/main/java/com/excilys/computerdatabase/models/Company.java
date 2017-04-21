@@ -13,9 +13,8 @@ public class Company {
      * Company private constructor.
      * @param builder company builder
      */
-    private Company(Builder builder) {
-        this.id = builder.id;
-        this.name = builder.name;
+    private Company(String name) {
+        this.name = name;
     }
 
     public long getId() {
@@ -36,15 +35,14 @@ public class Company {
 
     public static class Builder {
 
-        private long id;
-        private String name;
+        private Company company;
 
         /**
          * Builder constructor.
          * @param name name
          */
         public Builder(String name) {
-            this.name = name;
+            this.company = new Company(name);
         }
 
         /**
@@ -53,7 +51,7 @@ public class Company {
          * @return Builder
          */
         public Builder id(long id) {
-            this.id = id;
+            company.id = id;
             return this;
         }
 
@@ -62,7 +60,7 @@ public class Company {
          * @return Company
          */
         public Company build() {
-            return new Company(this);
+            return company;
         }
     }
 
