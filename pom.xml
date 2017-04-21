@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>computer-database</groupId>
 	<artifactId>computer-database</artifactId>
-	<version>0.0.2-SNAPSHOT</version>
+	<version>0.3.0-SNAPSHOT</version>
 
 	<packaging>war</packaging>
 
@@ -14,6 +14,17 @@
 		<mockitoVersion>1.10.19</mockitoVersion>
 		<javaxServletVersion>3.1.0</javaxServletVersion>
 		<javaxServletJspVersion>2.3.1</javaxServletJspVersion>
+		<jstlVersion>1.2</jstlVersion>
+		<logbackVersion>1.0.13</logbackVersion>
+		<dbUnitVersion>2.4.9</dbUnitVersion>
+		<seleniumVersion>1.0.1</seleniumVersion>
+		<javaVersion>1.8</javaVersion>
+		<mavenWarPlugin>2.1.1</mavenWarPlugin>
+		<seleniumPluginVersion>1.0.1</seleniumPluginVersion>
+		<checkstyleVersion>2.17</checkstyleVersion>
+		<reportPluginVersion>2.7</reportPluginVersion>
+		<mavenCleanPluginVersion>2.5</mavenCleanPluginVersion>
+		<mavenCompilerVersion>3.1</mavenCompilerVersion>
 	</properties>
 
 	<dependencies>
@@ -26,7 +37,7 @@
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
-			<version>1.0.13</version>
+			<version>${logbackVersion}</version>
 		</dependency>
 
 		<dependency>
@@ -45,7 +56,7 @@
 		<dependency>
 			<groupId>org.dbunit</groupId>
 			<artifactId>dbunit</artifactId>
-			<version>2.4.9</version>
+			<version>${dbUnitVersion}</version>
 			<scope>test</scope>
 		</dependency>
 
@@ -72,14 +83,14 @@
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>jstl</artifactId>
-			<version>1.2</version>
+			<version>${jstlVersion}</version>
 			<scope>compile</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>org.seleniumhq.selenium.client-drivers</groupId>
 			<artifactId>selenium-java-client-driver</artifactId>
-			<version>1.0.1</version>
+			<version>${seleniumVersion}</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
@@ -91,16 +102,16 @@
 			<plugins>
 				<plugin>
 					<artifactId>maven-compiler-plugin</artifactId>
-					<version>3.1</version>
+					<version>${mavenCompilerVersion}</version>
 					<configuration>
-						<source>1.8</source>
-						<target>1.8</target>
+						<source>${javaVersion}</source>
+						<target>${javaVersion}</target>
 					</configuration>
 				</plugin>
 
 				<plugin>
 					<artifactId>maven-war-plugin</artifactId>
-					<version>2.1.1</version>
+					<version>${mavenWarPlugin}</version>
 					<configuration>
 						<warSourceDirectory>src/main/webapp</warSourceDirectory>
 						<failOnMissingWebXml>false</failOnMissingWebXml>
@@ -110,7 +121,7 @@
 				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>selenium-maven-plugin</artifactId>
-					<version>1.0.1</version>
+					<version>${seleniumPluginVersion}</version>
 				</plugin>
 
 			</plugins>
@@ -122,7 +133,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-checkstyle-plugin</artifactId>
-				<version>2.17</version>
+				<version>${checkstyleVersion}</version>
 				<configuration>
 					<configLocation>src/main/resources/config/checkstyle/checkstyle.xml</configLocation>
 					<suppressionsLocation>src/main/resources/config/checkstyle/suppressions.xml</suppressionsLocation>
@@ -137,15 +148,17 @@
 					</reportSet>
 				</reportSets>
 			</plugin>
+			
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-project-info-reports-plugin</artifactId>
-				<version>2.7</version>
+				<version>${reportPluginVersion}</version>
 			</plugin>
+			
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-clean-plugin</artifactId>
-				<version>2.5</version>
+				<version>${mavenCleanPluginVersion}</version>
 				<configuration>
 					<filesets>
 						<fileset>
