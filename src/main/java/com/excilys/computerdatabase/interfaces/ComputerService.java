@@ -39,7 +39,7 @@ public interface ComputerService {
      * @throws IntroducedAfterDiscontinuedException exception when the introduced date is before the dicontinued date
      * @throws NameEmptyException exception when the name is empty
      */
-    void add(Computer computer);
+    ComputerDTO add(Computer computer);
 
     /**
      * Update a computer.

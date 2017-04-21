@@ -41,7 +41,7 @@ public interface ComputerDAO {
      * Add a computer.
      * @param computer the computer to add
      */
-    void add(Computer computer);
+    Computer add(Computer computer);
 
     /**
      * Update a computer.

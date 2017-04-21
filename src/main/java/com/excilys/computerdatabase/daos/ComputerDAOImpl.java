@@ -165,7 +165,7 @@ public class ComputerDAOImpl implements ComputerDAO {
     }
 
     @Override
-    public void add(Computer computer) {
+    public Computer add(Computer computer) {
         boolean add = false;
 
         try (Connection con = ConnectionMySQL.INSTANCE.getConnection(url);
@@ -177,6 +177,12 @@ public class ComputerDAOImpl implements ComputerDAO {
             stmt.setLong(4, computer.getCompany().getId());
             int res = stmt.executeUpdate();
             add = res == 1;
+            
+            ResultSet resultSet = stmt.getGeneratedKeys();
+            
+            if(resultSet.first()) {
+                computer.setId(resultSet.getLong(1));
+            }
 
         } catch (SQLException e) {
             add = false;
@@ -190,6 +196,8 @@ public class ComputerDAOImpl implements ComputerDAO {
         } else {
             LOGGER.error("Error: " + computer + " not added");
         }
+        
+        return computer;
     }
 
     @Override

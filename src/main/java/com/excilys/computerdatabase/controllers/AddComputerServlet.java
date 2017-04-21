@@ -68,7 +68,6 @@ public class AddComputerServlet extends HttpServlet {
 
         ComputerDTO computerDTO = new ComputerDTO();
         CompanyDTO companyDTO = new CompanyDTO();
-        
 
         companyDTO.setId(Long.parseLong(request.getParameter("companyId")));
 
