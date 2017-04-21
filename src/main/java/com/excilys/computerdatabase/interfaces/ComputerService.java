@@ -67,7 +67,7 @@ public interface ComputerService {
      * Return the number of computers.
      * @return int number of computers
      */
-    int count();
+    int count(String search);
 
     /**
      * Returns the company of the computer id.

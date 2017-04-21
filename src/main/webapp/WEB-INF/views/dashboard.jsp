@@ -42,11 +42,15 @@
 
 			<div id="actions" class="form-horizontal">
 				<div class="pull-left">
-					<form id="searchForm" action="#" method="GET" class="form-inline">
-
-						<input type="search" id="searchbox" name="search"
-							class="form-control" placeholder="Search name" /> <input
-							type="submit" id="searchsubmit" value="Filter by name"
+					<form id="searchForm"
+						action="" method="GET"
+						class="form-inline">
+							 
+						<input type="hidden" id="length" name="length" value="${length}" />
+							 
+						<input type="search" id="searchbox"
+							name="search" class="form-control" placeholder="Search name" />
+						<input type="submit" id="searchsubmit" value="Filter by name"
 							class="btn btn-primary" />
 					</form>
 				</div>
@@ -76,12 +80,58 @@
 									class="fa fa-trash-o fa-lg"></i>
 							</a>
 						</span></th>
-						<th>Computer name</th>
-						<th>Introduced date</th>
+
+						<!-- Table header for Computer Name -->
+						<th><utils:link href="dashboard" length="${length}"
+								search="${search}" sort="name"
+								order="${sort != null && sort == 'name' && order != 'DESC' ? 'DESC' : 'ASC'}"
+								text="Computer name"/> 
+							<c:if test="${sort == 'name' && order == 'ASC'}">
+								<span class="glyphicon glyphicon-chevron-up"></span>
+							</c:if> 
+							<c:if test="${sort == 'name' && order == 'DESC'}">
+								<span class="glyphicon glyphicon-chevron-down"></span>
+							</c:if>
+						</th>introduced
+
+						<!-- Table header for Introduced Date -->
+						<th><utils:link href="dashboard" length="${length}"
+								search="${search}" sort="introduced"
+								order="${sort != null && sort == 'introduced' && order != 'DESC' ? 'DESC' : 'ASC'}"
+								text="Introduced date" />
+							<c:if test="${sort == 'introduced' && order == 'ASC'}">
+								<span class="glyphicon glyphicon-chevron-up"></span>
+							</c:if> 
+							<c:if test="${sort == 'introduced' && order == 'DESC'}">
+								<span class="glyphicon glyphicon-chevron-down"></span>
+							</c:if>
+						</th>
+
 						<!-- Table header for Discontinued Date -->
-						<th>Discontinued date</th>
+						<th><utils:link href="dashboard" length="${length}"
+								search="${search}" sort="discontinued"
+								order="${sort != null && sort == 'discontinued' && order != 'DESC' ? 'DESC' : 'ASC'}"
+								text="Discontinued date" />
+							<c:if test="${sort == 'discontinued' && order == 'ASC'}">
+								<span class="glyphicon glyphicon-chevron-up"></span>
+							</c:if> 
+							<c:if test="${sort == 'discontinued' && order == 'DESC'}">
+								<span class="glyphicon glyphicon-chevron-down"></span>
+							</c:if>
+						</th>
+
 						<!-- Table header for Company -->
-						<th>Company</th>
+						<th><utils:link href="dashboard" length="${length}"
+								search="${search}" sort="company"
+								order="${sort != null && sort == 'company' && order != 'DESC' ? 'DESC' : 'ASC'}"
+								text="Company" />
+							<c:if test="${sort == 'company' && order == 'ASC'}">
+								<span class="glyphicon glyphicon-chevron-up"></span>
+							</c:if> 
+							<c:if test="${sort == 'company' && order == 'DESC'}">
+								<span class="glyphicon glyphicon-chevron-down"></span>
+							</c:if>
+						</th>
 
 					</tr>
 				</thead>
@@ -104,7 +154,7 @@
 
 	<footer class="navbar-fixed-bottom">
 		<div class="container text-center">
-			<utils:pagination nbPage="${nbPage}" length="${length}"
+			<utils:pagination nbPage="${nbPage}" length="${length}" search="${search}"
 				page="${page}" />
 		</div>
 

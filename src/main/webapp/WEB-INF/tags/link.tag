@@ -3,6 +3,9 @@
 <%@ attribute name="href" required="true" rtexprvalue="true"%>
 <%@ attribute name="page" required="false" type="java.lang.Integer"%>
 <%@ attribute name="length" required="false" type="java.lang.Integer"%>
+<%@ attribute name="search" required="false" type="java.lang.String"%>
+<%@ attribute name="sort" required="false" type="java.lang.String"%>
+<%@ attribute name="order" required="false" type="java.lang.String"%>
 <%@ attribute name="text" required="false" type="java.lang.String"%>
 <%@ attribute name="previous" required="false" type="java.lang.Boolean"%>
 <%@ attribute name="next" required="false" type="java.lang.Boolean"%>
@@ -26,22 +29,29 @@
 
     if (previousA || nextA) {
         pageAdresse = (page != null ? String.valueOf(page + (previousA ? -1 : 1)) : String.valueOf(page));
-        
+
         lengthAdresse = (length != null ? String.valueOf(length) : String.valueOf(length));
-        
-        adresse = href + "?page=" + pageAdresse + "&length=" + lengthAdresse;
-        
-        output = "<a href=\"" + adresse + "\" aria-label=\"Next\"> <span aria-hidden=\"true\">&" + (previousA ? 'l' : 'r') + "aquo;</span></a>";
+
+        adresse = href + "?page=" + pageAdresse + "&length=" + lengthAdresse
+        + (search != null && !search.equals("") ? "&search=" + search : "")
+        + (sort != null && !sort.equals("") ? "&sort=" + sort : "")
+        + (order != null && !order.equals("") ? "&order=" + order : "");
+
+        output = "<a href=\"" + adresse + "\" aria-label=\"Next\"> <span aria-hidden=\"true\">&"
+        + (previousA ? 'l' : 'r') + "aquo;</span></a>";
     } else {
         pageAdresse = (page != null ? String.valueOf(page) : "1");
         lengthAdresse = (length != null ? String.valueOf(length) : "10");
 
-        adresse = href + "?page=" + pageAdresse + "&length=" + lengthAdresse;
+        adresse = href + "?page=" + pageAdresse + "&length=" + lengthAdresse
+                + (search != null && !search.equals("") ? "&search=" + search : "")
+                + (sort != null && !sort.equals("") ? "&sort=" + sort : "")
+                + (order != null && !order.equals("") ? "&order=" + order : "");
 
         output = "<a class=\"" + classe + "\" href=\"" + adresse + "\">" + textA + "</a>";
     }
 
-    if(li != null) {
+    if (li != null) {
         output = "<li" + (!li.equals("default") ? " class=" + li + " " : "") + ">" + output + "</li>";
     }
 

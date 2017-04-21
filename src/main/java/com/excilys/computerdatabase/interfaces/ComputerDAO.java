@@ -24,7 +24,7 @@ public interface ComputerDAO {
      * @param order the field for order by
      * @return List<Computer>
      */
-    List<Computer> findAll(int offset, int length, String order);
+    List<Computer> findAll(int offset, int length, String search, String sort, String order);
 
     /**
      * Return the computer found by its id.
@@ -71,7 +71,7 @@ public interface ComputerDAO {
      * Return the number of computers.
      * @return int number of computers
      */
-    int count();
+    int count(String search);
 
     /**
      * Returns the Company of the computer id.

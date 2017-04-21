@@ -48,13 +48,13 @@ public class ComputerServiceImpl implements ComputerService, PageServ<ComputerDT
     @Override
     public Page<ComputerDTO> getPage(int pageNumero, int length) {
 
-        return getPage(pageNumero, length, Computer.FIELD_NAME);
+        return getPage(pageNumero, length, null, "ASC", Computer.FIELD_NAME);
     }
 
     @Override
-    public Page<ComputerDTO> getPage(int pageNumero, int length, String order) {
+    public Page<ComputerDTO> getPage(int pageNumero, int length, String search, String sort, String order) {
 
-        List<ComputerDTO> l = computerDAO.findAll((pageNumero - 1) * length, length, order).stream()
+        List<ComputerDTO> l = computerDAO.findAll((pageNumero - 1) * length, length, search, sort, order).stream()
                 .map(it -> computerDAO.createDTO(it)).collect(Collectors.toList());
 
         return new Page<ComputerDTO>(l, pageNumero);
@@ -99,8 +99,8 @@ public class ComputerServiceImpl implements ComputerService, PageServ<ComputerDT
     }
 
     @Override
-    public int count() {
-        return computerDAO.count();
+    public int count(String search) {
+        return computerDAO.count(search);
     }
 
     @Override

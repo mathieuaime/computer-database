@@ -57,7 +57,10 @@ public class ComputerDAOImpl implements ComputerDAO {
                                                                 + Computer.TABLE_NAME + " ON " + Computer.FIELD_COMPANY_ID + " = " + Company.TABLE_NAME + "."
                                                                 + Company.FIELD_ID + " WHERE " + Computer.TABLE_NAME + "." + Computer.FIELD_ID + " = ? ";
 
-    private static final String QUERY_COUNT_COMPUTERS           = "SELECT COUNT(*) AS count FROM " + Computer.TABLE_NAME;
+    private static final String QUERY_COUNT_COMPUTERS           = "SELECT COUNT(*) AS count " 
+                                                                + " FROM " + Computer.TABLE_NAME 
+                                                                + " LEFT JOIN " + Company.TABLE_NAME 
+                                                                + " ON " + Computer.TABLE_NAME + "." + Computer.FIELD_COMPANY_ID + "=" + Company.TABLE_NAME + "." + Company.FIELD_ID;
 
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(ComputerDAOImpl.class);
 
@@ -84,24 +87,24 @@ public class ComputerDAOImpl implements ComputerDAO {
 
     @Override
     public List<Computer> findAll() {
-        return findAll(-1, -1, Computer.FIELD_ID);
+        return findAll(-1, -1, null, "ASC", Computer.FIELD_ID);
     }
 
     @Override
-    public List<Computer> findAll(int offset, int length, String order) {
+    public List<Computer> findAll(int offset, int length, String search, String sort, String order) {
         List<Computer> computers = new ArrayList<>();
 
         try (Connection con = ConnectionMySQL.INSTANCE.getConnection(url);
-                PreparedStatement stmt = con
-                        .prepareStatement(QUERY_FIND_COMPUTER
-                                + (length != -1 ? " ORDER BY " + Computer.TABLE_NAME + "." + order
-                                        + " LIMIT " + length : "")
-                                + (length != -1 && offset != -1 ? " OFFSET " + offset : ""));) {
-            
-            LOGGER.debug(QUERY_FIND_COMPUTER
-                                + (length != -1 ? " ORDER BY " + Computer.TABLE_NAME + "." + order
-                                        + " LIMIT " + length : "")
-                                + (length != -1 && offset != -1 ? " OFFSET " + offset : ""));
+                PreparedStatement stmt = con.prepareStatement(QUERY_FIND_COMPUTER
+                        + (search != null ? " WHERE " + Computer.TABLE_NAME + "." + Computer.FIELD_NAME + " LIKE '%"
+                                + search + "%' OR " + Company.TABLE_NAME + "." + Company.FIELD_NAME + " LIKE '%"
+                                + search + "%'" : "")
+                        + (length != -1 ? " ORDER BY "
+                                + (sort != null && sort.equals("company") ? Company.TABLE_NAME : Computer.TABLE_NAME) + "."
+                                + (sort != null ? (sort.equals("company") ? Company.FIELD_NAME : sort)
+                                        : Computer.FIELD_NAME)
+                                + " " + (order != null ? order : "ASC") + " LIMIT " + length : "")
+                        + (length != -1 && offset != -1 ? " OFFSET " + offset : ""));) {
 
             final ResultSet rset = stmt.executeQuery();
 
@@ -234,11 +237,19 @@ public class ComputerDAOImpl implements ComputerDAO {
     }
 
     @Override
-    public int count() {
+    public int count(String search) {
         int count = 0;
+        
+        LOGGER.debug(QUERY_COUNT_COMPUTERS + (search != null
+                        ? " WHERE " + Computer.TABLE_NAME + "." + Computer.FIELD_NAME + " LIKE '%" + search + "%' OR "
+                                + Company.TABLE_NAME + "." + Company.FIELD_NAME + " LIKE '%" + search + "%'"
+                        : ""));
 
         try (Connection con = ConnectionMySQL.INSTANCE.getConnection(url);
-                PreparedStatement stmt = con.prepareStatement(QUERY_COUNT_COMPUTERS);) {
+                PreparedStatement stmt = con.prepareStatement(QUERY_COUNT_COMPUTERS + (search != null
+                        ? " WHERE " + Computer.TABLE_NAME + "." + Computer.FIELD_NAME + " LIKE '%" + search + "%' OR "
+                                + Company.TABLE_NAME + "." + Company.FIELD_NAME + " LIKE '%" + search + "%'"
+                        : ""));) {
             final ResultSet rset = stmt.executeQuery();
 
             if (rset.next()) {
@@ -325,7 +336,7 @@ public class ComputerDAOImpl implements ComputerDAO {
                 PreparedStatement stmt = con.prepareStatement(QUERY_DELETE_COMPUTER);) {
 
             ids = listId.stream().map(Object::toString).collect(Collectors.joining(", "));
-            
+
             stmt.setString(1, ids);
             int res = stmt.executeUpdate();
             delete = res == 1;

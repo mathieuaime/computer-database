@@ -54,11 +54,11 @@ public class CompanyServiceImpl implements CompanyService, PageServ<CompanyDTO> 
 
     @Override
     public Page<CompanyDTO> getPage(int pageNumero, int length) {
-        return getPage(pageNumero, length, Company.FIELD_NAME);
+        return getPage(pageNumero, length, null, "ASC", Company.FIELD_NAME);
     }
 
     @Override
-    public Page<CompanyDTO> getPage(int pageNumero, int length, String order) {
+    public Page<CompanyDTO> getPage(int pageNumero, int length, String search, String sort, String order) {
         List<CompanyDTO> l = companyDAO.findAll((pageNumero - 1) * length, length, order).stream()
                 .map(it -> companyDAO.createDTO(it)).collect(Collectors.toList());
 

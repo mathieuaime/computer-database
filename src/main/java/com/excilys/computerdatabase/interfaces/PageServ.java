@@ -25,5 +25,5 @@ public interface PageServ<T> {
      * @param order the field for order by
      * @return Page<T>
      */
-    Page<T> getPage(int pageNumero, int length, String order);
+    Page<T> getPage(int pageNumero, int length, String search, String sort, String order);
 }
