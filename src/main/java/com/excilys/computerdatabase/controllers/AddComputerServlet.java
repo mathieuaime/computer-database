@@ -13,8 +13,11 @@ import com.excilys.computerdatabase.dtos.CompanyDTO;
 import com.excilys.computerdatabase.dtos.ComputerDTO;
 import com.excilys.computerdatabase.exceptions.IntroducedAfterDiscontinuedException;
 import com.excilys.computerdatabase.exceptions.NameEmptyException;
+import com.excilys.computerdatabase.mappers.ComputerMapper;
+import com.excilys.computerdatabase.models.Computer;
 import com.excilys.computerdatabase.services.CompanyServiceImpl;
 import com.excilys.computerdatabase.services.ComputerServiceImpl;
+import com.excilys.computerdatabase.validators.ComputerValidator;
 
 public class AddComputerServlet extends HttpServlet {
 
@@ -69,9 +72,11 @@ public class AddComputerServlet extends HttpServlet {
         computerDTO.setIntroduced(request.getParameter("introduced"));
         computerDTO.setDiscontinued(request.getParameter("discontinued"));
         computerDTO.setCompanyId(Long.parseLong(request.getParameter("companyId")));
+        
+        Computer computer =  ComputerMapper.createBean(computerDTO);
 
         try {
-            computerService.add(computerDTO);
+            ComputerValidator.validate(computer);
             response.sendRedirect("dashboard");
         } catch (IntroducedAfterDiscontinuedException e) {
             request.setAttribute("error", "La date d'ajout doit être antérieure à la date de retrait");
@@ -80,6 +85,8 @@ public class AddComputerServlet extends HttpServlet {
             request.setAttribute("error", "Le nom doit être spécifié");
             doGet(request, response);
         }
+
+        computerService.add(computer);
     }
 
 }

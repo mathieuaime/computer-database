@@ -4,8 +4,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -14,10 +12,7 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 
 import com.excilys.computerdatabase.config.Config;
-import com.excilys.computerdatabase.dtos.ComputerDTO;
 import com.excilys.computerdatabase.exceptions.ComputerNotFoundException;
-import com.excilys.computerdatabase.exceptions.IntroducedAfterDiscontinuedException;
-import com.excilys.computerdatabase.exceptions.NameEmptyException;
 import com.excilys.computerdatabase.interfaces.ComputerDAO;
 import com.excilys.computerdatabase.mappers.CompanyMapper;
 import com.excilys.computerdatabase.mappers.ComputerMapper;
@@ -64,11 +59,7 @@ public class ComputerDAOImpl implements ComputerDAO {
 
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(ComputerDAOImpl.class);
 
-    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern(Config.getProperties().getProperty("date_format"));
-
     private String url;
-
-    private CompanyDAOImpl cDAO = new CompanyDAOImpl();
 
     /**
      * ComputerDAO constructor.
@@ -281,47 +272,7 @@ public class ComputerDAOImpl implements ComputerDAO {
 
         return company;
     }
-
-    @Override
-    public ComputerDTO createDTO(Computer computer) {
-        ComputerDTO computerDTO = new ComputerDTO();
-
-        LocalDate introduced = computer.getIntroduced();
-        LocalDate discontinued = computer.getDiscontinued();
-
-        computerDTO.setId(computer.getId());
-        computerDTO.setName(computer.getName());
-        computerDTO.setIntroduced((introduced != null ? introduced.format(DATE_FORMATTER) : ""));
-        computerDTO.setDiscontinued((discontinued != null ? discontinued.format(DATE_FORMATTER) : ""));
-        computerDTO.setCompanyId(computer.getCompany().getId());
-        computerDTO.setCompanyName(computer.getCompany().getName());
-
-        return computerDTO;
-    }
-
-    @Override
-    public Computer createBean(ComputerDTO computerDTO) throws IntroducedAfterDiscontinuedException, NameEmptyException {
-        Computer computer = null;
-
-        if (computerDTO.getName().equals("")) {
-            throw new NameEmptyException("Name Empty");
-        }
-
-        LocalDate introduced = (computerDTO.getIntroduced().equals("") ? null
-                : LocalDate.parse(computerDTO.getIntroduced(), DATE_FORMATTER));
-        LocalDate discontinued = (computerDTO.getDiscontinued().equals("") ? null
-                : LocalDate.parse(computerDTO.getDiscontinued(), DATE_FORMATTER));
-
-        if (introduced != null && discontinued != null && introduced.isAfter(discontinued)) {
-            throw new IntroducedAfterDiscontinuedException("Introduced date after Discontinued date");
-        }
-
-        computer = new Computer.Builder(computerDTO.getName()).id(computerDTO.getId()).introduced(introduced)
-                .discontinued(discontinued).company(cDAO.getById(computerDTO.getCompanyId())).build();
-
-        return computer;
-    }
-
+    
     @Override
     public void delete(List<Long> listId) throws ComputerNotFoundException {
         boolean delete = false;

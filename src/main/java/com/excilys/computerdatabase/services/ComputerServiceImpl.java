@@ -3,22 +3,20 @@ package com.excilys.computerdatabase.services;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.excilys.computerdatabase.daos.CompanyDAOImpl;
 import com.excilys.computerdatabase.daos.ComputerDAOImpl;
 import com.excilys.computerdatabase.dtos.CompanyDTO;
 import com.excilys.computerdatabase.dtos.ComputerDTO;
 import com.excilys.computerdatabase.dtos.Page;
 import com.excilys.computerdatabase.exceptions.ComputerNotFoundException;
-import com.excilys.computerdatabase.exceptions.IntroducedAfterDiscontinuedException;
-import com.excilys.computerdatabase.exceptions.NameEmptyException;
 import com.excilys.computerdatabase.interfaces.ComputerService;
 import com.excilys.computerdatabase.interfaces.PageServ;
+import com.excilys.computerdatabase.mappers.CompanyMapper;
+import com.excilys.computerdatabase.mappers.ComputerMapper;
 import com.excilys.computerdatabase.models.Computer;
 
 public class ComputerServiceImpl implements ComputerService, PageServ<ComputerDTO> {
 
     private ComputerDAOImpl computerDAO;
-    private CompanyDAOImpl companyDAO;
 
     /**
      * ComputerService constructor.
@@ -37,7 +35,7 @@ public class ComputerServiceImpl implements ComputerService, PageServ<ComputerDT
 
     @Override
     public List<ComputerDTO> get() {
-        return computerDAO.findAll().stream().map(it -> computerDAO.createDTO(it)).collect(Collectors.toList());
+        return computerDAO.findAll().stream().map(it -> ComputerMapper.createDTO(it)).collect(Collectors.toList());
     }
 
     @Override
@@ -55,7 +53,7 @@ public class ComputerServiceImpl implements ComputerService, PageServ<ComputerDT
     public Page<ComputerDTO> getPage(int pageNumero, int length, String search, String sort, String order) {
 
         List<ComputerDTO> l = computerDAO.findAll((pageNumero - 1) * length, length, search, sort, order).stream()
-                .map(it -> computerDAO.createDTO(it)).collect(Collectors.toList());
+                .map(it -> ComputerMapper.createDTO(it)).collect(Collectors.toList());
 
         return new Page<ComputerDTO>(l, pageNumero);
     }
@@ -68,23 +66,21 @@ public class ComputerServiceImpl implements ComputerService, PageServ<ComputerDT
             throw new ComputerNotFoundException("Computer Not Found");
         }
 
-        return computerDAO.createDTO(computer);
+        return ComputerMapper.createDTO(computer);
     }
 
     @Override
     public List<ComputerDTO> getByName(String name) {
-        return computerDAO.getByName(name).stream().map(it -> computerDAO.createDTO(it)).collect(Collectors.toList());
+        return computerDAO.getByName(name).stream().map(it -> ComputerMapper.createDTO(it)).collect(Collectors.toList());
     }
 
     @Override
-    public void add(ComputerDTO computerDTO) throws IntroducedAfterDiscontinuedException, NameEmptyException {
-        Computer computer = computerDAO.createBean(computerDTO);
+    public void add(Computer computer) {
         computerDAO.add(computer);
     }
 
     @Override
-    public void update(ComputerDTO computerDTO) throws IntroducedAfterDiscontinuedException, ComputerNotFoundException, NameEmptyException {
-        Computer computer = computerDAO.createBean(computerDTO);
+    public void update(Computer computer) throws ComputerNotFoundException {
         computerDAO.update(computer);
     }
 
@@ -105,6 +101,6 @@ public class ComputerServiceImpl implements ComputerService, PageServ<ComputerDT
 
     @Override
     public CompanyDTO getCompany(long id) {
-        return companyDAO.createDTO(computerDAO.getCompany(id));
+        return CompanyMapper.createDTO(computerDAO.getCompany(id));
     }
 }

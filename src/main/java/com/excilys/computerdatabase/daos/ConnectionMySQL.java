@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import org.slf4j.Logger;
 
 import com.excilys.computerdatabase.config.Config;
+import com.excilys.computerdatabase.mappers.ComputerMapper;
 
 public enum ConnectionMySQL {
 
@@ -35,6 +36,7 @@ public enum ConnectionMySQL {
         try {
             Class.forName("com.mysql.jdbc.Driver").newInstance();
             con = DriverManager.getConnection(url, USER, PASSWORD);
+            ComputerMapper.setUrl(url);
         } catch (SQLException | InstantiationException | IllegalAccessException | ClassNotFoundException e) {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Exception: " + e);

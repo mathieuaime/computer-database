@@ -101,7 +101,7 @@ public class CompanyTest extends DatabaseTestCase {
 
         try {
 
-            assertEquals(40, companyService.getComputers(1).size());
+            assertEquals(4, companyService.getComputers(1).size());
 
         } catch (Exception e) {
             if (LOGGER.isDebugEnabled()) {

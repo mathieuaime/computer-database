@@ -11,7 +11,6 @@ import java.util.List;
 import org.slf4j.Logger;
 
 import com.excilys.computerdatabase.config.Config;
-import com.excilys.computerdatabase.dtos.CompanyDTO;
 import com.excilys.computerdatabase.interfaces.CompanyDAO;
 import com.excilys.computerdatabase.mappers.CompanyMapper;
 import com.excilys.computerdatabase.mappers.ComputerMapper;
@@ -160,25 +159,6 @@ public class CompanyDAOImpl implements CompanyDAO {
         }
 
         return computers;
-    }
-
-    @Override
-    public CompanyDTO createDTO(Company company) {
-        CompanyDTO companyDTO = new CompanyDTO();
-
-        companyDTO.setId(company.getId());
-        companyDTO.setName(company.getName());
-
-        for (Computer c : getComputers(company.getId())) {
-            companyDTO.getComputersList().add(c.getId());
-        }
-
-        return companyDTO;
-    }
-
-    @Override
-    public Company createBean(CompanyDTO companyDTO) {
-        return new Company.Builder(companyDTO.getName()).id(companyDTO.getId()).build();
     }
 
 }

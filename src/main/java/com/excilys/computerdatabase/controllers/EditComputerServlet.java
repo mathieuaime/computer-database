@@ -14,8 +14,11 @@ import com.excilys.computerdatabase.dtos.ComputerDTO;
 import com.excilys.computerdatabase.exceptions.ComputerNotFoundException;
 import com.excilys.computerdatabase.exceptions.IntroducedAfterDiscontinuedException;
 import com.excilys.computerdatabase.exceptions.NameEmptyException;
+import com.excilys.computerdatabase.mappers.ComputerMapper;
+import com.excilys.computerdatabase.models.Computer;
 import com.excilys.computerdatabase.services.CompanyServiceImpl;
 import com.excilys.computerdatabase.services.ComputerServiceImpl;
+import com.excilys.computerdatabase.validators.ComputerValidator;
 
 public class EditComputerServlet extends HttpServlet {
 
@@ -83,9 +86,12 @@ public class EditComputerServlet extends HttpServlet {
         computerDTO.setIntroduced(request.getParameter("introduced"));
         computerDTO.setDiscontinued(request.getParameter("discontinued"));
         computerDTO.setCompanyId(Long.parseLong(request.getParameter("companyId")));
+        
+        Computer computer = ComputerMapper.createBean(computerDTO);
 
         try {
-            computerService.update(computerDTO);
+            ComputerValidator.validate(computer);
+            computerService.update(computer);
             response.sendRedirect("dashboard");
         } catch (IntroducedAfterDiscontinuedException e) {
             request.setAttribute("error", "La date d'ajout doit être antérieure à la date de retrait");

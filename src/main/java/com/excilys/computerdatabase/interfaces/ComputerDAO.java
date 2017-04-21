@@ -2,10 +2,7 @@ package com.excilys.computerdatabase.interfaces;
 
 import java.util.List;
 
-import com.excilys.computerdatabase.dtos.ComputerDTO;
 import com.excilys.computerdatabase.exceptions.ComputerNotFoundException;
-import com.excilys.computerdatabase.exceptions.IntroducedAfterDiscontinuedException;
-import com.excilys.computerdatabase.exceptions.NameEmptyException;
 import com.excilys.computerdatabase.models.Company;
 import com.excilys.computerdatabase.models.Computer;
 
@@ -79,20 +76,4 @@ public interface ComputerDAO {
      * @return Company
      */
     Company getCompany(long id);
-
-    /**
-     * Create a DTO from a computer.
-     * @param computer the computer
-     * @return ComputerDTO
-     */
-    ComputerDTO createDTO(Computer computer);
-
-    /**
-     * Create a computer from a DTO.
-     * @param computerDTO the computerDTO
-     * @return Computer
-     * @throws IntroducedAfterDiscontinuedException exception when the introduced date is before the dicontinued date
-     * @throws NameEmptyException exception when the name is empty
-     */
-    Computer createBean(ComputerDTO computerDTO) throws IntroducedAfterDiscontinuedException, NameEmptyException;
 }

@@ -5,7 +5,10 @@ import java.sql.SQLException;
 
 import org.slf4j.Logger;
 
+import com.excilys.computerdatabase.daos.CompanyDAOImpl;
+import com.excilys.computerdatabase.dtos.CompanyDTO;
 import com.excilys.computerdatabase.models.Company;
+import com.excilys.computerdatabase.models.Computer;
 
 public class CompanyMapper {
 
@@ -31,5 +34,24 @@ public class CompanyMapper {
         }
 
         return company;
+    }
+    
+    public static CompanyDTO createDTO(Company company) {
+        CompanyDTO companyDTO = new CompanyDTO();
+
+        companyDTO.setId(company.getId());
+        companyDTO.setName(company.getName());
+        
+        CompanyDAOImpl companyDAO = new CompanyDAOImpl(); 
+
+        for (Computer c : companyDAO.getComputers(company.getId())) {
+            companyDTO.getComputersList().add(c.getId());
+        }
+
+        return companyDTO;
+    }
+
+    public static Company createBean(CompanyDTO companyDTO) {
+        return new Company.Builder(companyDTO.getName()).id(companyDTO.getId()).build();
     }
 }

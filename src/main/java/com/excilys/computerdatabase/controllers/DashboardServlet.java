@@ -8,7 +8,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.excilys.computerdatabase.models.Computer;
 import com.excilys.computerdatabase.services.ComputerServiceImpl;
 
 public class DashboardServlet extends HttpServlet {

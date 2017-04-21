@@ -7,6 +7,7 @@ import com.excilys.computerdatabase.dtos.ComputerDTO;
 import com.excilys.computerdatabase.exceptions.ComputerNotFoundException;
 import com.excilys.computerdatabase.exceptions.IntroducedAfterDiscontinuedException;
 import com.excilys.computerdatabase.exceptions.NameEmptyException;
+import com.excilys.computerdatabase.models.Computer;
 
 public interface ComputerService {
 
@@ -38,7 +39,7 @@ public interface ComputerService {
      * @throws IntroducedAfterDiscontinuedException exception when the introduced date is before the dicontinued date
      * @throws NameEmptyException exception when the name is empty
      */
-    void add(ComputerDTO computerDTO) throws IntroducedAfterDiscontinuedException, NameEmptyException;
+    void add(Computer computer);
 
     /**
      * Update a computer.
@@ -47,7 +48,7 @@ public interface ComputerService {
      * @throws IntroducedAfterDiscontinuedException exception when the introduced date is before the dicontinued date
      * @throws NameEmptyException exception when the name is empty
      */
-    void update(ComputerDTO computerDTO) throws IntroducedAfterDiscontinuedException, ComputerNotFoundException, NameEmptyException;
+    void update(Computer computer) throws ComputerNotFoundException;
 
     /**
      * Delete a computer.

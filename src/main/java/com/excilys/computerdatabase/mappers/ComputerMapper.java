@@ -3,15 +3,24 @@ package com.excilys.computerdatabase.mappers;
 import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 import org.slf4j.Logger;
 
+import com.excilys.computerdatabase.config.Config;
+import com.excilys.computerdatabase.daos.CompanyDAOImpl;
+import com.excilys.computerdatabase.dtos.ComputerDTO;
 import com.excilys.computerdatabase.models.Company;
 import com.excilys.computerdatabase.models.Computer;
 
 public class ComputerMapper {
 
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(ComputerMapper.class);
+
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern(Config.getProperties().getProperty("date_format"));
+    
+    private static String url;
 
     /**
      * Create a computer from a ResultSet.
@@ -44,6 +53,56 @@ public class ComputerMapper {
         }
 
         return computer;
+    }
+
+    /**
+     * Create a computer from a DTO.
+     * @param computerDTO the computerDTO
+     * @return Computer
+     */
+    public static Computer createBean(ComputerDTO computerDTO) {
+        Computer computer = null;
+        
+        CompanyDAOImpl cDAO = new CompanyDAOImpl();
+
+        LocalDate introduced = (computerDTO.getIntroduced().equals("") ? null
+                : LocalDate.parse(computerDTO.getIntroduced(), DATE_FORMATTER));
+        LocalDate discontinued = (computerDTO.getDiscontinued().equals("") ? null
+                : LocalDate.parse(computerDTO.getDiscontinued(), DATE_FORMATTER));
+
+        computer = new Computer.Builder(computerDTO.getName()).id(computerDTO.getId()).introduced(introduced)
+                .discontinued(discontinued).company(cDAO.getById(computerDTO.getCompanyId())).build();
+
+        return computer;
+    }
+
+    /**
+     * Create a DTO from a computer.
+     * @param computer the computer
+     * @return ComputerDTO
+     */
+    public static ComputerDTO createDTO(Computer computer) {
+        ComputerDTO computerDTO = new ComputerDTO();
+
+        LocalDate introduced = computer.getIntroduced();
+        LocalDate discontinued = computer.getDiscontinued();
+
+        computerDTO.setId(computer.getId());
+        computerDTO.setName(computer.getName());
+        computerDTO.setIntroduced((introduced != null ? introduced.format(DATE_FORMATTER) : ""));
+        computerDTO.setDiscontinued((discontinued != null ? discontinued.format(DATE_FORMATTER) : ""));
+        computerDTO.setCompanyId(computer.getCompany().getId());
+        computerDTO.setCompanyName(computer.getCompany().getName());
+
+        return computerDTO;
+    }
+    
+    public static void setUrl(String url) {
+        ComputerMapper.url = url;
+    }
+    
+    public static String getUrl() {
+        return url;
     }
 
 }

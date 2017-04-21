@@ -15,16 +15,16 @@ import org.junit.Test;
 import org.slf4j.Logger;
 
 import com.excilys.computerdatabase.config.Config;
-import com.excilys.computerdatabase.dtos.ComputerDTO;
 import com.excilys.computerdatabase.models.Company;
+import com.excilys.computerdatabase.models.Computer;
 import com.excilys.computerdatabase.services.ComputerServiceImpl;
 
 public class ComputerTest extends DatabaseTestCase {
 
     private ComputerServiceImpl computerService;
     private Company comp1;
-    private ComputerDTO c1;
-    private ComputerDTO c2;
+    private Computer c1;
+    private Computer c2;
 
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(ComputerTest.class);
 
@@ -40,17 +40,15 @@ public class ComputerTest extends DatabaseTestCase {
     public ComputerTest() {
         computerService = new ComputerServiceImpl(URL);
 
-        comp1 = new Company.Builder("Apple Inc.").id(1L).build();
+        comp1 = new Company.Builder("Apple Inc.").id(1000L).build();
 
-        c1 = new ComputerDTO();
-        c1.setName("Computer1");
+        c1 = new Computer("Computer1");
         c1.setId(1000L);
-        c1.setCompanyId(comp1.getId());
+        c1.setCompany(comp1);
 
-        c2 = new ComputerDTO();
-        c2.setName("Computer2");
+        c2 = new Computer("Computer2");
         c2.setId(1001L);
-        c2.setCompanyId(comp1.getId());
+        c2.setCompany(comp1);
     }
 
     /**
@@ -116,7 +114,7 @@ public class ComputerTest extends DatabaseTestCase {
     @Test
     public void testAdd() {
 
-        try {
+        try {            
             computerService.add(c1);
 
             assertEquals(c1, computerService.getById(c1.getId()));

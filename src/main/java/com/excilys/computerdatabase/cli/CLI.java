@@ -8,8 +8,11 @@ import com.excilys.computerdatabase.dtos.ComputerDTO;
 import com.excilys.computerdatabase.exceptions.ComputerNotFoundException;
 import com.excilys.computerdatabase.exceptions.IntroducedAfterDiscontinuedException;
 import com.excilys.computerdatabase.exceptions.NameEmptyException;
+import com.excilys.computerdatabase.mappers.ComputerMapper;
+import com.excilys.computerdatabase.models.Computer;
 import com.excilys.computerdatabase.services.CompanyServiceImpl;
 import com.excilys.computerdatabase.services.ComputerServiceImpl;
+import com.excilys.computerdatabase.validators.ComputerValidator;
 
 public class CLI {
 
@@ -134,7 +137,10 @@ public class CLI {
                     c.setDiscontinued(discontinuedComputer);
                     c.setCompanyId(Long.parseLong(idCompany));
 
-                    computerService.add(c);
+                    Computer computer = ComputerMapper.createBean(c);
+                    
+                    ComputerValidator.validate(computer);
+                    computerService.add(computer);
 
                     System.out.println("Computer ajouté");
 
@@ -174,7 +180,10 @@ public class CLI {
                     c.setDiscontinued(discontinuedComputer);
                     c.setCompanyId(Long.parseLong(idCompany));
 
-                    computerService.update(c);
+                    Computer computer = ComputerMapper.createBean(c);
+                    
+                    ComputerValidator.validate(computer);
+                    computerService.update(computer);
 
                 } catch (NumberFormatException e) {
                     System.out.println("L'id doit être un nombre");
