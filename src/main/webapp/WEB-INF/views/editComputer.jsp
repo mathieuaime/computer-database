@@ -54,7 +54,7 @@
 									class="form-control" id="companyId" name="companyId">
 									<c:forEach items="${companies}" var="company">
 										<c:choose>
-											<c:when test="${company.id == computer.companyId}">
+											<c:when test="${company.id == computer.company.id}">
 												<option value="${company.id}" selected="selected">${company.name}</option>
 											</c:when>
 											<c:otherwise>

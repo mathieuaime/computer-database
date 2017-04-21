@@ -129,15 +129,18 @@ public class CLI {
                 idCompany = scanner.next();
 
                 try {
-                    ComputerDTO c = new ComputerDTO();
+                    ComputerDTO computerDTO = new ComputerDTO();
+                    CompanyDTO companyDTO = new CompanyDTO();
 
-                    c.setName(nameComputer);
-                    c.setId(Long.parseLong(idComputer));
-                    c.setIntroduced(introducedComputer);
-                    c.setDiscontinued(discontinuedComputer);
-                    c.setCompanyId(Long.parseLong(idCompany));
+                    companyDTO.setId(Long.parseLong(idCompany));
 
-                    Computer computer = ComputerMapper.createBean(c);
+                    computerDTO.setName(nameComputer);
+                    computerDTO.setId(Long.parseLong(idComputer));
+                    computerDTO.setIntroduced(introducedComputer);
+                    computerDTO.setDiscontinued(discontinuedComputer);
+                    computerDTO.setCompany(companyDTO);
+
+                    Computer computer = ComputerMapper.createBean(computerDTO);
                     
                     ComputerValidator.validate(computer);
                     computerService.add(computer);
@@ -172,15 +175,19 @@ public class CLI {
                 idCompany = scanner.nextLine();
 
                 try {
-                    ComputerDTO c = new ComputerDTO();
+                    ComputerDTO computerDTO = new ComputerDTO();
+                    CompanyDTO companyDTO = new CompanyDTO();
+                    
 
-                    c.setName(nameComputer);
-                    c.setId(Long.parseLong(idComputer));
-                    c.setIntroduced(introducedComputer);
-                    c.setDiscontinued(discontinuedComputer);
-                    c.setCompanyId(Long.parseLong(idCompany));
+                    companyDTO.setId(Long.parseLong(idCompany));
 
-                    Computer computer = ComputerMapper.createBean(c);
+                    computerDTO.setName(nameComputer);
+                    computerDTO.setId(Long.parseLong(idComputer));
+                    computerDTO.setIntroduced(introducedComputer);
+                    computerDTO.setDiscontinued(discontinuedComputer);
+                    computerDTO.setCompany(companyDTO);
+
+                    Computer computer = ComputerMapper.createBean(computerDTO);
                     
                     ComputerValidator.validate(computer);
                     computerService.update(computer);

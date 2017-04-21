@@ -92,7 +92,7 @@
 							<c:if test="${sort == 'name' && order == 'DESC'}">
 								<span class="glyphicon glyphicon-chevron-down"></span>
 							</c:if>
-						</th>introduced
+						</th>
 
 						<!-- Table header for Introduced Date -->
 						<th><utils:link href="dashboard" length="${length}"
@@ -144,7 +144,7 @@
 							<td><a href="editComputer?id=${computer.id}" onclick="">${computer.name}</a></td>
 							<td>${computer.introduced}</td>
 							<td>${computer.discontinued}</td>
-							<td>${computer.companyName}</td>
+							<td>${computer.company.name}</td>
 						</tr>
 					</c:forEach>
 				</tbody>

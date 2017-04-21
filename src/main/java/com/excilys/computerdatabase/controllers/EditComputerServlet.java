@@ -80,13 +80,16 @@ public class EditComputerServlet extends HttpServlet {
             throws ServletException, IOException {
 
         ComputerDTO computerDTO = new ComputerDTO();
+        CompanyDTO companyDTO = new CompanyDTO();
+
+        companyDTO.setId(Long.parseLong(request.getParameter("companyId")));
 
         computerDTO.setId(Long.parseLong(request.getParameter("id")));
         computerDTO.setName(request.getParameter("name"));
         computerDTO.setIntroduced(request.getParameter("introduced"));
         computerDTO.setDiscontinued(request.getParameter("discontinued"));
-        computerDTO.setCompanyId(Long.parseLong(request.getParameter("companyId")));
-        
+        computerDTO.setCompany(companyDTO);
+
         Computer computer = ComputerMapper.createBean(computerDTO);
 
         try {

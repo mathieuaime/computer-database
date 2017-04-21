@@ -5,8 +5,7 @@ public class ComputerDTO {
     private String name;
     private String introduced;
     private String discontinued;
-    private long companyId;
-    private String companyName;
+    private CompanyDTO company;
 
     public long getId() {
         return id;
@@ -40,24 +39,16 @@ public class ComputerDTO {
         this.discontinued = discontinued;
     }
 
-    public long getCompanyId() {
-        return companyId;
+    public CompanyDTO getCompany() {
+        return company;
     }
 
-    public void setCompanyId(long companyId) {
-        this.companyId = companyId;
-    }
-
-    public String getCompanyName() {
-        return companyName;
-    }
-
-    public void setCompanyName(String companyName) {
-        this.companyName = companyName;
+    public void setCompany(CompanyDTO company) {
+        this.company = company;
     }
 
     @Override
     public String toString() {
-        return id + "/" + name + "/" + introduced + "/" + discontinued + "/" + companyName;
+        return id + "/" + name + "/" + introduced + "/" + discontinued + "/" + company;
     }
 }

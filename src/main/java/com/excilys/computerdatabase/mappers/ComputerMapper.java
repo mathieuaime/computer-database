@@ -71,7 +71,7 @@ public class ComputerMapper {
                 : LocalDate.parse(computerDTO.getDiscontinued(), DATE_FORMATTER));
 
         computer = new Computer.Builder(computerDTO.getName()).id(computerDTO.getId()).introduced(introduced)
-                .discontinued(discontinued).company(cDAO.getById(computerDTO.getCompanyId())).build();
+                .discontinued(discontinued).company(cDAO.getById(computerDTO.getCompany().getId())).build();
 
         return computer;
     }
@@ -91,8 +91,7 @@ public class ComputerMapper {
         computerDTO.setName(computer.getName());
         computerDTO.setIntroduced((introduced != null ? introduced.format(DATE_FORMATTER) : ""));
         computerDTO.setDiscontinued((discontinued != null ? discontinued.format(DATE_FORMATTER) : ""));
-        computerDTO.setCompanyId(computer.getCompany().getId());
-        computerDTO.setCompanyName(computer.getCompany().getName());
+        computerDTO.setCompany(CompanyMapper.createDTO(computer.getCompany()));
 
         return computerDTO;
     }
