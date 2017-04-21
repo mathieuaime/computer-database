@@ -239,11 +239,6 @@ public class ComputerDAOImpl implements ComputerDAO {
     @Override
     public int count(String search) {
         int count = 0;
-        
-        LOGGER.debug(QUERY_COUNT_COMPUTERS + (search != null
-                        ? " WHERE " + Computer.TABLE_NAME + "." + Computer.FIELD_NAME + " LIKE '%" + search + "%' OR "
-                                + Company.TABLE_NAME + "." + Company.FIELD_NAME + " LIKE '%" + search + "%'"
-                        : ""));
 
         try (Connection con = ConnectionMySQL.INSTANCE.getConnection(url);
                 PreparedStatement stmt = con.prepareStatement(QUERY_COUNT_COMPUTERS + (search != null

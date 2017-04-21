@@ -48,7 +48,7 @@ public class ComputerServiceImpl implements ComputerService, PageServ<ComputerDT
     @Override
     public Page<ComputerDTO> getPage(int pageNumero, int length) {
 
-        return getPage(pageNumero, length, null, "ASC", Computer.FIELD_NAME);
+        return getPage(pageNumero, length, null, Computer.FIELD_NAME, "ASC");
     }
 
     @Override
