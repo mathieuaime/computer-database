@@ -17,7 +17,7 @@
 		<jstlVersion>1.2</jstlVersion>
 		<logbackVersion>1.0.13</logbackVersion>
 		<dbUnitVersion>2.4.9</dbUnitVersion>
-		<seleniumVersion>1.0.1</seleniumVersion>
+		<seleniumVersion>2.27.0</seleniumVersion>
 		<javaVersion>1.8</javaVersion>
 		<mavenWarPlugin>2.1.1</mavenWarPlugin>
 		<seleniumPluginVersion>1.0.1</seleniumPluginVersion>
@@ -89,8 +89,8 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.seleniumhq.selenium.client-drivers</groupId>
-			<artifactId>selenium-java-client-driver</artifactId>
+			<groupId>org.seleniumhq.selenium</groupId>
+			<artifactId>selenium-java</artifactId>
 			<version>${seleniumVersion}</version>
 			<scope>test</scope>
 		</dependency>
