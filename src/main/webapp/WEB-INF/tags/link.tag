@@ -1,3 +1,4 @@
+<%@tag import="com.excilys.computerdatabase.config.Config"%>
 <%@ tag language="java" pageEncoding="ISO-8859-1"%>
 
 <%@ attribute name="href" required="true" rtexprvalue="true"%>
@@ -20,11 +21,14 @@
 <%@ attribute name="li" required="false" type="java.lang.String"%>
 
 <%
+	int PAGE_DEFAULT = Integer.parseInt(Config.getProperties().getProperty("page_default"));
+	int LENGTH_DEFAULT = Integer.parseInt(Config.getProperties().getProperty("length_default"));
+
     previous 				= (previous	!= null ? previous 	: false);
     next 					= (next 	!= null ? next 		: false);
-    
-    page					= (page 	!= null ? page 		: 1);
-    length					= (length 	!= null ? length 	: 10);
+
+    page					= (page 	!= null ? page 		: PAGE_DEFAULT);
+    length					= (length 	!= null ? length 	: LENGTH_DEFAULT);
 
     String output 			= "";
     String pageAdresse 		= "?page=" + String.valueOf(page);

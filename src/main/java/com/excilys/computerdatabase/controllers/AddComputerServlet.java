@@ -48,7 +48,7 @@ public class AddComputerServlet extends HttpServlet {
 
         RequestDispatcher view = request.getRequestDispatcher("WEB-INF/views/addComputer.jsp");
 
-        List<CompanyDTO> companies = companyService.get(); // TODO voir si trier les companies
+        List<CompanyDTO> companies = companyService.get();
 
         request.setAttribute("companies", companies);
 

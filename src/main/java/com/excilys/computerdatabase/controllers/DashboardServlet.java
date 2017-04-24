@@ -10,12 +10,16 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.excilys.computerdatabase.config.Config;
 import com.excilys.computerdatabase.exceptions.ComputerNotFoundException;
 import com.excilys.computerdatabase.services.ComputerServiceImpl;
 
 public class DashboardServlet extends HttpServlet {
 
     private static final long serialVersionUID = 6465944299510271447L;
+
+    private static final int PAGE_DEFAULT = Integer.parseInt(Config.getProperties().getProperty("page_default"));
+    private static final int LENGTH_DEFAULT = Integer.parseInt(Config.getProperties().getProperty("length_default"));
 
     /**
      * GET Dashboard.
@@ -29,9 +33,8 @@ public class DashboardServlet extends HttpServlet {
 
         ComputerServiceImpl computerService = new ComputerServiceImpl();
 
-        //TODO valeurs par défaut dans config.properties
-        int page = (request.getParameter("page") != null ? Integer.parseInt(request.getParameter("page")) : 1);
-        int length = (request.getParameter("length") != null ? Integer.parseInt(request.getParameter("length")) : 10);
+        int page = (request.getParameter("page") != null ? Integer.parseInt(request.getParameter("page")) : PAGE_DEFAULT);
+        int length = (request.getParameter("length") != null ? Integer.parseInt(request.getParameter("length")) : LENGTH_DEFAULT);
 
         String search = request.getParameter("search");
         String sort = request.getParameter("sort");

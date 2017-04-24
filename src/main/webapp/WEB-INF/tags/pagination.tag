@@ -48,11 +48,11 @@
 	<c:forEach items="${lengths}" var="i">
 		<c:choose>
 			<c:when test="${length == i}">
-				<customTag:link href="dashboard" page="1" length="${i}" text="${i}"
+				<customTag:link href="dashboard" length="${i}" text="${i}"
 					search="${search}" sort="${sort}" order="${order}" button="primary" />
 			</c:when>
 			<c:otherwise>
-				<customTag:link href="dashboard" page="1" length="${i}" text="${i}"
+				<customTag:link href="dashboard" length="${i}" text="${i}"
 					search="${search}" sort="${sort}" order="${order}" button="default" />
 			</c:otherwise>
 		</c:choose>

@@ -51,7 +51,7 @@ public class CompanyDAOImpl implements CompanyDAO {
 
     @Override
     public List<Company> findAll() {
-        return findAll(-1, -1, Company.FIELD_ID);
+        return findAll(-1, -1, Company.FIELD_NAME);
     }
 
     @Override
@@ -60,7 +60,8 @@ public class CompanyDAOImpl implements CompanyDAO {
 
         try (Connection con = ConnectionMySQL.INSTANCE.getConnection();
                 PreparedStatement stmt = con.prepareStatement(QUERY_FIND_COMPANIES
-                        + (length != -1 ? " ORDER BY " + order + " LIMIT " + length : "")
+                        + " ORDER BY " + order
+                        + (length != -1 ? " LIMIT " + length : "")
                         + (length != -1 && offset != -1 ? " OFFSET " + offset : ""));) {
 
             final ResultSet rset = stmt.executeQuery();

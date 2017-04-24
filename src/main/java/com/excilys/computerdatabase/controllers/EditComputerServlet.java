@@ -61,7 +61,7 @@ public class EditComputerServlet extends HttpServlet {
 
         request.setAttribute("computer", computerDTO);
 
-        List<CompanyDTO> companies = companyService.get(); // TODO voir si trier les companies
+        List<CompanyDTO> companies = companyService.get();
 
         request.setAttribute("companies", companies);
 
