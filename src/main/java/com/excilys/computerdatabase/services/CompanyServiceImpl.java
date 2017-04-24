@@ -24,14 +24,6 @@ public class CompanyServiceImpl implements CompanyService, PageServ<CompanyDTO> 
         companyDAO = new CompanyDAOImpl();
     }
 
-    /**
-     * CompanyService constructor with a custom url.
-     * @param url the url of the connexion.
-     */
-    public CompanyServiceImpl(String url) {
-        companyDAO = new CompanyDAOImpl(url);
-    }
-
     @Override
     public List<CompanyDTO> get() {
         return companyDAO.findAll().stream().map(it -> CompanyMapper.createDTO(it)).collect(Collectors.toList());

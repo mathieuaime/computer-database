@@ -25,7 +25,7 @@ public class Computer {
 
     /**
      * Computer private constructor.
-     * @param builder Computer builder
+     * @param name name
      */
     public Computer(String name) {
         this.name = name;
@@ -72,7 +72,7 @@ public class Computer {
     }
 
     public static class Builder {
-        
+
         private Computer computer;
 
         /**

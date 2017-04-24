@@ -43,17 +43,4 @@ public interface CompanyDAO {
      */
     List<Computer> getComputers(long id);
 
-    /**
-     * Create a DTO from a company.
-     * @param company the company
-     * @return CompanyDTO
-     */
-    //CompanyDTO createDTO(Company company);
-
-    /**
-     * Create a company from a DTO.
-     * @param companyDTO the companyDTO
-     * @return Company
-     */
-    //Company createBean(CompanyDTO companyDTO);
 }

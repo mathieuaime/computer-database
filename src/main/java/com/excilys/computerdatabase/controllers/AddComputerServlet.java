@@ -75,7 +75,7 @@ public class AddComputerServlet extends HttpServlet {
         computerDTO.setIntroduced(request.getParameter("introduced"));
         computerDTO.setDiscontinued(request.getParameter("discontinued"));
         computerDTO.setCompany(companyDTO);
-        
+
         Computer computer =  ComputerMapper.createBean(computerDTO);
 
         try {

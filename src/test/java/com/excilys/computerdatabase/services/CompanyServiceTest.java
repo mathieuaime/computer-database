@@ -1,4 +1,4 @@
-package com.excilys.computerdatabase.unit.companytest;
+package com.excilys.computerdatabase.services;
 
 import java.io.File;
 import java.sql.Connection;
@@ -15,7 +15,7 @@ import org.slf4j.Logger;
 import com.excilys.computerdatabase.config.Config;
 import com.excilys.computerdatabase.services.CompanyServiceImpl;
 
-public class CompanyTest extends DatabaseTestCase {
+public class CompanyServiceTest extends DatabaseTestCase {
 
     private CompanyServiceImpl companyService = new CompanyServiceImpl();
     
@@ -25,13 +25,13 @@ public class CompanyTest extends DatabaseTestCase {
     private static final String USER = Config.getProperties().getProperty("user");
     private static final String PASSWORD = Config.getProperties().getProperty("password");
     
-    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(CompanyTest.class);
+    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(CompanyServiceTest.class);
 
     /**
      * CompanyTest constructor.
      */
-    public CompanyTest() {
-        companyService = new CompanyServiceImpl(URL);
+    public CompanyServiceTest() {
+        companyService = new CompanyServiceImpl();
     }
 
     /**

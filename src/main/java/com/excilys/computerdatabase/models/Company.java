@@ -11,7 +11,7 @@ public class Company {
 
     /**
      * Company private constructor.
-     * @param builder company builder
+     * @param name name
      */
     private Company(String name) {
         this.name = name;

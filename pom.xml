@@ -25,6 +25,7 @@
 		<reportPluginVersion>2.7</reportPluginVersion>
 		<mavenCleanPluginVersion>2.5</mavenCleanPluginVersion>
 		<mavenCompilerVersion>3.1</mavenCompilerVersion>
+		<hikariCPVersion>2.6.1</hikariCPVersion>
 	</properties>
 
 	<dependencies>
@@ -93,6 +94,12 @@
 			<version>${seleniumVersion}</version>
 			<scope>test</scope>
 		</dependency>
+
+		<dependency>
+			<groupId>com.zaxxer</groupId>
+			<artifactId>HikariCP</artifactId>
+			<version>${hikariCPVersion}</version>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -148,13 +155,13 @@
 					</reportSet>
 				</reportSets>
 			</plugin>
-			
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-project-info-reports-plugin</artifactId>
 				<version>${reportPluginVersion}</version>
 			</plugin>
-			
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-clean-plugin</artifactId>

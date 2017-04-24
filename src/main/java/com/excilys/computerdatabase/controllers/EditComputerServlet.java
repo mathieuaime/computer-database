@@ -46,9 +46,9 @@ public class EditComputerServlet extends HttpServlet {
      */
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         int idComputer = (request.getParameter("id") != null ? Integer.parseInt(request.getParameter("id")) : 0);
-        
+
         ComputerDTO computerDTO = null;
 
         try {
@@ -58,7 +58,7 @@ public class EditComputerServlet extends HttpServlet {
         }
 
         RequestDispatcher view = request.getRequestDispatcher("WEB-INF/views/editComputer.jsp");
-        
+
         request.setAttribute("computer", computerDTO);
 
         List<CompanyDTO> companies = companyService.get(); // TODO voir si trier les companies

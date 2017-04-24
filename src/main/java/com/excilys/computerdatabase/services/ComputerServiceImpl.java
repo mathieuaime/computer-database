@@ -25,14 +25,6 @@ public class ComputerServiceImpl implements ComputerService, PageServ<ComputerDT
         computerDAO = new ComputerDAOImpl();
     }
 
-    /**
-     * ComputerService constructor with a custom url.
-     * @param url the url of the connexion.
-     */
-    public ComputerServiceImpl(String url) {
-        computerDAO = new ComputerDAOImpl(url);
-    }
-
     @Override
     public List<ComputerDTO> get() {
         return computerDAO.findAll().stream().map(it -> ComputerMapper.createDTO(it)).collect(Collectors.toList());
@@ -89,7 +81,7 @@ public class ComputerServiceImpl implements ComputerService, PageServ<ComputerDT
     public void delete(long id) throws ComputerNotFoundException {
         computerDAO.delete(id);
     }
-    
+
     @Override
     public void delete(List<Long> ids) throws ComputerNotFoundException {
         computerDAO.delete(ids);

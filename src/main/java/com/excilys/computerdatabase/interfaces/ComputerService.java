@@ -35,15 +35,16 @@ public interface ComputerService {
 
     /**
      * Add a computer.
-     * @param computerDTO the computer to add
+     * @param computer the computer to add
      * @throws IntroducedAfterDiscontinuedException exception when the introduced date is before the dicontinued date
      * @throws NameEmptyException exception when the name is empty
+     * @return ComputerDTO
      */
     ComputerDTO add(Computer computer);
 
     /**
      * Update a computer.
-     * @param computerDTO the computer to update
+     * @param computer the computer to update
      * @throws ComputerNotFoundException exception when the computer is not found
      * @throws IntroducedAfterDiscontinuedException exception when the introduced date is before the dicontinued date
      * @throws NameEmptyException exception when the name is empty
@@ -67,6 +68,7 @@ public interface ComputerService {
     /**
      * Return the number of computers.
      * @return int number of computers
+     * @param search the field to search for
      */
     int count(String search);
 

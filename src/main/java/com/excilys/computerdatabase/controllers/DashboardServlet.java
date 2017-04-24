@@ -36,7 +36,7 @@ public class DashboardServlet extends HttpServlet {
         String search = request.getParameter("search");
         String sort = request.getParameter("sort");
         String order = request.getParameter("order");
-        
+
         int computerCount = computerService.count(search);
 
         double nbPage = Math.ceil((float) computerCount / length);
@@ -56,17 +56,24 @@ public class DashboardServlet extends HttpServlet {
         view.forward(request, response);
 
     }
-    
+
+    /**
+     * POST Dashboard.
+     * @param request request
+     * @param response response
+     * @throws ServletException servelt exception
+     * @throws IOException io exception
+     */
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String[] listComputersToDelete = request.getParameter("selection").split(",");
         List<Long> ids = new ArrayList<Long>();
 
         ComputerServiceImpl computerService = new ComputerServiceImpl();
 
-        for(String s : listComputersToDelete) {
+        for (String s : listComputersToDelete) {
             ids.add(Long.parseLong(s));
         }
-        
+
         try {
             computerService.delete(ids);
         } catch (ComputerNotFoundException e) {

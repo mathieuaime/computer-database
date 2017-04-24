@@ -1,4 +1,4 @@
-package com.excilys.computerdatabase.unit.computertest;
+package com.excilys.computerdatabase.services;
 
 import java.io.File;
 import java.sql.Connection;
@@ -19,14 +19,14 @@ import com.excilys.computerdatabase.models.Company;
 import com.excilys.computerdatabase.models.Computer;
 import com.excilys.computerdatabase.services.ComputerServiceImpl;
 
-public class ComputerTest extends DatabaseTestCase {
+public class ComputerServiceTest extends DatabaseTestCase {
 
     private ComputerServiceImpl computerService;
     private Company comp1;
     private Computer c1;
     private Computer c2;
 
-    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(ComputerTest.class);
+    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(ComputerServiceTest.class);
 
     private static final String SAMPLE_TEST_XML = "src/test/resources/db-sample.xml";
 
@@ -37,8 +37,8 @@ public class ComputerTest extends DatabaseTestCase {
     /**
      * ComputerTest constructor.
      */
-    public ComputerTest() {
-        computerService = new ComputerServiceImpl(URL);
+    public ComputerServiceTest() {
+        computerService = new ComputerServiceImpl();
 
         comp1 = new Company.Builder("Apple Inc.").id(1000L).build();
 

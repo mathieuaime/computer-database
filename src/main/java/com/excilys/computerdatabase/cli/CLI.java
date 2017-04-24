@@ -141,7 +141,7 @@ public class CLI {
                     computerDTO.setCompany(companyDTO);
 
                     Computer computer = ComputerMapper.createBean(computerDTO);
-                    
+
                     ComputerValidator.validate(computer);
                     computerService.add(computer);
 
@@ -177,7 +177,6 @@ public class CLI {
                 try {
                     ComputerDTO computerDTO = new ComputerDTO();
                     CompanyDTO companyDTO = new CompanyDTO();
-                    
 
                     companyDTO.setId(Long.parseLong(idCompany));
 
@@ -188,7 +187,7 @@ public class CLI {
                     computerDTO.setCompany(companyDTO);
 
                     Computer computer = ComputerMapper.createBean(computerDTO);
-                    
+
                     ComputerValidator.validate(computer);
                     computerService.update(computer);
 

@@ -19,7 +19,7 @@ public class ComputerMapper {
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(ComputerMapper.class);
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern(Config.getProperties().getProperty("date_format"));
-    
+
     private static String url;
 
     /**
@@ -62,7 +62,7 @@ public class ComputerMapper {
      */
     public static Computer createBean(ComputerDTO computerDTO) {
         Computer computer = null;
-        
+
         CompanyDAOImpl cDAO = new CompanyDAOImpl();
 
         LocalDate introduced = (computerDTO.getIntroduced().equals("") ? null
@@ -95,11 +95,11 @@ public class ComputerMapper {
 
         return computerDTO;
     }
-    
+
     public static void setUrl(String url) {
         ComputerMapper.url = url;
     }
-    
+
     public static String getUrl() {
         return url;
     }

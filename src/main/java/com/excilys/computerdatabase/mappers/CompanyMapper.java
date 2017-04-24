@@ -35,14 +35,19 @@ public class CompanyMapper {
 
         return company;
     }
-    
+
+    /**
+     * Create a DTO from a company.
+     * @param company the company
+     * @return CompanyDTO
+     */
     public static CompanyDTO createDTO(Company company) {
         CompanyDTO companyDTO = new CompanyDTO();
 
         companyDTO.setId(company.getId());
         companyDTO.setName(company.getName());
-        
-        CompanyDAOImpl companyDAO = new CompanyDAOImpl(); 
+
+        CompanyDAOImpl companyDAO = new CompanyDAOImpl();
 
         for (Computer c : companyDAO.getComputers(company.getId())) {
             companyDTO.getComputersList().add(c.getId());
@@ -51,6 +56,11 @@ public class CompanyMapper {
         return companyDTO;
     }
 
+    /**
+     * Create a company from a DTO.
+     * @param companyDTO the companyDTO
+     * @return Company
+     */
     public static Company createBean(CompanyDTO companyDTO) {
         return new Company.Builder(companyDTO.getName()).id(companyDTO.getId()).build();
     }
