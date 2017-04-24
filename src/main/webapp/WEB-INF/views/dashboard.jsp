@@ -49,7 +49,7 @@
 						<input type="hidden" id="length" name="length" value="${length}" />
 							 
 						<input type="search" id="searchbox"
-							name="search" class="form-control" placeholder="Search name" />
+							name="search" class="form-control" placeholder="Search name" value="${search}"/>
 						<input type="submit" id="searchsubmit" value="Filter by name"
 							class="btn btn-primary" />
 					</form>
