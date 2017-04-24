@@ -2,6 +2,7 @@ package com.excilys.computerdatabase.interfaces;
 
 import java.util.List;
 
+import com.excilys.computerdatabase.exceptions.CompanyNotFoundException;
 import com.excilys.computerdatabase.models.Company;
 import com.excilys.computerdatabase.models.Computer;
 
@@ -42,5 +43,12 @@ public interface CompanyDAO {
      * @return List<Computer>
      */
     List<Computer> getComputers(long id);
+
+    /**
+     * Delete a company and all its computers.
+     * @param id the id of the company
+     * @throws CompanyNotFoundException when the company does not exist
+     */
+    void delete(long id) throws CompanyNotFoundException;
 
 }

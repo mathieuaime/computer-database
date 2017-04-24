@@ -15,6 +15,7 @@ import org.junit.Test;
 import org.slf4j.Logger;
 
 import com.excilys.computerdatabase.config.Config;
+import com.excilys.computerdatabase.mappers.ComputerMapper;
 import com.excilys.computerdatabase.models.Company;
 import com.excilys.computerdatabase.models.Computer;
 import com.excilys.computerdatabase.services.ComputerServiceImpl;
@@ -40,7 +41,7 @@ public class ComputerServiceTest extends DatabaseTestCase {
     public ComputerServiceTest() {
         computerService = new ComputerServiceImpl();
 
-        comp1 = new Company.Builder("Apple Inc.").id(1000L).build();
+        comp1 = new Company.Builder("Company2").id(2L).build();
 
         c1 = new Computer("Computer1");
         c1.setId(1000L);
@@ -116,8 +117,10 @@ public class ComputerServiceTest extends DatabaseTestCase {
 
         try {            
             computerService.add(c1);
+            
+            Computer c = ComputerMapper.createBean(computerService.getById(c1.getId()));
 
-            assertEquals(c1, computerService.getById(c1.getId()));
+            assertEquals(c1, c);
 
         } catch (Exception e) {
             if (LOGGER.isDebugEnabled()) {
@@ -135,8 +138,10 @@ public class ComputerServiceTest extends DatabaseTestCase {
         try {
             c1.setId(1);
             computerService.update(c1);
+            
+            Computer c = ComputerMapper.createBean(computerService.getById(c1.getId()));
 
-            assertEquals(c1, computerService.getById(c1.getId()));
+            assertEquals(c1, c);
 
         } catch (Exception e) {
             if (LOGGER.isDebugEnabled()) {

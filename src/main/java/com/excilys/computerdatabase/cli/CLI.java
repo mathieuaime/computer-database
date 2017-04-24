@@ -5,6 +5,7 @@ import java.util.Scanner;
 import com.excilys.computerdatabase.config.Config;
 import com.excilys.computerdatabase.dtos.CompanyDTO;
 import com.excilys.computerdatabase.dtos.ComputerDTO;
+import com.excilys.computerdatabase.exceptions.CompanyNotFoundException;
 import com.excilys.computerdatabase.exceptions.ComputerNotFoundException;
 import com.excilys.computerdatabase.exceptions.IntroducedAfterDiscontinuedException;
 import com.excilys.computerdatabase.exceptions.NameEmptyException;
@@ -34,7 +35,8 @@ public class CLI {
         System.out.println("4 : Créer un pc");
         System.out.println("5 : MAJ un pc");
         System.out.println("6 : Supprimer un pc");
-        System.out.println("7 : Quitter");
+        System.out.println("7 : Supprimer une companie");
+        System.out.println("8 : Quitter");
     }
 
     /**
@@ -207,7 +209,7 @@ public class CLI {
                 idComputer = scanner.next();
 
                 try {
-                    computerService.delete(Integer.parseInt(idComputer));
+                    computerService.delete(Long.parseLong(idComputer));
                     System.out.println("Computer supprimé");
                 } catch (NumberFormatException e) {
                     System.out.println("L'id doit être un nombre");
@@ -217,6 +219,20 @@ public class CLI {
                 break;
 
             case "7":
+                System.out.println("Id de la companie ?");
+                idCompany = scanner.next();
+
+                try {
+                    companyService.delete(Long.parseLong(idCompany));
+                    System.out.println("Computer supprimé");
+                } catch (NumberFormatException e) {
+                    System.out.println("L'id doit être un nombre");
+                } catch (CompanyNotFoundException e) {
+                    System.out.println("Le computer n'existe pas");
+                }
+                break;
+
+            case "8":
                 break loop;
 
             default:

@@ -7,6 +7,7 @@ import com.excilys.computerdatabase.daos.CompanyDAOImpl;
 import com.excilys.computerdatabase.dtos.CompanyDTO;
 import com.excilys.computerdatabase.dtos.ComputerDTO;
 import com.excilys.computerdatabase.dtos.Page;
+import com.excilys.computerdatabase.exceptions.CompanyNotFoundException;
 import com.excilys.computerdatabase.interfaces.CompanyService;
 import com.excilys.computerdatabase.interfaces.PageServ;
 import com.excilys.computerdatabase.mappers.CompanyMapper;
@@ -60,5 +61,10 @@ public class CompanyServiceImpl implements CompanyService, PageServ<CompanyDTO> 
     @Override
     public List<ComputerDTO> getComputers(long id) {
         return companyDAO.getComputers(id).stream().map(it -> ComputerMapper.createDTO(it)).collect(Collectors.toList());
+    }
+
+    @Override
+    public void delete(long id) throws CompanyNotFoundException {
+        companyDAO.delete(id);
     }
 }

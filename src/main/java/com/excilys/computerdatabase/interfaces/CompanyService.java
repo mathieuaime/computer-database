@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.excilys.computerdatabase.dtos.CompanyDTO;
 import com.excilys.computerdatabase.dtos.ComputerDTO;
+import com.excilys.computerdatabase.exceptions.CompanyNotFoundException;
 
 public interface CompanyService {
 
@@ -33,4 +34,11 @@ public interface CompanyService {
      * @return List<ComputerDTO>
      */
     List<ComputerDTO> getComputers(long id);
+
+    /**
+     * Delete the company id and all its computers.
+     * @param id the id of the company
+     * @throws CompanyNotFoundException when the company does not exist
+     */
+    void delete(long id) throws CompanyNotFoundException;
 }

@@ -110,6 +110,28 @@ public class CompanyServiceTest extends DatabaseTestCase {
         }
     }
 
+    /**
+     * Test delete.
+     */
+    @Test
+    public void testDelete() {
+        try {
+            
+            assertEquals(1L, companyService.getById(1L).getId());
+
+            companyService.delete(1L);
+
+            assertNull(companyService.getById(1L));
+            
+            assertEquals(0, companyService.getComputers(1L));
+
+        } catch (Exception e) {
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Exception: " + e);
+            }
+        }
+    }
+
     @Override
     protected IDatabaseConnection getConnection() throws Exception {
         Connection jdbcConnection = DriverManager.getConnection(URL, USER, PASSWORD);

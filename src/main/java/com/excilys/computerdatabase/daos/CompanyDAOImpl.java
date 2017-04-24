@@ -10,6 +10,7 @@ import java.util.List;
 
 import org.slf4j.Logger;
 
+import com.excilys.computerdatabase.exceptions.CompanyNotFoundException;
 import com.excilys.computerdatabase.interfaces.CompanyDAO;
 import com.excilys.computerdatabase.mappers.CompanyMapper;
 import com.excilys.computerdatabase.mappers.ComputerMapper;
@@ -39,6 +40,12 @@ public class CompanyDAOImpl implements CompanyDAO {
                                                             + " INNER JOIN " + Company.TABLE_NAME
                                                             + " ON " + Computer.FIELD_COMPANY_ID + " = " + Company.TABLE_NAME + "." + Company.FIELD_ID
                                                             + " WHERE " + Company.TABLE_NAME + "." + Company.FIELD_ID + " =  ?";
+
+    private static final String QUERY_DELETE_COMPUTERS      = "DELETE FROM " + Computer.TABLE_NAME
+                                                            + " WHERE " + Computer.FIELD_COMPANY_ID + " = ?";
+
+    private static final String QUERY_DELETE_COMPANY        = "DELETE FROM " + Company.TABLE_NAME
+                                                            + " WHERE " + Company.FIELD_ID + " = ?";
 
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(CompanyDAOImpl.class);
 
@@ -141,6 +148,42 @@ public class CompanyDAOImpl implements CompanyDAO {
         }
 
         return computers;
+    }
+
+    @Override
+    public void delete(long id) throws CompanyNotFoundException {
+
+        try (Connection con = ConnectionMySQL.INSTANCE.getConnection();) {
+
+            boolean oldAutoCommit = con.getAutoCommit();
+            con.setAutoCommit(false);
+
+            try (PreparedStatement stmt = con.prepareStatement(QUERY_DELETE_COMPUTERS);) {
+
+                stmt.setLong(1, id);
+                stmt.executeUpdate();
+
+                try (PreparedStatement stmt2 = con.prepareStatement(QUERY_DELETE_COMPANY);) {
+                    stmt2.setLong(1, id);
+                    stmt2.executeUpdate();
+                }
+
+                con.commit();
+
+                LOGGER.info("Info: Company " + id + " and all its computers sucessfully deleted");
+
+            } catch (SQLException e) {
+                con.rollback();
+                LOGGER.error("Error: Company " + id + " not deleted");
+            } finally {
+                con.setAutoCommit(oldAutoCommit);
+            }
+
+        } catch (SQLException e) {
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Exception: " + e);
+            }
+        }
     }
 
 }

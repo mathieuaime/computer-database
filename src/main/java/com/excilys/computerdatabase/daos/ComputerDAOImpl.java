@@ -148,35 +148,41 @@ public class ComputerDAOImpl implements ComputerDAO {
 
     @Override
     public Computer add(Computer computer) {
-        boolean add = false;
 
-        try (Connection con = ConnectionMySQL.INSTANCE.getConnection();
-                PreparedStatement stmt = con.prepareStatement(QUERY_ADD_COMPUTER);) {
+        try (Connection con = ConnectionMySQL.INSTANCE.getConnection();) {
 
-            stmt.setString(1, computer.getName());
-            stmt.setObject(2, computer.getIntroduced());
-            stmt.setObject(3, computer.getDiscontinued());
-            stmt.setLong(4, computer.getCompany().getId());
-            int res = stmt.executeUpdate();
-            add = res == 1;
+            boolean oldAutoCommit = con.getAutoCommit();
+            con.setAutoCommit(false);
 
-            ResultSet resultSet = stmt.getGeneratedKeys();
+            try (PreparedStatement stmt = con.prepareStatement(QUERY_ADD_COMPUTER);) {
 
-            if (resultSet.first()) {
-                computer.setId(resultSet.getLong(1));
+                stmt.setString(1, computer.getName());
+                stmt.setObject(2, computer.getIntroduced());
+                stmt.setObject(3, computer.getDiscontinued());
+                stmt.setLong(4, computer.getCompany().getId());
+                stmt.executeUpdate();
+
+                ResultSet resultSet = stmt.getGeneratedKeys();
+
+                if (resultSet.first()) {
+                    computer.setId(resultSet.getLong(1));
+                }
+
+                con.commit();
+
+                LOGGER.info("Info: " + computer + " sucessfully added");
+
+            } catch (SQLException e) {
+                con.rollback();
+                LOGGER.error("Error: " + computer + " not added");
+            } finally {
+                con.setAutoCommit(oldAutoCommit);
             }
 
         } catch (SQLException e) {
-            add = false;
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Exception: " + e);
             }
-        }
-
-        if (add) {
-            LOGGER.info("Info: " + computer + " sucessfully added");
-        } else {
-            LOGGER.error("Error: " + computer + " not added");
         }
 
         return computer;
@@ -184,31 +190,36 @@ public class ComputerDAOImpl implements ComputerDAO {
 
     @Override
     public void update(Computer computer) throws ComputerNotFoundException {
-        boolean update = false;
 
-        try (Connection con = ConnectionMySQL.INSTANCE.getConnection();
-                PreparedStatement stmt = con.prepareStatement(QUERY_UPDATE_COMPUTER);) {
+        try (Connection con = ConnectionMySQL.INSTANCE.getConnection();) {
 
-            stmt.setString(1, computer.getName());
-            stmt.setObject(2, computer.getIntroduced());
-            stmt.setObject(3, computer.getDiscontinued());
-            stmt.setLong(4, computer.getCompany().getId());
-            stmt.setLong(5, computer.getId());
-            int res = stmt.executeUpdate();
-            update = res == 1;
+            boolean oldAutoCommit = con.getAutoCommit();
+            con.setAutoCommit(false);
+
+            try (PreparedStatement stmt = con.prepareStatement(QUERY_UPDATE_COMPUTER);) {
+
+                stmt.setString(1, computer.getName());
+                stmt.setObject(2, computer.getIntroduced());
+                stmt.setObject(3, computer.getDiscontinued());
+                stmt.setLong(4, computer.getCompany().getId());
+                stmt.setLong(5, computer.getId());
+                stmt.executeUpdate();
+
+                con.commit();
+
+                LOGGER.info("Info: " + computer + " sucessfully added");
+
+            } catch (SQLException e) {
+                con.rollback();
+                LOGGER.error("Error: " + computer + " not added -> " + e);
+            } finally {
+                con.setAutoCommit(oldAutoCommit);
+            }
 
         } catch (SQLException e) {
-            update = false;
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Exception: " + e);
             }
-        }
-
-        if (update) {
-            LOGGER.info("Info: " + computer + " sucessfully updated");
-        } else {
-            LOGGER.error("Error: " + computer + " not updated");
-            throw new ComputerNotFoundException("Computer Not Found");
         }
     }
 
@@ -265,29 +276,35 @@ public class ComputerDAOImpl implements ComputerDAO {
 
     @Override
     public void delete(List<Long> listId) throws ComputerNotFoundException {
-        boolean delete = false;
         String ids = "";
 
-        try (Connection con = ConnectionMySQL.INSTANCE.getConnection();
-                PreparedStatement stmt = con.prepareStatement(QUERY_DELETE_COMPUTER);) {
+        try (Connection con = ConnectionMySQL.INSTANCE.getConnection();) {
 
-            ids = listId.stream().map(Object::toString).collect(Collectors.joining(", "));
+            boolean oldAutoCommit = con.getAutoCommit();
+            con.setAutoCommit(false);
 
-            stmt.setString(1, ids);
-            int res = stmt.executeUpdate();
-            delete = res == 1;
+            try (PreparedStatement stmt = con.prepareStatement(QUERY_DELETE_COMPUTER);) {
+
+                ids = listId.stream().map(Object::toString).collect(Collectors.joining(", "));
+
+                stmt.setString(1, ids);
+                stmt.executeUpdate();
+
+                con.commit();
+
+                LOGGER.info("Info: Computer " + ids + " sucessfully deleted");
+
+            } catch (SQLException e) {
+                con.rollback();
+                LOGGER.error("Error: Computer " + ids + " not deleted");
+            } finally {
+                con.setAutoCommit(oldAutoCommit);
+            }
 
         } catch (SQLException e) {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Exception: " + e);
             }
-        }
-
-        if (delete) {
-            LOGGER.info("Info: Computer " + ids + " sucessfully deleted");
-        } else {
-            LOGGER.error("Error: Computer " + ids + " not deleted");
-            throw new ComputerNotFoundException("Computer Not Found");
         }
     }
 
