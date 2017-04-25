@@ -72,23 +72,38 @@ public class ComputerDAOImpl implements ComputerDAO {
     @Override
     public List<Computer> findAll(int offset, int length, String search, String column, String order) {
         List<Computer> computers = new ArrayList<>();
+        
+        if (search != null) {
+            search.replaceAll("-", "*");
+        }
+        
+        /*String query = QUERY_FIND_COMPUTER
+                + (search != null && !search.equals("")
+                ? " WHERE MATCH (" + Computer.TABLE_NAME + "." + Computer.FIELD_NAME
+                        + ") AGAINST ('+*" + search + "*' IN BOOLEAN MODE) OR MATCH (" 
+                        + Company.TABLE_NAME + "." + Company.FIELD_NAME + ") AGAINST ('+" + search
+                        + "*' IN BOOLEAN MODE)"
+                : "")
+        + (length != -1 ? " ORDER BY "
+                + (column != null ? Computer.TABLE_NAME + column
+                        : Computer.TABLE_NAME + Computer.FIELD_NAME)
+                + " " + (order != null ? order : "ASC") + " LIMIT " + length : "")
+        + (length != -1 && offset != -1 ? " OFFSET " + offset : "");*/
+        
+        String query = QUERY_FIND_COMPUTER
+                + (search != null ? " WHERE " + Computer.TABLE_NAME + "." + Computer.FIELD_NAME + " LIKE '"
+                        + search + "%' OR " + Company.TABLE_NAME + "." + Company.FIELD_NAME + " LIKE '"
+                        + search + "%'" : "")
+                + (length != -1 ? " ORDER BY "
+                        + (column != null ? Computer.TABLE_NAME + column
+                                : Computer.TABLE_NAME + Computer.FIELD_NAME)
+                        + " " + (order != null ? order : "ASC") + " LIMIT " + length : "")
+                + (length != -1 && offset != -1 ? " OFFSET " + offset : "");
+        
+        //LOGGER.debug(query);
 
         try (Connection con = ConnectionMySQL.INSTANCE.getConnection();
-                PreparedStatement stmt = con
-                        .prepareStatement(
-                                QUERY_FIND_COMPUTER
-                                        + (search != null
-                                                ? " WHERE " + Computer.TABLE_NAME + "." + Computer.FIELD_NAME
-                                                        + " LIKE '%" + search + "%' OR " + Company.TABLE_NAME + "."
-                                                        + Company.FIELD_NAME + " LIKE '%" + search
-                                                        + "%'"
-                                                : "")
-                                        + (length != -1 ? " ORDER BY "
-                                                + (column != null ? Computer.TABLE_NAME + column
-                                                        : Computer.TABLE_NAME + Computer.FIELD_NAME)
-                                                + " " + (order != null ? order : "ASC") + " LIMIT " + length : "")
-                                        + (length != -1 && offset != -1 ? " OFFSET " + offset : ""));) {
-
+                PreparedStatement stmt = con.prepareStatement(query);) {
             final ResultSet rset = stmt.executeQuery();
 
             while (rset.next()) {
@@ -180,7 +195,7 @@ public class ComputerDAOImpl implements ComputerDAO {
 
                 con.commit();
 
-                LOGGER.info("Info: " + computer + " sucessfully added");
+                //LOGGER.info("Info: " + computer + " sucessfully added");
 
             } catch (SQLException e) {
                 con.rollback();
@@ -204,7 +219,6 @@ public class ComputerDAOImpl implements ComputerDAO {
         try (Connection con = ConnectionMySQL.INSTANCE.getConnection();) {
 
             boolean oldAutoCommit = con.getAutoCommit();
-            con.setAutoCommit(false);
 
             try (PreparedStatement stmt = con.prepareStatement(QUERY_UPDATE_COMPUTER);) {
 
@@ -217,7 +231,7 @@ public class ComputerDAOImpl implements ComputerDAO {
 
                 con.commit();
 
-                LOGGER.info("Info: " + computer + " sucessfully added");
+                //LOGGER.info("Info: " + computer + " sucessfully added");
 
             } catch (SQLException e) {
                 con.rollback();
@@ -244,8 +258,8 @@ public class ComputerDAOImpl implements ComputerDAO {
 
         try (Connection con = ConnectionMySQL.INSTANCE.getConnection();
                 PreparedStatement stmt = con.prepareStatement(QUERY_COUNT_COMPUTERS + (search != null
-                        ? " WHERE " + Computer.TABLE_NAME + "." + Computer.FIELD_NAME + " LIKE '%" + search + "%' OR "
-                                + Company.TABLE_NAME + "." + Company.FIELD_NAME + " LIKE '%" + search + "%'"
+                        ? " WHERE " + Computer.TABLE_NAME + "." + Computer.FIELD_NAME + " LIKE '" + search + "%' OR "
+                                + Company.TABLE_NAME + "." + Company.FIELD_NAME + " LIKE '" + search + "%'"
                         : ""));) {
             final ResultSet rset = stmt.executeQuery();
 
@@ -302,7 +316,7 @@ public class ComputerDAOImpl implements ComputerDAO {
 
                 con.commit();
 
-                LOGGER.info("Info: Computer " + ids + " sucessfully deleted");
+                //LOGGER.info("Info: Computer " + ids + " sucessfully deleted");
 
             } catch (SQLException e) {
                 con.rollback();

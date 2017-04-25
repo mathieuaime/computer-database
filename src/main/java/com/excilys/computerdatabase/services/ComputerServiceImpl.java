@@ -68,8 +68,7 @@ public class ComputerServiceImpl implements ComputerService, PageServ<ComputerDT
 
     @Override
     public ComputerDTO add(Computer computer) {
-        computer = computerDAO.add(computer);
-        return ComputerMapper.createDTO(computer);
+        return ComputerMapper.createDTO(computerDAO.add(computer));
     }
 
     @Override

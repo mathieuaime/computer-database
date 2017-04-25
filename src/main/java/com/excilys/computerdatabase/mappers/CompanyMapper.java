@@ -5,10 +5,8 @@ import java.sql.SQLException;
 
 import org.slf4j.Logger;
 
-import com.excilys.computerdatabase.daos.CompanyDAOImpl;
 import com.excilys.computerdatabase.dtos.CompanyDTO;
 import com.excilys.computerdatabase.models.Company;
-import com.excilys.computerdatabase.models.Computer;
 
 public class CompanyMapper {
 
@@ -46,12 +44,6 @@ public class CompanyMapper {
 
         companyDTO.setId(company.getId());
         companyDTO.setName(company.getName());
-
-        CompanyDAOImpl companyDAO = new CompanyDAOImpl();
-
-        for (Computer c : companyDAO.getComputers(company.getId())) {
-            companyDTO.getComputersList().add(c.getId());
-        }
 
         return companyDTO;
     }
