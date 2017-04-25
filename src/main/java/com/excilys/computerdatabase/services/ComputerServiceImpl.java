@@ -42,9 +42,9 @@ public class ComputerServiceImpl implements ComputerService, PageServ<ComputerDT
     }
 
     @Override
-    public Page<ComputerDTO> getPage(int pageNumero, int length, String search, String sort, String order) {
+    public Page<ComputerDTO> getPage(int pageNumero, int length, String search, String column, String order) {
 
-        List<ComputerDTO> l = computerDAO.findAll((pageNumero - 1) * length, length, search, sort, order).stream()
+        List<ComputerDTO> l = computerDAO.findAll((pageNumero - 1) * length, length, search, column, order).stream()
                 .map(it -> ComputerMapper.createDTO(it)).collect(Collectors.toList());
 
         return new Page<ComputerDTO>(l, pageNumero);

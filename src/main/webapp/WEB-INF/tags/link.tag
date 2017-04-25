@@ -4,10 +4,10 @@
 <%@ attribute name="href" required="true" rtexprvalue="true"%>
 
 <%@ attribute name="page" required="false" type="java.lang.Integer"%>
-<%@ attribute name="length" required="false" type="java.lang.Integer"%>
+<%@ attribute name="pageSize" required="false" type="java.lang.Integer"%>
 
 <%@ attribute name="search" required="false" type="java.lang.String"%>
-<%@ attribute name="sort" required="false" type="java.lang.String"%>
+<%@ attribute name="column" required="false" type="java.lang.String"%>
 <%@ attribute name="order" required="false" type="java.lang.String"%>
 <%@ attribute name="text" required="false" type="java.lang.String"%>
 
@@ -22,25 +22,25 @@
 
 <%
 	int PAGE_DEFAULT = Integer.parseInt(Config.getProperties().getProperty("page_default"));
-	int LENGTH_DEFAULT = Integer.parseInt(Config.getProperties().getProperty("length_default"));
+	int pageSize_DEFAULT = Integer.parseInt(Config.getProperties().getProperty("page_size_default"));
 
     previous 				= (previous	!= null ? previous 	: false);
     next 					= (next 	!= null ? next 		: false);
 
     page					= (page 	!= null ? page 		: PAGE_DEFAULT);
-    length					= (length 	!= null ? length 	: LENGTH_DEFAULT);
+    pageSize				= (pageSize != null ? pageSize 	: pageSize_DEFAULT);
 
     String output 			= "";
     String pageAdresse 		= "?page=" + String.valueOf(page);
-    String lengthAdresse 	= "&length=" + String.valueOf(length);
+    String pageSizeAdresse 	= "&pageSize=" + String.valueOf(pageSize);
 
     String searchAdresse 	= (search	!= null && !search.equals("") 	? "&search=" 	+ search 	: "");
-    String sortAdresse 		= (sort 	!= null && !sort.equals("") 	? "&sort=" 		+ sort 		: "");
+    String columnAdresse 	= (column 	!= null && !column.equals("") 	? "&column=" 	+ column 	: "");
     String orderAdresse 	= (order 	!= null && !order.equals("") 	? "&order=" 	+ order 	: "");
     
     text 					= (text != null ? text : (home != null && home ? " Application - Computer Database " : ""));
 
-    String adresse 			= href + pageAdresse + lengthAdresse + searchAdresse + sortAdresse + orderAdresse;
+    String adresse 			= href + pageAdresse + pageSizeAdresse + searchAdresse + columnAdresse + orderAdresse;
 
     //Si on veut que le lien soit un bouton de type button
     if (button != null) {
@@ -53,8 +53,8 @@
         //la page en string (page + ou - 1)
         pageAdresse = "?page=" + String.valueOf(page + (previous ? -1 : 1));
 
-        //l'adresse avec les champs search, sort et order facultatifs
-        adresse = href + pageAdresse + lengthAdresse + searchAdresse + sortAdresse + orderAdresse;
+        //l'adresse avec les champs search, column et order facultatifs
+        adresse = href + pageAdresse + pageSizeAdresse + searchAdresse + columnAdresse + orderAdresse;
 
         //la balise a avec les parametres correspondants (previous ou next)
         output = "<a href=\"" + adresse + "\" aria-label=\"" + (previous ? "Next" : "Previous")

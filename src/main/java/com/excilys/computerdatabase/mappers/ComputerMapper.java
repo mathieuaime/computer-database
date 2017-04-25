@@ -36,8 +36,8 @@ public class ComputerMapper {
             String nameComputer         = rset.getString(Computer.TABLE_NAME + Computer.FIELD_NAME);
             Date introducedComputer     = rset.getDate(Computer.TABLE_NAME + Computer.FIELD_INTRODUCED);
             Date discontinuedComputer   = rset.getDate(Computer.TABLE_NAME + Computer.FIELD_DISCONTINUED);
-            long idCompany              = rset.getLong(Company.TABLE_NAME + Company.FIELD_ID);
-            String nameCompany          = rset.getString(Company.TABLE_NAME + Company.FIELD_NAME);
+            long idCompany              = rset.getLong(Computer.TABLE_NAME + Company.TABLE_NAME + Company.FIELD_ID);
+            String nameCompany          = rset.getString(Computer.TABLE_NAME + Company.TABLE_NAME + Company.FIELD_NAME);
 
             Company company = new Company.Builder(nameCompany).id(idCompany).build();
 

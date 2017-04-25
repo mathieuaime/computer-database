@@ -8,6 +8,8 @@
 	<packaging>war</packaging>
 
 	<properties>
+		<javaVersion>1.8</javaVersion>
+		
 		<slf4jAPIVersion>1.6.1</slf4jAPIVersion>
 		<mysqlConnectorJavaVersion>5.1.39</mysqlConnectorJavaVersion>
 		<junitVersion>4.12</junitVersion>
@@ -17,15 +19,23 @@
 		<jstlVersion>1.2</jstlVersion>
 		<logbackVersion>1.0.13</logbackVersion>
 		<dbUnitVersion>2.4.9</dbUnitVersion>
-		<seleniumVersion>2.27.0</seleniumVersion>
-		<javaVersion>1.8</javaVersion>
+
+		<seleniumVersion>3.4.0</seleniumVersion>
+
 		<mavenWarPlugin>2.1.1</mavenWarPlugin>
+
 		<seleniumPluginVersion>1.0.1</seleniumPluginVersion>
+
 		<checkstyleVersion>2.17</checkstyleVersion>
 		<reportPluginVersion>2.7</reportPluginVersion>
 		<mavenCleanPluginVersion>2.5</mavenCleanPluginVersion>
 		<mavenCompilerVersion>3.1</mavenCompilerVersion>
+
 		<hikariCPVersion>2.6.1</hikariCPVersion>
+
+		<gatling.version>2.1.7</gatling.version>
+		<gatling-plugin.version>2.1.7</gatling-plugin.version>
+		<scala-maven-plugin.version>3.2.2</scala-maven-plugin.version>
 	</properties>
 
 	<dependencies>
@@ -100,6 +110,14 @@
 			<artifactId>HikariCP</artifactId>
 			<version>${hikariCPVersion}</version>
 		</dependency>
+
+		<dependency>
+			<groupId>io.gatling.highcharts</groupId>
+			<artifactId>gatling-charts-highcharts</artifactId>
+			<version>${gatling.version}</version>
+			<scope>test</scope>
+		</dependency>
+
 	</dependencies>
 
 	<build>
@@ -129,6 +147,25 @@
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>selenium-maven-plugin</artifactId>
 					<version>${seleniumPluginVersion}</version>
+				</plugin>
+
+				<plugin>
+					<groupId>net.alchim31.maven</groupId>
+					<artifactId>scala-maven-plugin</artifactId>
+					<version>${scala-maven-plugin.version}</version>
+				</plugin>
+
+				<plugin>
+					<groupId>io.gatling</groupId>
+					<artifactId>gatling-maven-plugin</artifactId>
+					<version>${gatling-plugin.version}</version>
+					<executions>
+						<execution>
+							<goals>
+								<goal>execute</goal>
+							</goals>
+						</execution>
+					</executions>
 				</plugin>
 
 			</plugins>

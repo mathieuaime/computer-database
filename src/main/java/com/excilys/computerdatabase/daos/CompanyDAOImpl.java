@@ -34,8 +34,8 @@ public class CompanyDAOImpl implements CompanyDAO {
                                                             + Computer.TABLE_NAME + "." + Computer.FIELD_NAME + " AS " + Computer.TABLE_NAME + Computer.FIELD_NAME + ", "
                                                             + Computer.TABLE_NAME + "." + Computer.FIELD_INTRODUCED + " AS " + Computer.TABLE_NAME + Computer.FIELD_INTRODUCED + ", "
                                                             + Computer.TABLE_NAME + "." + Computer.FIELD_DISCONTINUED + " AS " + Computer.TABLE_NAME + Computer.FIELD_DISCONTINUED + ", "
-                                                            + Company.TABLE_NAME + "." + Company.FIELD_ID + " AS " + Company.TABLE_NAME + Company.FIELD_ID + ", "
-                                                            + Company.TABLE_NAME + "." + Company.FIELD_NAME + " AS " + Company.TABLE_NAME + Company.FIELD_NAME
+                                                            + Company.TABLE_NAME + "." + Company.FIELD_ID + " AS " + Computer.TABLE_NAME + Company.TABLE_NAME + Company.FIELD_ID + ", "
+                                                            + Company.TABLE_NAME + "." + Company.FIELD_NAME + " AS " + Computer.TABLE_NAME + Company.TABLE_NAME + Company.FIELD_NAME
                                                             + " FROM " + Computer.TABLE_NAME
                                                             + " INNER JOIN " + Company.TABLE_NAME
                                                             + " ON " + Computer.FIELD_COMPANY_ID + " = " + Company.TABLE_NAME + "." + Company.FIELD_ID

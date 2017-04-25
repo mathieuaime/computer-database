@@ -17,16 +17,22 @@ import com.excilys.computerdatabase.mappers.CompanyMapper;
 import com.excilys.computerdatabase.mappers.ComputerMapper;
 import com.excilys.computerdatabase.models.Company;
 import com.excilys.computerdatabase.models.Computer;
+import com.mysql.jdbc.Statement;
 
 public class ComputerDAOImpl implements ComputerDAO {
 
     private static final String QUERY_FIND_COMPUTER             = "SELECT " + Computer.TABLE_NAME + "." + Computer.FIELD_ID + " AS "
-                                                                + Computer.TABLE_NAME + Computer.FIELD_ID + "," + Computer.TABLE_NAME + "." + Computer.FIELD_NAME + " AS "
-                                                                + Computer.TABLE_NAME + Computer.FIELD_NAME + "," + Computer.TABLE_NAME + "." + Computer.FIELD_INTRODUCED
-                                                                + " AS " + Computer.TABLE_NAME + Computer.FIELD_INTRODUCED + "," + Computer.TABLE_NAME + "."
-                                                                + Computer.FIELD_DISCONTINUED + " AS " + Computer.TABLE_NAME + Computer.FIELD_DISCONTINUED + ","
-                                                                + Company.TABLE_NAME + "." + Company.FIELD_ID + " AS " + Company.TABLE_NAME + Company.FIELD_ID + ","
-                                                                + Company.TABLE_NAME + "." + Company.FIELD_NAME + " AS " + Company.TABLE_NAME + Company.FIELD_NAME
+                                                                + Computer.TABLE_NAME + Computer.FIELD_ID + ", "
+                                                                + Computer.TABLE_NAME + "." + Computer.FIELD_NAME + " AS "
+                                                                + Computer.TABLE_NAME + Computer.FIELD_NAME + ", "
+                                                                + Computer.TABLE_NAME + "." + Computer.FIELD_INTRODUCED + " AS "
+                                                                + Computer.TABLE_NAME + Computer.FIELD_INTRODUCED + ", "
+                                                                + Computer.TABLE_NAME + "." + Computer.FIELD_DISCONTINUED + " AS "
+                                                                + Computer.TABLE_NAME + Computer.FIELD_DISCONTINUED + ", "
+                                                                + Company.TABLE_NAME + "." + Company.FIELD_ID + " AS "
+                                                                + Computer.TABLE_NAME + Company.TABLE_NAME + Company.FIELD_ID + ", "
+                                                                + Company.TABLE_NAME + "." + Company.FIELD_NAME + " AS "
+                                                                + Computer.TABLE_NAME + Company.TABLE_NAME + Company.FIELD_NAME
                                                                 + " FROM " + Computer.TABLE_NAME + " LEFT JOIN " + Company.TABLE_NAME + " ON " + Computer.TABLE_NAME + "."
                                                                 + Computer.FIELD_COMPANY_ID + "=" + Company.TABLE_NAME + "." + Company.FIELD_ID;
 
@@ -64,20 +70,24 @@ public class ComputerDAOImpl implements ComputerDAO {
     }
 
     @Override
-    public List<Computer> findAll(int offset, int length, String search, String sort, String order) {
+    public List<Computer> findAll(int offset, int length, String search, String column, String order) {
         List<Computer> computers = new ArrayList<>();
 
         try (Connection con = ConnectionMySQL.INSTANCE.getConnection();
-                PreparedStatement stmt = con.prepareStatement(QUERY_FIND_COMPUTER
-                        + (search != null ? " WHERE " + Computer.TABLE_NAME + "." + Computer.FIELD_NAME + " LIKE '%"
-                                + search + "%' OR " + Company.TABLE_NAME + "." + Company.FIELD_NAME + " LIKE '%"
-                                + search + "%'" : "")
-                        + (length != -1 ? " ORDER BY "
-                                + (sort != null && sort.equals("company") ? Company.TABLE_NAME : Computer.TABLE_NAME) + "."
-                                + (sort != null ? (sort.equals("company") ? Company.FIELD_NAME : sort)
-                                        : Computer.FIELD_NAME)
-                                + " " + (order != null ? order : "ASC") + " LIMIT " + length : "")
-                        + (length != -1 && offset != -1 ? " OFFSET " + offset : ""));) {
+                PreparedStatement stmt = con
+                        .prepareStatement(
+                                QUERY_FIND_COMPUTER
+                                        + (search != null
+                                                ? " WHERE " + Computer.TABLE_NAME + "." + Computer.FIELD_NAME
+                                                        + " LIKE '%" + search + "%' OR " + Company.TABLE_NAME + "."
+                                                        + Company.FIELD_NAME + " LIKE '%" + search
+                                                        + "%'"
+                                                : "")
+                                        + (length != -1 ? " ORDER BY "
+                                                + (column != null ? Computer.TABLE_NAME + column
+                                                        : Computer.TABLE_NAME + Computer.FIELD_NAME)
+                                                + " " + (order != null ? order : "ASC") + " LIMIT " + length : "")
+                                        + (length != -1 && offset != -1 ? " OFFSET " + offset : ""));) {
 
             final ResultSet rset = stmt.executeQuery();
 
@@ -154,7 +164,7 @@ public class ComputerDAOImpl implements ComputerDAO {
             boolean oldAutoCommit = con.getAutoCommit();
             con.setAutoCommit(false);
 
-            try (PreparedStatement stmt = con.prepareStatement(QUERY_ADD_COMPUTER);) {
+            try (PreparedStatement stmt = con.prepareStatement(QUERY_ADD_COMPUTER, Statement.RETURN_GENERATED_KEYS);) {
 
                 stmt.setString(1, computer.getName());
                 stmt.setObject(2, computer.getIntroduced());
@@ -174,7 +184,7 @@ public class ComputerDAOImpl implements ComputerDAO {
 
             } catch (SQLException e) {
                 con.rollback();
-                LOGGER.error("Error: " + computer + " not added");
+                LOGGER.error("Error: " + computer + " not added -> " + e);
             } finally {
                 con.setAutoCommit(oldAutoCommit);
             }
