@@ -219,6 +219,7 @@ public class ComputerDAOImpl implements ComputerDAO {
         try (Connection con = ConnectionMySQL.INSTANCE.getConnection();) {
 
             boolean oldAutoCommit = con.getAutoCommit();
+            con.setAutoCommit(false);
 
             try (PreparedStatement stmt = con.prepareStatement(QUERY_UPDATE_COMPUTER);) {
 
