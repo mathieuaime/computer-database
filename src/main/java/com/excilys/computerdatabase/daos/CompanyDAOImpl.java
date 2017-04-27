@@ -64,6 +64,8 @@ public class CompanyDAOImpl implements CompanyDAO {
                         + (length != -1 ? " LIMIT " + length : "")
                         + (length != -1 && offset != -1 ? " OFFSET " + offset : ""));) {
 
+            con.setReadOnly(true);
+
             final ResultSet rset = stmt.executeQuery();
 
             while (rset.next()) {
@@ -86,6 +88,8 @@ public class CompanyDAOImpl implements CompanyDAO {
 
         try (Connection con = ConnectionMySQL.INSTANCE.getConnection();
                 PreparedStatement stmt = con.prepareStatement(QUERY_FIND_COMPANY_BY_ID);) {
+
+            con.setReadOnly(true);
             stmt.setLong(1, id);
             final ResultSet rset = stmt.executeQuery();
 
@@ -108,6 +112,8 @@ public class CompanyDAOImpl implements CompanyDAO {
 
         try (Connection con = ConnectionMySQL.INSTANCE.getConnection();
                 PreparedStatement stmt = con.prepareStatement(QUERY_FIND_COMPANY_BY_NAME);) {
+
+            con.setReadOnly(true);
             stmt.setString(1, name);
             final ResultSet rset = stmt.executeQuery();
 
@@ -131,6 +137,8 @@ public class CompanyDAOImpl implements CompanyDAO {
 
         try (Connection con = ConnectionMySQL.INSTANCE.getConnection();
                 PreparedStatement stmt = con.prepareStatement(QUERY_FIND_COMPUTERS);) {
+
+            con.setReadOnly(true);
             stmt.setLong(1, id);
 
             final ResultSet rset = stmt.executeQuery();
@@ -156,6 +164,8 @@ public class CompanyDAOImpl implements CompanyDAO {
 
         try (Connection con = ConnectionMySQL.INSTANCE.getConnection();) {
 
+            con.setReadOnly(false);
+
             boolean oldAutoCommit = con.getAutoCommit();
             con.setAutoCommit(false);
 
@@ -171,7 +181,7 @@ public class CompanyDAOImpl implements CompanyDAO {
 
                 con.commit();
 
-                LOGGER.info("Info: Company " + id + " and all its computers sucessfully deleted");
+                //LOGGER.info("Info: Company " + id + " and all its computers sucessfully deleted");
 
             } catch (SQLException e) {
                 con.rollback();

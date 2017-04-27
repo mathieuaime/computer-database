@@ -1,6 +1,8 @@
 package com.excilys.computerdatabase.controllers;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import javax.servlet.RequestDispatcher;
@@ -9,6 +11,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+
+import com.excilys.computerdatabase.config.Config;
 import com.excilys.computerdatabase.dtos.CompanyDTO;
 import com.excilys.computerdatabase.dtos.ComputerDTO;
 import com.excilys.computerdatabase.exceptions.IntroducedAfterDiscontinuedException;
@@ -26,6 +31,10 @@ public class AddComputerServlet extends HttpServlet {
     private ComputerServiceImpl computerService;
 
     private CompanyServiceImpl companyService;
+
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern(Config.getProperties().getProperty("date_format"));
+
+    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(AddComputerServlet.class);
 
     /**
      * AddComputerServlet default constructor : initialize the daos.
@@ -48,9 +57,7 @@ public class AddComputerServlet extends HttpServlet {
 
         RequestDispatcher view = request.getRequestDispatcher("WEB-INF/views/addComputer.jsp");
 
-        List<CompanyDTO> companies = companyService.get();
-
-        request.setAttribute("companies", companies);
+        request.setAttribute("companies", companyService.get());
 
         view.forward(request, response);
 
@@ -68,12 +75,15 @@ public class AddComputerServlet extends HttpServlet {
 
         ComputerDTO computerDTO = new ComputerDTO();
         CompanyDTO companyDTO = new CompanyDTO();
+        
+        String introduced = request.getParameter("introduced");
+        String discontinued = request.getParameter("discontinued");
 
         companyDTO.setId(Long.parseLong(request.getParameter("companyId")));
 
         computerDTO.setName(request.getParameter("name"));
-        computerDTO.setIntroduced(request.getParameter("introduced"));
-        computerDTO.setDiscontinued(request.getParameter("discontinued"));
+        computerDTO.setIntroduced(!introduced.equals("") ? LocalDate.parse(introduced, DateTimeFormatter.ofPattern("yyyy-MM-dd")).format(DATE_FORMATTER) : "");
+        computerDTO.setDiscontinued(!discontinued.equals("") ? LocalDate.parse(discontinued, DateTimeFormatter.ofPattern("yyyy-MM-dd")).format(DATE_FORMATTER) : "");
         computerDTO.setCompany(companyDTO);
 
         Computer computer =  ComputerMapper.createBean(computerDTO);

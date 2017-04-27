@@ -3,7 +3,10 @@ package com.excilys.computerdatabase.services;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+
 import com.excilys.computerdatabase.daos.CompanyDAOImpl;
+import com.excilys.computerdatabase.daos.ComputerDAOImpl;
 import com.excilys.computerdatabase.dtos.CompanyDTO;
 import com.excilys.computerdatabase.dtos.ComputerDTO;
 import com.excilys.computerdatabase.dtos.Page;
@@ -18,6 +21,8 @@ public class CompanyServiceImpl implements CompanyService, PageServ<CompanyDTO> 
 
     private CompanyDAOImpl companyDAO;
 
+    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(CompanyService.class);
+
     /**
      * CompanyService constructor.
      */
@@ -28,6 +33,7 @@ public class CompanyServiceImpl implements CompanyService, PageServ<CompanyDTO> 
     @Override
     public List<CompanyDTO> get() {
         return companyDAO.findAll().stream().map(it -> CompanyMapper.createDTO(it)).collect(Collectors.toList());
+        //return companyDAO.findAll().stream().parallel().map(it -> CompanyMapper.createDTO(it)).collect(Collectors.toList());
     }
 
     @Override
@@ -52,10 +58,8 @@ public class CompanyServiceImpl implements CompanyService, PageServ<CompanyDTO> 
 
     @Override
     public Page<CompanyDTO> getPage(int pageNumero, int length, String search, String sort, String order) {
-        List<CompanyDTO> l = companyDAO.findAll((pageNumero - 1) * length, length, order).stream()
-                .map(it -> CompanyMapper.createDTO(it)).collect(Collectors.toList());
-
-        return new Page<CompanyDTO>(l, pageNumero);
+        return new Page<CompanyDTO>(companyDAO.findAll((pageNumero - 1) * length, length, order).stream()
+                .map(it -> CompanyMapper.createDTO(it)).collect(Collectors.toList()), pageNumero);
     }
 
     @Override

@@ -22,9 +22,7 @@ public class CompanyMapper {
         Company company = null;
 
         try {
-            int idCompany       = rset.getInt(Company.FIELD_ID);
-            String nameCompany  = rset.getString(Company.FIELD_NAME);
-            company = new Company.Builder(nameCompany).id(idCompany).build();
+            company = new Company.Builder(rset.getString(Company.FIELD_NAME)).id(rset.getInt(Company.FIELD_ID)).build();
         } catch (SQLException e) {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Exception: " + e);

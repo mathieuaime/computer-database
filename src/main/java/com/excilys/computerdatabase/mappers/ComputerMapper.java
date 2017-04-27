@@ -18,12 +18,16 @@ public class ComputerMapper {
 
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(ComputerMapper.class);
 
-    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern(Config.getProperties().getProperty("date_format"));
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter
+            .ofPattern(Config.getProperties().getProperty("date_format"));
 
     private static String url;
+    
+    private static CompanyDAOImpl cDAO = new CompanyDAOImpl();
 
     /**
      * Create a computer from a ResultSet.
+     * 
      * @param rset the ResultSet
      * @return Computer
      */
@@ -32,16 +36,15 @@ public class ComputerMapper {
         Computer computer = null;
 
         try {
-            long idComputer             = rset.getLong(Computer.TABLE_NAME + Computer.FIELD_ID);
-            String nameComputer         = rset.getString(Computer.TABLE_NAME + Computer.FIELD_NAME);
-            Date introducedComputer     = rset.getDate(Computer.TABLE_NAME + Computer.FIELD_INTRODUCED);
-            Date discontinuedComputer   = rset.getDate(Computer.TABLE_NAME + Computer.FIELD_DISCONTINUED);
-            long idCompany              = rset.getLong(Computer.TABLE_NAME + Company.TABLE_NAME + Company.FIELD_ID);
-            String nameCompany          = rset.getString(Computer.TABLE_NAME + Company.TABLE_NAME + Company.FIELD_NAME);
+            Date introducedComputer = rset.getDate(Computer.TABLE_NAME + Computer.FIELD_INTRODUCED);
+            Date discontinuedComputer = rset.getDate(Computer.TABLE_NAME + Computer.FIELD_DISCONTINUED);
 
-            Company company = new Company.Builder(nameCompany).id(idCompany).build();
+            Company company = new Company.Builder(
+                    rset.getString(Computer.TABLE_NAME + Company.TABLE_NAME + Company.FIELD_NAME))
+                            .id(rset.getLong(Computer.TABLE_NAME + Company.TABLE_NAME + Company.FIELD_ID)).build();
 
-            computer = new Computer.Builder(nameComputer).id(idComputer)
+            computer = new Computer.Builder(rset.getString(Computer.TABLE_NAME + Computer.FIELD_NAME))
+                    .id(rset.getLong(Computer.TABLE_NAME + Computer.FIELD_ID))
                     .introduced((introducedComputer != null ? introducedComputer.toLocalDate() : null))
                     .discontinued((discontinuedComputer != null ? discontinuedComputer.toLocalDate() : null))
                     .company(company).build();
@@ -57,28 +60,27 @@ public class ComputerMapper {
 
     /**
      * Create a computer from a DTO.
-     * @param computerDTO the computerDTO
+     * 
+     * @param computerDTO
+     *            the computerDTO
      * @return Computer
      */
     public static Computer createBean(ComputerDTO computerDTO) {
-        Computer computer = null;
-
-        CompanyDAOImpl cDAO = new CompanyDAOImpl();
 
         LocalDate introduced = (computerDTO.getIntroduced().equals("") ? null
                 : LocalDate.parse(computerDTO.getIntroduced(), DATE_FORMATTER));
         LocalDate discontinued = (computerDTO.getDiscontinued().equals("") ? null
                 : LocalDate.parse(computerDTO.getDiscontinued(), DATE_FORMATTER));
 
-        computer = new Computer.Builder(computerDTO.getName()).id(computerDTO.getId()).introduced(introduced)
+        return new Computer.Builder(computerDTO.getName()).id(computerDTO.getId()).introduced(introduced)
                 .discontinued(discontinued).company(cDAO.getById(computerDTO.getCompany().getId())).build();
-
-        return computer;
     }
 
     /**
      * Create a DTO from a computer.
-     * @param computer the computer
+     * 
+     * @param computer
+     *            the computer
      * @return ComputerDTO
      */
     public static ComputerDTO createDTO(Computer computer) {
