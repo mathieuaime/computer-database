@@ -71,11 +71,11 @@ public class EditComputerServlet extends HttpServlet {
 
         request.setAttribute("computer", computerDTO);
 
-        long startTime = System.currentTimeMillis();
+        //long startTime = System.currentTimeMillis();
         request.setAttribute("companies", companyService.get());
-        long stopTime = System.currentTimeMillis();
+        //long stopTime = System.currentTimeMillis();
         
-        LOGGER.debug((stopTime - startTime) + " ms");
+        //LOGGER.debug((stopTime - startTime) + " ms");
 
         view.forward(request, response);
 

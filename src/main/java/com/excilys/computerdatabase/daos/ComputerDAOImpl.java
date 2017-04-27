@@ -61,19 +61,21 @@ public class ComputerDAOImpl implements ComputerDAO {
                                                                         + " = ?, " + Computer.FIELD_INTRODUCED + " = ?, " + Computer.FIELD_DISCONTINUED + " = ?, "
                                                                         + Computer.FIELD_COMPANY_ID + " = ? " + " WHERE " + Computer.FIELD_ID + " = ?";
 
-    private static final String QUERY_DELETE_COMPUTER           = "DELETE FROM " + Computer.TABLE_NAME + " WHERE "
-                                                                + Computer.FIELD_ID + " IN (";
-
-    private static final String QUERY_FIND_COMPANY              = "SELECT " + Company.TABLE_NAME + "." + Company.FIELD_ID + ", "
-                                                                + Company.TABLE_NAME + "." + Company.FIELD_NAME + " FROM " + Company.TABLE_NAME + " INNER JOIN "
-                                                                + Computer.TABLE_NAME + " ON " + Computer.FIELD_COMPANY_ID + " = " + Company.TABLE_NAME + "."
-                                                                + Company.FIELD_ID + " WHERE " + Computer.TABLE_NAME + "." + Computer.FIELD_ID + " = ? ";
-
-    private static final String QUERY_COUNT_COMPUTERS           = "select count(*) as count from computer";
+    private static final String QUERY_DELETE_COMPUTER                   = "DELETE FROM " + Computer.TABLE_NAME + " WHERE "
+                                                                        + Computer.FIELD_ID + " IN (";
     
-    private static final String QUERY_COUNT_COMPUTERS_SEARCH    = "SELECT (select count(*) from computer where name like ?) +" +
-                                                                "(select count(*) from computer inner join (select distinct(id) from company where name like ?) c on  computer.company_id = c.id) -" +
-                                                                "(select count(*) from computer inner join company on computer.company_id = company.id where computer.name like ? and company.name like ?) as count";
+    private static final String QUERY_DELETE_COMPUTER_OF_COMPANY        = "DELETE FROM computer WHERE company_id =  ?";
+
+    private static final String QUERY_FIND_COMPANY                      = "SELECT " + Company.TABLE_NAME + "." + Company.FIELD_ID + ", "
+                                                                        + Company.TABLE_NAME + "." + Company.FIELD_NAME + " FROM " + Company.TABLE_NAME + " INNER JOIN "
+                                                                        + Computer.TABLE_NAME + " ON " + Computer.FIELD_COMPANY_ID + " = " + Company.TABLE_NAME + "."
+                                                                        + Company.FIELD_ID + " WHERE " + Computer.TABLE_NAME + "." + Computer.FIELD_ID + " = ? ";
+
+    private static final String QUERY_COUNT_COMPUTERS                   = "select count(*) as count from computer";
+    
+    private static final String QUERY_COUNT_COMPUTERS_SEARCH            = "SELECT (select count(*) from computer where name like ?) +" +
+                                                                        "(select count(*) from computer inner join (select distinct(id) from company where name like ?) c on  computer.company_id = c.id) -" +
+                                                                        "(select count(*) from computer inner join company on computer.company_id = company.id where computer.name like ? and company.name like ?) as count";
     
     private static int countTotal = -1;
 
@@ -128,7 +130,7 @@ public class ComputerDAOImpl implements ComputerDAO {
         
         //LOGGER.debug(query);
 
-        try (Connection con = ConnectionMySQL.INSTANCE.getConnection();
+        try (Connection con = ConnectionMySQL.getConnection();
                 PreparedStatement stmt = con.prepareStatement(query);) {
 
             con.setReadOnly(true);
@@ -156,7 +158,7 @@ public class ComputerDAOImpl implements ComputerDAO {
     public Computer getById(long id) {
         Computer computer = null;
 
-        try (Connection con = ConnectionMySQL.INSTANCE.getConnection();
+        try (Connection con = ConnectionMySQL.getConnection();
                 PreparedStatement stmt = con.prepareStatement(QUERY_FIND_COMPUTER_BY_ID);) {
 
             con.setReadOnly(true);
@@ -182,7 +184,7 @@ public class ComputerDAOImpl implements ComputerDAO {
     public List<Computer> getByName(String name) {
         List<Computer> computers = new ArrayList<>();
 
-        try (Connection con = ConnectionMySQL.INSTANCE.getConnection();
+        try (Connection con = ConnectionMySQL.getConnection();
                 PreparedStatement stmt = con.prepareStatement(QUERY_FIND_COMPUTER_BY_NAME);) {
 
             con.setReadOnly(true);
@@ -208,7 +210,7 @@ public class ComputerDAOImpl implements ComputerDAO {
     @Override
     public Computer add(Computer computer) {
 
-        try (Connection con = ConnectionMySQL.INSTANCE.getConnection();) {
+        try (Connection con = ConnectionMySQL.getConnection();) {
 
             boolean oldAutoCommit = con.getAutoCommit();
             con.setAutoCommit(false);
@@ -221,9 +223,9 @@ public class ComputerDAOImpl implements ComputerDAO {
                 stmt.setObject(2, computer.getIntroduced());
                 stmt.setObject(3, computer.getDiscontinued());
                 stmt.setLong(4, computer.getCompany().getId());
-                long startTime = System.currentTimeMillis();
+                //long startTime = System.currentTimeMillis();
                 stmt.executeUpdate();
-                long stopTime = System.currentTimeMillis();
+                //long stopTime = System.currentTimeMillis();
                 
                 //LOGGER.debug((stopTime - startTime) + "ms : " + QUERY_ADD_COMPUTER);
 
@@ -257,7 +259,7 @@ public class ComputerDAOImpl implements ComputerDAO {
     @Override
     public void update(Computer computer) throws ComputerNotFoundException {
 
-        try (Connection con = ConnectionMySQL.INSTANCE.getConnection();) {
+        try (Connection con = ConnectionMySQL.getConnection();) {
 
             boolean oldAutoCommit = con.getAutoCommit();
             con.setAutoCommit(false);
@@ -272,9 +274,9 @@ public class ComputerDAOImpl implements ComputerDAO {
                 stmt.setLong(4, computer.getCompany().getId());
                 stmt.setLong(5, computer.getId());
                 
-                long startTime = System.currentTimeMillis();
+                //long startTime = System.currentTimeMillis();
                 stmt.executeUpdate();
-                long stopTime = System.currentTimeMillis();
+                //long stopTime = System.currentTimeMillis();
                 //LOGGER.debug((stopTime - startTime) + " ms : " + stmt.toString());
 
                 con.commit();
@@ -299,6 +301,38 @@ public class ComputerDAOImpl implements ComputerDAO {
     public void delete(long id) throws ComputerNotFoundException {
         delete(new ArrayList<Long>(Arrays.asList(id)));
     }
+    
+    public void deleteFromCompany(long companyId) {
+        
+        try (Connection con = ConnectionMySQL.getConnection();) {
+
+            boolean oldAutoCommit = con.getAutoCommit();
+            con.setAutoCommit(false);
+
+            try (PreparedStatement stmt = con.prepareStatement(QUERY_DELETE_COMPUTER_OF_COMPANY);) {
+
+                con.setReadOnly(false);
+
+                stmt.setLong(1, companyId);
+                stmt.executeUpdate();
+
+                con.commit();
+
+                countTotal = -1;//a modifier
+
+            } catch (SQLException e) {
+                con.rollback();
+                LOGGER.error("Error: computers from company " + companyId + " not deleted -> " + e);
+            } finally {
+                con.setAutoCommit(oldAutoCommit);
+            }
+
+        } catch (SQLException e) {
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Exception: " + e);
+            }
+        }
+    }
 
     @Override
     public int count(String search) {
@@ -312,7 +346,7 @@ public class ComputerDAOImpl implements ComputerDAO {
             search += "%";
         }
 
-        try (Connection con = ConnectionMySQL.INSTANCE.getConnection();
+        try (Connection con = ConnectionMySQL.getConnection();
                 PreparedStatement stmt = con.prepareStatement(query);) {
 
             con.setReadOnly(true);
@@ -363,7 +397,7 @@ public class ComputerDAOImpl implements ComputerDAO {
     public Company getCompany(long id) {
         Company company = null;
 
-        try (Connection con = ConnectionMySQL.INSTANCE.getConnection();
+        try (Connection con = ConnectionMySQL.getConnection();
                 PreparedStatement stmt = con.prepareStatement(QUERY_FIND_COMPANY);) {
 
             con.setReadOnly(true);
@@ -387,7 +421,7 @@ public class ComputerDAOImpl implements ComputerDAO {
     public void delete(List<Long> listId) throws ComputerNotFoundException {
         String ids = "";
 
-        try (Connection con = ConnectionMySQL.INSTANCE.getConnection();) {
+        try (Connection con = ConnectionMySQL.getConnection();) {
 
             con.setReadOnly(false);
 

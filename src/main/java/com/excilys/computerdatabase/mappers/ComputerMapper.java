@@ -13,6 +13,7 @@ import com.excilys.computerdatabase.daos.CompanyDAOImpl;
 import com.excilys.computerdatabase.dtos.ComputerDTO;
 import com.excilys.computerdatabase.models.Company;
 import com.excilys.computerdatabase.models.Computer;
+import com.excilys.computerdatabase.services.CompanyServiceImpl;
 
 public class ComputerMapper {
 
@@ -23,7 +24,7 @@ public class ComputerMapper {
 
     private static String url;
     
-    private static CompanyDAOImpl cDAO = new CompanyDAOImpl();
+    private static CompanyServiceImpl cDAO = new CompanyServiceImpl();
 
     /**
      * Create a computer from a ResultSet.
@@ -73,7 +74,7 @@ public class ComputerMapper {
                 : LocalDate.parse(computerDTO.getDiscontinued(), DATE_FORMATTER));
 
         return new Computer.Builder(computerDTO.getName()).id(computerDTO.getId()).introduced(introduced)
-                .discontinued(discontinued).company(cDAO.getById(computerDTO.getCompany().getId())).build();
+                .discontinued(discontinued).company(CompanyMapper.createBean(cDAO.getById(computerDTO.getCompany().getId()))).build();
     }
 
     /**

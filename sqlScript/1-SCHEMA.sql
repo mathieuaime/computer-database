@@ -22,3 +22,7 @@ drop schema if exists `computer-database-db2`;
 
   alter table computer add constraint fk_computer_company_1 foreign key (company_id) references company (id) on delete restrict on update restrict;
   create index ix_computer_company_1 on computer (company_id);
+  create index ix_computer_name on computer (name);
+  create index ix_computer_introduced on computer (introduced);
+  create index ix_computer_discontinued on computer (discontinued);
+  create index ix_company_name on company (name);
