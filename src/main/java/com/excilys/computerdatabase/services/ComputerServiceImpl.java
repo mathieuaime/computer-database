@@ -3,6 +3,10 @@ package com.excilys.computerdatabase.services;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.boon.core.Sys;
+import org.slf4j.Logger;
+
+import com.excilys.computerdatabase.controllers.EditComputerServlet;
 import com.excilys.computerdatabase.daos.ComputerDAOImpl;
 import com.excilys.computerdatabase.dtos.CompanyDTO;
 import com.excilys.computerdatabase.dtos.ComputerDTO;
@@ -17,6 +21,11 @@ import com.excilys.computerdatabase.models.Computer;
 public class ComputerServiceImpl implements ComputerService, PageServ<ComputerDTO> {
 
     private ComputerDAOImpl computerDAO;
+
+    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(ComputerServiceImpl.class);
+    
+    private long startTime;
+    private long stopTime;
 
     /**
      * ComputerService constructor.
@@ -42,12 +51,10 @@ public class ComputerServiceImpl implements ComputerService, PageServ<ComputerDT
     }
 
     @Override
-    public Page<ComputerDTO> getPage(int pageNumero, int length, String search, String sort, String order) {
+    public Page<ComputerDTO> getPage(int pageNumero, int length, String search, String column, String order) {
 
-        List<ComputerDTO> l = computerDAO.findAll((pageNumero - 1) * length, length, search, sort, order).stream()
-                .map(it -> ComputerMapper.createDTO(it)).collect(Collectors.toList());
-
-        return new Page<ComputerDTO>(l, pageNumero);
+        return new Page<ComputerDTO>(computerDAO.findAll((pageNumero - 1) * length, length, search, column, order).stream()
+                .map(it -> ComputerMapper.createDTO(it)).collect(Collectors.toList()), pageNumero);
     }
 
     @Override
@@ -68,8 +75,7 @@ public class ComputerServiceImpl implements ComputerService, PageServ<ComputerDT
 
     @Override
     public ComputerDTO add(Computer computer) {
-        computer = computerDAO.add(computer);
-        return ComputerMapper.createDTO(computer);
+        return ComputerMapper.createDTO(computerDAO.add(computer));
     }
 
     @Override

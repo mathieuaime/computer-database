@@ -46,7 +46,7 @@
 						action="" method="GET"
 						class="form-inline">
 							 
-						<input type="hidden" id="length" name="length" value="${length}" />
+						<input type="hidden" id="pageSize" name="pageSize" value="${pageSize}" />
 							 
 						<input type="search" id="searchbox"
 							name="search" class="form-control" placeholder="Search name" value="${search}"/>
@@ -81,53 +81,53 @@
 						</span></th>
 
 						<!-- Table header for Computer Name -->
-						<th><utils:link href="dashboard" length="${length}"
-								search="${search}" sort="name"
-								order="${sort != null && sort == 'name' && order != 'DESC' ? 'DESC' : 'ASC'}"
+						<th><utils:link href="dashboard" pageSize="${pageSize}"
+								search="${search}" column="name"
+								order="${column != null && column == 'name' && order != 'DESC' ? 'DESC' : 'ASC'}"
 								text="Computer name"/> 
-							<c:if test="${sort == 'name' && order == 'ASC'}">
+							<c:if test="${column == 'name' && order == 'ASC'}">
 								<span class="glyphicon glyphicon-chevron-up"></span>
 							</c:if> 
-							<c:if test="${sort == 'name' && order == 'DESC'}">
+							<c:if test="${column == 'name' && order == 'DESC'}">
 								<span class="glyphicon glyphicon-chevron-down"></span>
 							</c:if>
 						</th>
 
 						<!-- Table header for Introduced Date -->
-						<th><utils:link href="dashboard" length="${length}"
-								search="${search}" sort="introduced"
-								order="${sort != null && sort == 'introduced' && order != 'DESC' ? 'DESC' : 'ASC'}"
+						<th><utils:link href="dashboard" pageSize="${pageSize}"
+								search="${search}" column="introduced"
+								order="${column != null && column == 'introduced' && order != 'DESC' ? 'DESC' : 'ASC'}"
 								text="Introduced date" />
-							<c:if test="${sort == 'introduced' && order == 'ASC'}">
+							<c:if test="${column == 'introduced' && order == 'ASC'}">
 								<span class="glyphicon glyphicon-chevron-up"></span>
 							</c:if> 
-							<c:if test="${sort == 'introduced' && order == 'DESC'}">
+							<c:if test="${column == 'introduced' && order == 'DESC'}">
 								<span class="glyphicon glyphicon-chevron-down"></span>
 							</c:if>
 						</th>
 
 						<!-- Table header for Discontinued Date -->
-						<th><utils:link href="dashboard" length="${length}"
-								search="${search}" sort="discontinued"
-								order="${sort != null && sort == 'discontinued' && order != 'DESC' ? 'DESC' : 'ASC'}"
+						<th><utils:link href="dashboard" pageSize="${pageSize}"
+								search="${search}" column="discontinued"
+								order="${column != null && column == 'discontinued' && order != 'DESC' ? 'DESC' : 'ASC'}"
 								text="Discontinued date" />
-							<c:if test="${sort == 'discontinued' && order == 'ASC'}">
+							<c:if test="${column == 'discontinued' && order == 'ASC'}">
 								<span class="glyphicon glyphicon-chevron-up"></span>
 							</c:if> 
-							<c:if test="${sort == 'discontinued' && order == 'DESC'}">
+							<c:if test="${column == 'discontinued' && order == 'DESC'}">
 								<span class="glyphicon glyphicon-chevron-down"></span>
 							</c:if>
 						</th>
 
 						<!-- Table header for Company -->
-						<th><utils:link href="dashboard" length="${length}"
-								search="${search}" sort="company"
-								order="${sort != null && sort == 'company' && order != 'DESC' ? 'DESC' : 'ASC'}"
+						<th><utils:link href="dashboard" pageSize="${pageSize}"
+								search="${search}" column="companyname"
+								order="${column != null && column == 'companyname' && order != 'DESC' ? 'DESC' : 'ASC'}"
 								text="Company" />
-							<c:if test="${sort == 'company' && order == 'ASC'}">
+							<c:if test="${column == 'companyname' && order == 'ASC'}">
 								<span class="glyphicon glyphicon-chevron-up"></span>
 							</c:if> 
-							<c:if test="${sort == 'company' && order == 'DESC'}">
+							<c:if test="${column == 'companyname' && order == 'DESC'}">
 								<span class="glyphicon glyphicon-chevron-down"></span>
 							</c:if>
 						</th>
@@ -153,7 +153,7 @@
 
 	<footer class="navbar-fixed-bottom">
 		<div class="container text-center">
-			<utils:pagination nbPage="${nbPage}" length="${length}" search="${search}"
+			<utils:pagination nbPage="${nbPage}" pageSize="${pageSize}" search="${search}"
 				page="${page}" />
 		</div>
 

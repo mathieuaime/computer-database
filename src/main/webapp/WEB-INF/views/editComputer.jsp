@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="utils"%>
 <!DOCTYPE html>
 <html>
@@ -38,16 +39,27 @@
 									name="name">
 							</div>
 							<div class="form-group">
+								<fmt:parseDate value="${computer.introduced}"
+									pattern="${dateFormat}" var="introducedParsed" />
+								<fmt:formatDate value="${introducedParsed}" pattern="yyyy-MM-dd"
+									var="formatedIntroduced" />
+
 								<label for="introduced">Introduced date</label> <input
 									type="date" class="form-control" id="introduced"
-									placeholder="Introduced date" value="${computer.introduced}"
+									placeholder="Introduced date" value="${formatedIntroduced}"
 									name="introduced">
 							</div>
 							<div class="form-group">
+								<fmt:parseDate value="${computer.discontinued}"
+									pattern="${dateFormat}" var="discontinuedParsed" />
+								<fmt:formatDate value="${discontinuedParsed}" pattern="yyyy-MM-dd"
+									var="formatedDiscontinued" />
+									
 								<label for="discontinued">Discontinued date</label> <input
 									type="date" class="form-control" id="discontinued"
 									placeholder="Discontinued date"
-									value="${computer.discontinued}" name="discontinued">
+									value="${formatedDiscontinued}"
+									name="discontinued">
 							</div>
 							<div class="form-group">
 								<label for="companyId">Company</label> <select

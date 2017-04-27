@@ -1,7 +1,8 @@
 package com.excilys.computerdatabase.controllers;
 
 import java.io.IOException;
-import java.util.List;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -9,6 +10,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+
+import com.excilys.computerdatabase.config.Config;
 import com.excilys.computerdatabase.dtos.CompanyDTO;
 import com.excilys.computerdatabase.dtos.ComputerDTO;
 import com.excilys.computerdatabase.exceptions.ComputerNotFoundException;
@@ -23,6 +27,10 @@ import com.excilys.computerdatabase.validators.ComputerValidator;
 public class EditComputerServlet extends HttpServlet {
 
     private static final long serialVersionUID = -82009216108348436L;
+    
+    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(EditComputerServlet.class);
+
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern(Config.getProperties().getProperty("date_format"));
 
     private ComputerServiceImpl computerService;
 
@@ -46,6 +54,8 @@ public class EditComputerServlet extends HttpServlet {
      */
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        
+        request.setAttribute("dateFormat", Config.getProperties().getProperty("date_format"));
 
         int idComputer = (request.getParameter("id") != null ? Integer.parseInt(request.getParameter("id")) : 0);
 
@@ -61,9 +71,11 @@ public class EditComputerServlet extends HttpServlet {
 
         request.setAttribute("computer", computerDTO);
 
-        List<CompanyDTO> companies = companyService.get();
-
-        request.setAttribute("companies", companies);
+        long startTime = System.currentTimeMillis();
+        request.setAttribute("companies", companyService.get());
+        long stopTime = System.currentTimeMillis();
+        
+        LOGGER.debug((stopTime - startTime) + " ms");
 
         view.forward(request, response);
 
@@ -81,14 +93,19 @@ public class EditComputerServlet extends HttpServlet {
 
         ComputerDTO computerDTO = new ComputerDTO();
         CompanyDTO companyDTO = new CompanyDTO();
+        
+        String introduced = request.getParameter("introduced");
+        String discontinued = request.getParameter("discontinued");
 
         companyDTO.setId(Long.parseLong(request.getParameter("companyId")));
 
         computerDTO.setId(Long.parseLong(request.getParameter("id")));
         computerDTO.setName(request.getParameter("name"));
-        computerDTO.setIntroduced(request.getParameter("introduced"));
-        computerDTO.setDiscontinued(request.getParameter("discontinued"));
+        computerDTO.setIntroduced(!introduced.equals("") ? LocalDate.parse(introduced, DateTimeFormatter.ofPattern("yyyy-MM-dd")).format(DATE_FORMATTER) : "");
+        computerDTO.setDiscontinued(!discontinued.equals("") ? LocalDate.parse(discontinued, DateTimeFormatter.ofPattern("yyyy-MM-dd")).format(DATE_FORMATTER) : "");
         computerDTO.setCompany(companyDTO);
+        
+        //LOGGER.debug(computerDTO.toString());
 
         Computer computer = ComputerMapper.createBean(computerDTO);
 
