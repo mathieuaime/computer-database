@@ -1,0 +1,10 @@
+Docker with java8 & maven : docker pull jamesdbloom/docker-java8-maven
+Docker with MySQL : docker pull mysql
+
+Create docker network : docker network create -d bridge --subnet 172.25.0.0/16 test_nw
+
+Run mysql docker : docker run -d --network=test_nw --name=mysqltest --env="MYSQL_ROOT_PASSWORD=password" mysqlcustom-test
+Run maven docker : docker run -d --network=test_nw  --name=maventest jamesdbloom/docker-java8-maven
+Run jenkins docker : docker run -v /var/run/docker.sock:/var/run/docker.sock -d --network=test_nw --name=jenkins jenkins
+
+Ip Address of a docker : docker inspect mysqltest | grep IPAddress

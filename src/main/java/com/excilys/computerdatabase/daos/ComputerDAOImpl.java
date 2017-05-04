@@ -71,11 +71,11 @@ public class ComputerDAOImpl implements ComputerDAO {
                                                                         + Computer.TABLE_NAME + " ON " + Computer.FIELD_COMPANY_ID + " = " + Company.TABLE_NAME + "."
                                                                         + Company.FIELD_ID + " WHERE " + Computer.TABLE_NAME + "." + Computer.FIELD_ID + " = ? ";
 
-    private static final String QUERY_COUNT_COMPUTERS                   = "select count(*) as count from computer";
+    private static final String QUERY_COUNT_COMPUTERS                   = "select count(id) as count from computer";
     
-    private static final String QUERY_COUNT_COMPUTERS_SEARCH            = "SELECT (select count(*) from computer where name like ?) +" +
-                                                                        "(select count(*) from computer inner join (select distinct(id) from company where name like ?) c on  computer.company_id = c.id) -" +
-                                                                        "(select count(*) from computer inner join company on computer.company_id = company.id where computer.name like ? and company.name like ?) as count";
+    private static final String QUERY_COUNT_COMPUTERS_SEARCH            = "SELECT (select count(id) from computer where name like ?) +" +
+                                                                        "(select count(computer.id) from computer inner join (select distinct(id) from company where name like ?) c on  computer.company_id = c.id) -" +
+                                                                        "(select count(computer.id) from computer inner join company on computer.company_id = company.id where computer.name like ? and company.name like ?) as count";
     
     private static int countTotal = -1;
 
@@ -355,7 +355,7 @@ public class ComputerDAOImpl implements ComputerDAO {
 
             boolean searchForTotalCount = search == null || search.equals("");
 
-            if (searchForTotalCount && countTotal != -1) {
+            if (searchForTotalCount && countTotal < 0) {
                 count = countTotal;
             } else {
 
