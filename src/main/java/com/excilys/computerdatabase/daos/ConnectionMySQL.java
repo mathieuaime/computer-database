@@ -10,14 +10,20 @@ public enum ConnectionMySQL {
 
     INSTANCE;
 
-    private static HikariDataSource dataSource = null;
+    private static ThreadLocal<Connection> connectionThread = new ThreadLocal<>();
+    private static HikariConfig config = new HikariConfig("/config/hikari.properties");
+    private static HikariDataSource dataSource = new HikariDataSource(config);
 
     /**
      * Open the connection.
      */
-    public static void connect() {
-        HikariConfig config = new HikariConfig("/config/hikari.properties");
-        dataSource = new HikariDataSource(config);
+    public static void open() {
+        try {
+            connectionThread.set(dataSource.getConnection());
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -25,12 +31,20 @@ public enum ConnectionMySQL {
      * @return Connection
      * @throws SQLException SQLException
      */
-    public Connection getConnection() throws SQLException {
-        if (dataSource == null) {
-            connect();
-        }
+    public static Connection getConnection() throws SQLException {
+        return connectionThread.get();
+    }
 
-        return dataSource.getConnection();
+    /**
+     * Close the connection.
+     */
+    public static void close() {
+        try {
+            connectionThread.get().close();
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 
 }

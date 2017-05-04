@@ -41,9 +41,6 @@ public class CompanyDAOImpl implements CompanyDAO {
                                                             + " ON " + Computer.FIELD_COMPANY_ID + " = " + Company.TABLE_NAME + "." + Company.FIELD_ID
                                                             + " WHERE " + Company.TABLE_NAME + "." + Company.FIELD_ID + " =  ?";
 
-    private static final String QUERY_DELETE_COMPUTERS      = "DELETE FROM " + Computer.TABLE_NAME
-                                                            + " WHERE " + Computer.FIELD_COMPANY_ID + " = ?";
-
     private static final String QUERY_DELETE_COMPANY        = "DELETE FROM " + Company.TABLE_NAME
                                                             + " WHERE " + Company.FIELD_ID + " = ?";
 
@@ -58,7 +55,7 @@ public class CompanyDAOImpl implements CompanyDAO {
     public List<Company> findAll(int offset, int length, String order) {
         List<Company> companies = new ArrayList<>();
 
-        try (Connection con = ConnectionMySQL.INSTANCE.getConnection();
+        try (Connection con = ConnectionMySQL.getConnection();
                 PreparedStatement stmt = con.prepareStatement(QUERY_FIND_COMPANIES
                         + " ORDER BY " + order
                         + (length != -1 ? " LIMIT " + length : "")
@@ -86,7 +83,7 @@ public class CompanyDAOImpl implements CompanyDAO {
     public Company getById(long id) {
         Company company = null;
 
-        try (Connection con = ConnectionMySQL.INSTANCE.getConnection();
+        try (Connection con = ConnectionMySQL.getConnection();
                 PreparedStatement stmt = con.prepareStatement(QUERY_FIND_COMPANY_BY_ID);) {
 
             con.setReadOnly(true);
@@ -110,7 +107,7 @@ public class CompanyDAOImpl implements CompanyDAO {
     public List<Company> getByName(String name) {
         List<Company> companies = new ArrayList<>();
 
-        try (Connection con = ConnectionMySQL.INSTANCE.getConnection();
+        try (Connection con = ConnectionMySQL.getConnection();
                 PreparedStatement stmt = con.prepareStatement(QUERY_FIND_COMPANY_BY_NAME);) {
 
             con.setReadOnly(true);
@@ -135,7 +132,7 @@ public class CompanyDAOImpl implements CompanyDAO {
     public List<Computer> getComputers(long id) {
         List<Computer> computers = new ArrayList<>();
 
-        try (Connection con = ConnectionMySQL.INSTANCE.getConnection();
+        try (Connection con = ConnectionMySQL.getConnection();
                 PreparedStatement stmt = con.prepareStatement(QUERY_FIND_COMPUTERS);) {
 
             con.setReadOnly(true);
@@ -161,31 +158,24 @@ public class CompanyDAOImpl implements CompanyDAO {
 
     @Override
     public void delete(long id) throws CompanyNotFoundException {
-
-        try (Connection con = ConnectionMySQL.INSTANCE.getConnection();) {
-
-            con.setReadOnly(false);
+        try (Connection con = ConnectionMySQL.getConnection();) {
 
             boolean oldAutoCommit = con.getAutoCommit();
             con.setAutoCommit(false);
 
-            try (PreparedStatement stmt = con.prepareStatement(QUERY_DELETE_COMPUTERS);) {
+            try (PreparedStatement stmt = con.prepareStatement(QUERY_DELETE_COMPANY);) {
+
+                con.setReadOnly(false);
 
                 stmt.setLong(1, id);
                 stmt.executeUpdate();
 
-                try (PreparedStatement stmt2 = con.prepareStatement(QUERY_DELETE_COMPANY);) {
-                    stmt2.setLong(1, id);
-                    stmt2.executeUpdate();
-                }
-
                 con.commit();
 
-                //LOGGER.info("Info: Company " + id + " and all its computers sucessfully deleted");
 
             } catch (SQLException e) {
                 con.rollback();
-                LOGGER.error("Error: Company " + id + " not deleted");
+                LOGGER.error("Error: company " + id + " not deleted -> " + e);
             } finally {
                 con.setAutoCommit(oldAutoCommit);
             }
