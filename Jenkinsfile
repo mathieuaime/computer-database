@@ -2,16 +2,11 @@ node {
 		stage("Checkout project") {
 			
 		}
-		
-        stage("Docker MySQL") {
-        	docker.image('mysqlcustom-test').withRun("--env MYSQL_ROOT_PASSWORD=root --network=isolated_nw --name=mysqltest") {
-        		echo 'Hello, MySQL'
-        	}
-        }
         
-        stage("Docker Maven") {
-            docker.image('jamesdbloom/docker-java8-maven').withRun(" --network=isolated_nw --name=maventest") {
-            	echo 'Hello, Maven'
-        	}
+        stage("Unit tests") {
+        	sh "docker start mysqltest"
+	        sh "docker run --network=isolated_nw  --name=maventest mavencustom-test"
+	        sh "docker rm maventest"
+	        sh "docker stop mysqltest"
         }
 }

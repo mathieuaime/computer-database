@@ -158,9 +158,13 @@ public class CompanyDAOImpl implements CompanyDAO {
 
     @Override
     public void delete(long id) throws CompanyNotFoundException {
-        try (Connection con = ConnectionMySQL.getConnection();) {
+        
+        Connection con;
+        
+        try {
+            
+            con = ConnectionMySQL.getConnection();
 
-            boolean oldAutoCommit = con.getAutoCommit();
             con.setAutoCommit(false);
 
             try (PreparedStatement stmt = con.prepareStatement(QUERY_DELETE_COMPANY);) {
@@ -170,14 +174,10 @@ public class CompanyDAOImpl implements CompanyDAO {
                 stmt.setLong(1, id);
                 stmt.executeUpdate();
 
-                con.commit();
-
 
             } catch (SQLException e) {
                 con.rollback();
                 LOGGER.error("Error: company " + id + " not deleted -> " + e);
-            } finally {
-                con.setAutoCommit(oldAutoCommit);
             }
 
         } catch (SQLException e) {

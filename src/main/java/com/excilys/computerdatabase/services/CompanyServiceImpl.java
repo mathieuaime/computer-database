@@ -1,5 +1,6 @@
 package com.excilys.computerdatabase.services;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -61,18 +62,14 @@ public class CompanyServiceImpl implements CompanyService, PageServ<CompanyDTO> 
 
     @Override
     public Page<CompanyDTO> getPage() {
-        ConnectionMySQL.open();
         Page<CompanyDTO> p = new Page<CompanyDTO>(get(), 1);
-        ConnectionMySQL.close();
 
         return p;
     }
 
     @Override
     public Page<CompanyDTO> getPage(int pageNumero, int length) {
-        ConnectionMySQL.open();
         Page<CompanyDTO> p = getPage(pageNumero, length, null, "ASC", Company.FIELD_NAME);
-        ConnectionMySQL.close();
 
         return p;
     }
@@ -103,6 +100,13 @@ public class CompanyServiceImpl implements CompanyService, PageServ<CompanyDTO> 
         computerDAO.deleteFromCompany(id);
 
         companyDAO.delete(id);
+        
+        try {
+            ConnectionMySQL.getConnection().commit();
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
 
         ConnectionMySQL.close();
     }

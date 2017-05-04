@@ -121,9 +121,9 @@ public class CompanyServiceTest extends DatabaseTestCase {
 
             companyService.delete(1L);
 
-            assertNull(companyService.getById(1L));
+            assertEquals(0, companyService.getComputers(1L).size());
             
-            assertEquals(0, companyService.getComputers(1L));
+            assertNull(companyService.getById(1L));
 
         } catch (Exception e) {
             if (LOGGER.isDebugEnabled()) {

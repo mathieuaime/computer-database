@@ -3,10 +3,8 @@ package com.excilys.computerdatabase.services;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.boon.core.Sys;
 import org.slf4j.Logger;
 
-import com.excilys.computerdatabase.controllers.EditComputerServlet;
 import com.excilys.computerdatabase.daos.ComputerDAOImpl;
 import com.excilys.computerdatabase.daos.ConnectionMySQL;
 import com.excilys.computerdatabase.dtos.CompanyDTO;
@@ -18,8 +16,6 @@ import com.excilys.computerdatabase.interfaces.PageServ;
 import com.excilys.computerdatabase.mappers.CompanyMapper;
 import com.excilys.computerdatabase.mappers.ComputerMapper;
 import com.excilys.computerdatabase.models.Computer;
-
-import akka.io.Tcp.Connect;
 
 public class ComputerServiceImpl implements ComputerService, PageServ<ComputerDTO> {
 
@@ -39,30 +35,17 @@ public class ComputerServiceImpl implements ComputerService, PageServ<ComputerDT
 
     @Override
     public List<ComputerDTO> get() {
-        ConnectionMySQL.open();
-        List<ComputerDTO> l = computerDAO.findAll().stream().map(it -> ComputerMapper.createDTO(it))
-                .collect(Collectors.toList());
-        ConnectionMySQL.close();
-
-        return l;
+        return getPage().getObjects();
     }
 
     @Override
     public Page<ComputerDTO> getPage() {
-        ConnectionMySQL.open();
-        Page<ComputerDTO> p = new Page<ComputerDTO>(get(), 1);
-        ConnectionMySQL.close();
-
-        return p;
+        return getPage(1, count(null), null, null, null);
     }
 
     @Override
     public Page<ComputerDTO> getPage(int pageNumero, int length) {
-        ConnectionMySQL.open();
-        Page<ComputerDTO> p = getPage(pageNumero, length, null, Computer.FIELD_NAME, "ASC");
-        ConnectionMySQL.close();
-
-        return p;
+        return getPage(pageNumero, length, null, Computer.FIELD_NAME, "ASC");
     }
 
     @Override

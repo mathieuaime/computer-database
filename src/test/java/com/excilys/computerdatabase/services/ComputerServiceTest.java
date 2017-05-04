@@ -98,7 +98,7 @@ public class ComputerServiceTest extends DatabaseTestCase {
      */
     @Test
     public void testGetAll() {
-        assertEquals(4, computerService.get().size());
+        assertEquals(4, computerService.getPage().getObjectNumber());
     }
 
     /**
