@@ -12,4 +12,4 @@ ENTRYPOINT ["mvn", "dependency:resolve"]
 ENTRYPOINT ["mvn", "verify"]
 
 #Tests and build
-ENTRYPOINT ["mvn","package"]
+ENTRYPOINT ["mvn","clean","package"]
