@@ -55,13 +55,15 @@ public enum CompanyDAOImpl implements CompanyDAO {
     public List<Company> findAll(int offset, int length, String order) {
         List<Company> companies = new ArrayList<>();
 
-        try (Connection con = ConnectionMySQL.getConnection();
-                PreparedStatement stmt = con.prepareStatement(QUERY_FIND_COMPANIES
-                        + " ORDER BY " + order
-                        + (length != -1 ? " LIMIT " + length + " OFFSET " + offset : ""));) {
+        try {
+            Connection con = ConnectionMySQL.getConnection();
 
-            con.setReadOnly(true);
-            companies = CompanyMapper.getCompanies(stmt.executeQuery());
+            try (PreparedStatement stmt = con.prepareStatement(QUERY_FIND_COMPANIES + " ORDER BY " + order
+                    + (length != -1 ? " LIMIT " + length + " OFFSET " + offset : ""));) {
+
+                con.setReadOnly(true);
+                companies = CompanyMapper.getCompanies(stmt.executeQuery());
+            }
 
         } catch (SQLException e) {
             if (LOGGER.isDebugEnabled()) {
@@ -76,15 +78,18 @@ public enum CompanyDAOImpl implements CompanyDAO {
     public Company getById(long id) {
         Company company = null;
 
-        try (Connection con = ConnectionMySQL.getConnection();
-                PreparedStatement stmt = con.prepareStatement(QUERY_FIND_COMPANY_BY_ID);) {
+        try {
+            Connection con = ConnectionMySQL.getConnection();
 
-            con.setReadOnly(true);
-            stmt.setLong(1, id);
-            final ResultSet rset = stmt.executeQuery();
+            try (PreparedStatement stmt = con.prepareStatement(QUERY_FIND_COMPANY_BY_ID);) {
 
-            if (rset.first()) {
-                company = CompanyMapper.getCompany(rset);
+                con.setReadOnly(true);
+                stmt.setLong(1, id);
+                final ResultSet rset = stmt.executeQuery();
+
+                if (rset.first()) {
+                    company = CompanyMapper.getCompany(rset);
+                }
             }
 
         } catch (SQLException e) {
@@ -100,13 +105,16 @@ public enum CompanyDAOImpl implements CompanyDAO {
     public List<Company> getByName(String name) {
         List<Company> companies = new ArrayList<>();
 
-        try (Connection con = ConnectionMySQL.getConnection();
-                PreparedStatement stmt = con.prepareStatement(QUERY_FIND_COMPANY_BY_NAME);) {
+        try {
+            Connection con = ConnectionMySQL.getConnection();
 
-            con.setReadOnly(true);
-            stmt.setString(1, name);
+            try (PreparedStatement stmt = con.prepareStatement(QUERY_FIND_COMPANY_BY_NAME);) {
 
-            companies = CompanyMapper.getCompanies(stmt.executeQuery());
+                con.setReadOnly(true);
+                stmt.setString(1, name);
+
+                companies = CompanyMapper.getCompanies(stmt.executeQuery());
+            }
 
         } catch (SQLException e) {
             if (LOGGER.isDebugEnabled()) {
@@ -121,13 +129,16 @@ public enum CompanyDAOImpl implements CompanyDAO {
     public List<Computer> getComputers(long id) {
         List<Computer> computers = new ArrayList<>();
 
-        try (Connection con = ConnectionMySQL.getConnection();
-                PreparedStatement stmt = con.prepareStatement(QUERY_FIND_COMPUTERS);) {
+        try {
+            Connection con = ConnectionMySQL.getConnection();
 
-            con.setReadOnly(true);
-            stmt.setLong(1, id);
+            try (PreparedStatement stmt = con.prepareStatement(QUERY_FIND_COMPUTERS);) {
 
-            computers = ComputerMapper.getComputers(stmt.executeQuery());
+                con.setReadOnly(true);
+                stmt.setLong(1, id);
+
+                computers = ComputerMapper.getComputers(stmt.executeQuery());
+            }
 
         } catch (SQLException e) {
             if (LOGGER.isDebugEnabled()) {
@@ -141,11 +152,9 @@ public enum CompanyDAOImpl implements CompanyDAO {
     @Override
     public void delete(long id) throws CompanyNotFoundException {
 
-        Connection con;
-
         try {
 
-            con = ConnectionMySQL.getConnection();
+            Connection con = ConnectionMySQL.getConnection();
 
             con.setAutoCommit(false);
 

@@ -18,13 +18,13 @@ import com.excilys.computerdatabase.daos.impl.CompanyDAOImpl;
 public class CompanyDAOTest extends DatabaseTestCase {
 
     private CompanyDAOImpl companyDAO = CompanyDAOImpl.INSTANCE;
-    
+
     private static final String SAMPLE_TEST_XML = "src/test/resources/db-sample.xml";
 
     private static final String URL = Config.getProperties().getProperty("urlTest");
     private static final String USER = Config.getProperties().getProperty("user");
     private static final String PASSWORD = Config.getProperties().getProperty("password");
-    
+
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(CompanyDAOTest.class);
 
     /**
@@ -34,10 +34,11 @@ public class CompanyDAOTest extends DatabaseTestCase {
     public void testGetById() {
 
         try {
-
+            ConnectionMySQL.open();
             assertEquals(1, companyDAO.getById(1).getId());
 
             assertNull(companyDAO.getById(1000));
+            ConnectionMySQL.close();
 
         } catch (Exception e) {
             if (LOGGER.isDebugEnabled()) {
@@ -53,13 +54,14 @@ public class CompanyDAOTest extends DatabaseTestCase {
     public void testGetByName() {
 
         try {
-
+            ConnectionMySQL.open();
             assertEquals(1, companyDAO.getByName("Company1").size());
             assertEquals(1, companyDAO.getByName("Company1").get(0).getId());
-            
+
             assertEquals(2, companyDAO.getByName("Company2").size());
 
             assertEquals(0, companyDAO.getByName("Company1000").size());
+            ConnectionMySQL.open();
 
         } catch (Exception e) {
             if (LOGGER.isDebugEnabled()) {
@@ -73,8 +75,9 @@ public class CompanyDAOTest extends DatabaseTestCase {
      */
     @Test
     public void testFindAll() {
-
-            assertEquals(3, companyDAO.findAll().size());
+        ConnectionMySQL.open();
+        assertEquals(3, companyDAO.findAll().size());
+        ConnectionMySQL.close();
     }
 
     /**
@@ -82,8 +85,9 @@ public class CompanyDAOTest extends DatabaseTestCase {
      */
     @Test
     public void testFind() {
-
-            assertEquals(1, companyDAO.findAll(1, 1, null).size());
+        ConnectionMySQL.open();
+        assertEquals(1, companyDAO.findAll(1, 1, null).size());
+        ConnectionMySQL.close();
     }
 
     /**
@@ -93,8 +97,9 @@ public class CompanyDAOTest extends DatabaseTestCase {
     public void testGetComputer() {
 
         try {
-
+            ConnectionMySQL.open();
             assertEquals(4, companyDAO.getComputers(1).size());
+            ConnectionMySQL.close();
 
         } catch (Exception e) {
             if (LOGGER.isDebugEnabled()) {
@@ -109,14 +114,16 @@ public class CompanyDAOTest extends DatabaseTestCase {
     @Test
     public void testDelete() {
         try {
-            
-            assertEquals(1L, companyDAO.getById(1L).getId());
 
-            companyDAO.delete(1L);
+            ConnectionMySQL.open();
+            assertEquals(2L, companyDAO.getById(2L).getId());
 
-            assertEquals(0, companyDAO.getComputers(1L).size());
-            
-            assertNull(companyDAO.getById(1L));
+            companyDAO.delete(2L);
+
+            assertEquals(0, companyDAO.getComputers(2L).size());
+
+            assertNull(companyDAO.getById(2L));
+            ConnectionMySQL.close();
 
         } catch (Exception e) {
             if (LOGGER.isDebugEnabled()) {

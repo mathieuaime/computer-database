@@ -57,10 +57,11 @@ public class ComputerDAOTest extends DatabaseTestCase {
     public void testGetById() {
 
         try {
-
+            ConnectionMySQL.open();
             assertEquals(1, computerDAO.getById(1L).getId());
 
             assertNull(computerDAO.getById(1000L));
+            ConnectionMySQL.close();
 
         } catch (Exception e) {
             if (LOGGER.isDebugEnabled()) {
@@ -76,13 +77,14 @@ public class ComputerDAOTest extends DatabaseTestCase {
     public void testGetByName() {
 
         try {
-
+            ConnectionMySQL.open();
             assertEquals(1, computerDAO.getByName("Computer1").size());
             assertEquals(1, computerDAO.getByName("Computer1").get(0).getId());
 
             assertEquals(2, computerDAO.getByName("Computer2").size());
 
             assertEquals(0, computerDAO.getByName("Computer1000").size());
+            ConnectionMySQL.close();
 
         } catch (Exception e) {
             if (LOGGER.isDebugEnabled()) {
@@ -96,7 +98,9 @@ public class ComputerDAOTest extends DatabaseTestCase {
      */
     @Test
     public void testFindAll() {
+        ConnectionMySQL.open();
         assertEquals(4, computerDAO.findAll().size());
+        ConnectionMySQL.close();
     }
 
     /**
@@ -104,7 +108,9 @@ public class ComputerDAOTest extends DatabaseTestCase {
      */
     @Test
     public void testFind() {
+        ConnectionMySQL.open();
         assertEquals(2, computerDAO.findAll(1, 2, null, null, null).size());
+        ConnectionMySQL.close();
     }
 
     /**
@@ -114,11 +120,10 @@ public class ComputerDAOTest extends DatabaseTestCase {
     public void testAdd() {
 
         try {            
+            ConnectionMySQL.open();
             computerDAO.add(c1);
-            
-            Computer c = computerDAO.getById(c1.getId());
-
-            assertEquals(c1, c);
+            assertEquals(c1, computerDAO.getById(c1.getId()));
+            ConnectionMySQL.close();
 
         } catch (Exception e) {
             if (LOGGER.isDebugEnabled()) {
@@ -135,11 +140,10 @@ public class ComputerDAOTest extends DatabaseTestCase {
 
         try {
             c1.setId(1);
+            ConnectionMySQL.open();
             computerDAO.update(c1);
-            
-            Computer c = computerDAO.getById(c1.getId());
-
-            assertEquals(c1, c);
+            assertEquals(c1, computerDAO.getById(c1.getId()));
+            ConnectionMySQL.close();
 
         } catch (Exception e) {
             if (LOGGER.isDebugEnabled()) {
@@ -154,12 +158,13 @@ public class ComputerDAOTest extends DatabaseTestCase {
     @Test
     public void testDelete() {
         try {
-            
+            ConnectionMySQL.open();
             assertEquals(1L, computerDAO.getById(1L).getId());
 
             computerDAO.delete(1L);
 
             assertNull(computerDAO.getById(1L));
+            ConnectionMySQL.close();
 
         } catch (Exception e) {
             if (LOGGER.isDebugEnabled()) {
@@ -174,7 +179,7 @@ public class ComputerDAOTest extends DatabaseTestCase {
     @Test
     public void testDeleteList() {
         try {
-            
+            ConnectionMySQL.open();
             assertEquals(1L, computerDAO.getById(1L).getId());
             assertEquals(2L, computerDAO.getById(2L).getId());
 
@@ -182,6 +187,7 @@ public class ComputerDAOTest extends DatabaseTestCase {
 
             assertNull(computerDAO.getById(1L));
             assertNull(computerDAO.getById(2L));
+            ConnectionMySQL.close();
 
         } catch (Exception e) {
             if (LOGGER.isDebugEnabled()) {
@@ -197,8 +203,9 @@ public class ComputerDAOTest extends DatabaseTestCase {
     public void testGetCompany() {
 
         try {
-
+            ConnectionMySQL.open();
             assertEquals(1L, computerDAO.getCompany(1L).getId());
+            ConnectionMySQL.close();
 
         } catch (Exception e) {
             if (LOGGER.isDebugEnabled()) {
