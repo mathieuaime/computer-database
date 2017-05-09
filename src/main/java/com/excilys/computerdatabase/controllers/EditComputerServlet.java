@@ -32,18 +32,9 @@ public class EditComputerServlet extends HttpServlet {
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern(Config.getProperties().getProperty("date_format"));
 
-    private ComputerServiceImpl computerService;
+    private ComputerServiceImpl computerService = ComputerServiceImpl.INSTANCE;
 
-    private CompanyServiceImpl companyService;
-
-    /**
-     * AddComputerServlet default constructor : initialize the daos.
-     */
-    public EditComputerServlet() {
-        super();
-        computerService = new ComputerServiceImpl();
-        companyService = new CompanyServiceImpl();
-    }
+    private CompanyServiceImpl companyService = CompanyServiceImpl.INSTANCE;
 
     /**
      * GET editComputer.

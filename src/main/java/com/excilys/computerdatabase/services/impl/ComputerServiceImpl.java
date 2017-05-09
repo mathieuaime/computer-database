@@ -17,21 +17,16 @@ import com.excilys.computerdatabase.models.Computer;
 import com.excilys.computerdatabase.services.interfaces.ComputerService;
 import com.excilys.computerdatabase.services.interfaces.PageService;
 
-public class ComputerServiceImpl implements ComputerService, PageService<ComputerDTO> {
+public enum ComputerServiceImpl implements ComputerService, PageService<ComputerDTO> {
+    
+    INSTANCE;
 
-    private ComputerDAOImpl computerDAO;
+    private ComputerDAOImpl computerDAO = ComputerDAOImpl.INSTANCE;
 
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(ComputerServiceImpl.class);
 
     private long startTime;
     private long stopTime;
-
-    /**
-     * ComputerService constructor.
-     */
-    public ComputerServiceImpl() {
-        computerDAO = new ComputerDAOImpl();
-    }
 
     @Override
     public List<ComputerDTO> get() {

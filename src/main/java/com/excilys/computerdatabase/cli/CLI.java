@@ -18,8 +18,8 @@ import com.excilys.computerdatabase.validators.ComputerValidator;
 public class CLI {
 
     private static Scanner scanner;
-    private static CompanyServiceImpl companyService = new CompanyServiceImpl();
-    private static ComputerServiceImpl computerService = new ComputerServiceImpl();
+    private static CompanyServiceImpl companyService = CompanyServiceImpl.INSTANCE;
+    private static ComputerServiceImpl computerService = ComputerServiceImpl.INSTANCE;
 
     private static final String DATE_FORMAT = Config.getProperties().getProperty("date_format");
 

@@ -18,7 +18,9 @@ import com.excilys.computerdatabase.mappers.ComputerMapper;
 import com.excilys.computerdatabase.models.Company;
 import com.excilys.computerdatabase.models.Computer;
 
-public class CompanyDAOImpl implements CompanyDAO {
+public enum CompanyDAOImpl implements CompanyDAO {
+    
+    INSTANCE;
 
     // Search all the companies
     private static final String QUERY_FIND_COMPANIES        = "SELECT * FROM company";

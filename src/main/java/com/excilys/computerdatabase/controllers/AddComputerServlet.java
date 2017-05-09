@@ -27,22 +27,13 @@ public class AddComputerServlet extends HttpServlet {
 
     private static final long serialVersionUID = -82009216108348436L;
 
-    private ComputerServiceImpl computerService;
+    private ComputerServiceImpl computerService = ComputerServiceImpl.INSTANCE;
 
-    private CompanyServiceImpl companyService;
+    private CompanyServiceImpl companyService = CompanyServiceImpl.INSTANCE;
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern(Config.getProperties().getProperty("date_format"));
 
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(AddComputerServlet.class);
-
-    /**
-     * AddComputerServlet default constructor : initialize the daos.
-     */
-    public AddComputerServlet() {
-        super();
-        computerService = new ComputerServiceImpl();
-        companyService = new CompanyServiceImpl();
-    }
 
     /**
      * GET addComputer.

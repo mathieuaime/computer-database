@@ -18,20 +18,14 @@ import com.excilys.computerdatabase.mappers.ComputerMapper;
 import com.excilys.computerdatabase.services.interfaces.CompanyService;
 import com.excilys.computerdatabase.services.interfaces.PageService;
 
-public class CompanyServiceImpl implements CompanyService, PageService<CompanyDTO> {
+public enum CompanyServiceImpl implements CompanyService, PageService<CompanyDTO> {
+    
+    INSTANCE;
 
-    private CompanyDAOImpl companyDAO;
-    private ComputerDAOImpl computerDAO;
+    private CompanyDAOImpl companyDAO = CompanyDAOImpl.INSTANCE;
+    private ComputerDAOImpl computerDAO = ComputerDAOImpl.INSTANCE;
 
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(CompanyService.class);
-
-    /**
-     * CompanyService constructor.
-     */
-    public CompanyServiceImpl() {
-        companyDAO = new CompanyDAOImpl();
-        computerDAO = new ComputerDAOImpl();
-    }
 
     @Override
     public List<CompanyDTO> get() {

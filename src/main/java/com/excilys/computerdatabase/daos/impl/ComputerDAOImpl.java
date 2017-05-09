@@ -20,7 +20,9 @@ import com.excilys.computerdatabase.models.Company;
 import com.excilys.computerdatabase.models.Computer;
 import com.mysql.jdbc.Statement;
 
-public class ComputerDAOImpl implements ComputerDAO {
+public enum ComputerDAOImpl implements ComputerDAO {
+
+    INSTANCE;
 
     private static final String QUERY_FIND_COMPUTER                     = "select computer.id AS computerid, computer.name AS computername, "
                                                                         + "computer.introduced AS computerintroduced, computer.discontinued AS computerdiscontinued, "
