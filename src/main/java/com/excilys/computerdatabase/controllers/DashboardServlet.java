@@ -25,14 +25,7 @@ public class DashboardServlet extends HttpServlet {
 
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(DashboardServlet.class);
 
-    private ComputerServiceImpl computerService;
-
-    /**
-     * DashboardServlet constructor.
-     */
-    public DashboardServlet() {
-        computerService = new ComputerServiceImpl();
-    }
+    private ComputerServiceImpl computerService = ComputerServiceImpl.INSTANCE;
 
     /**
      * GET Dashboard.
@@ -78,8 +71,6 @@ public class DashboardServlet extends HttpServlet {
         String[] listComputersToDelete = request.getParameter("selection").split(",");
 
         List<Long> ids = new ArrayList<Long>(listComputersToDelete.length);
-
-        ComputerServiceImpl computerService = new ComputerServiceImpl();
 
         for (String s : listComputersToDelete) {
             ids.add(Long.parseLong(s));

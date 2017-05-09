@@ -25,7 +25,7 @@ public class ComputerMapper {
 
     private static String url;
 
-    private static CompanyServiceImpl cDAO = new CompanyServiceImpl();
+    private static CompanyServiceImpl companyService = CompanyServiceImpl.INSTANCE;
 
     /**
      * Create a computer from a ResultSet.
@@ -93,7 +93,7 @@ public class ComputerMapper {
 
         return new Computer.Builder(computerDTO.getName()).id(computerDTO.getId()).introduced(introduced)
                 .discontinued(discontinued)
-                .company(CompanyMapper.createBean(cDAO.getById(computerDTO.getCompany().getId()))).build();
+                .company(CompanyMapper.createBean(companyService.getById(computerDTO.getCompany().getId()))).build();
     }
 
     /**

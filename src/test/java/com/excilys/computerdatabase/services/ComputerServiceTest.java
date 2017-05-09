@@ -22,7 +22,7 @@ import com.excilys.computerdatabase.services.impl.ComputerServiceImpl;
 
 public class ComputerServiceTest extends DatabaseTestCase {
 
-    private ComputerServiceImpl computerService;
+    private ComputerServiceImpl computerService = ComputerServiceImpl.INSTANCE;
     private Company comp1;
     private Computer c1;
     private Computer c2;
@@ -39,7 +39,6 @@ public class ComputerServiceTest extends DatabaseTestCase {
      * ComputerTest constructor.
      */
     public ComputerServiceTest() {
-        computerService = new ComputerServiceImpl();
 
         comp1 = new Company.Builder("Company2").id(2L).build();
 

@@ -17,7 +17,7 @@ import com.excilys.computerdatabase.services.impl.CompanyServiceImpl;
 
 public class CompanyServiceTest extends DatabaseTestCase {
 
-    private CompanyServiceImpl companyService = new CompanyServiceImpl();
+    private CompanyServiceImpl companyService = CompanyServiceImpl.INSTANCE;
     
     private static final String SAMPLE_TEST_XML = "src/test/resources/db-sample.xml";
 
@@ -26,13 +26,6 @@ public class CompanyServiceTest extends DatabaseTestCase {
     private static final String PASSWORD = Config.getProperties().getProperty("password");
     
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(CompanyServiceTest.class);
-
-    /**
-     * CompanyTest constructor.
-     */
-    public CompanyServiceTest() {
-        companyService = new CompanyServiceImpl();
-    }
 
     /**
      * Test get by id.
