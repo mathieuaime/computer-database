@@ -5,10 +5,12 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 
 import org.dbunit.DatabaseTestCase;
+import org.dbunit.database.DatabaseConfig;
 import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
+import org.dbunit.ext.mysql.MySqlDataTypeFactory;
 import org.junit.Test;
 import org.slf4j.Logger;
 
@@ -147,4 +149,8 @@ public class CompanyDAOTest extends DatabaseTestCase {
         return dataSet;
     }
 
+    @Override
+    protected void setUpDatabaseConfig(DatabaseConfig config) {
+        config.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new MySqlDataTypeFactory());
+    }
 }
