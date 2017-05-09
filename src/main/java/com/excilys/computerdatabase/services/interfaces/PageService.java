@@ -1,8 +1,8 @@
-package com.excilys.computerdatabase.interfaces;
+package com.excilys.computerdatabase.services.interfaces;
 
 import com.excilys.computerdatabase.dtos.Page;
 
-public interface PageServ<T> {
+public interface PageService<T> {
 
     /**
      * Returns a page with all the objects.
@@ -23,7 +23,7 @@ public interface PageServ<T> {
      * @param pageNumero the numero of the page
      * @param length the length of the page
      * @param search the field to search for
-     * @param sort the field to sort for
+     * @param column the field to sort for
      * @param order the field to order by
      * @return Page<T>
      */

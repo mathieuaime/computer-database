@@ -1,4 +1,4 @@
-package com.excilys.computerdatabase.interfaces;
+package com.excilys.computerdatabase.daos.interfaces;
 
 import java.util.List;
 
@@ -80,4 +80,10 @@ public interface ComputerDAO {
      * @return Company
      */
     Company getCompany(long id);
+
+    /**
+     * Delete the computer of the company id.
+     * @param companyId the company id
+     */
+    void deleteFromCompany(long companyId);
 }

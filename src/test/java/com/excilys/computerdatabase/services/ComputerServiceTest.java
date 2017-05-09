@@ -18,7 +18,7 @@ import com.excilys.computerdatabase.config.Config;
 import com.excilys.computerdatabase.mappers.ComputerMapper;
 import com.excilys.computerdatabase.models.Company;
 import com.excilys.computerdatabase.models.Computer;
-import com.excilys.computerdatabase.services.ComputerServiceImpl;
+import com.excilys.computerdatabase.services.impl.ComputerServiceImpl;
 
 public class ComputerServiceTest extends DatabaseTestCase {
 

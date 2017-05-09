@@ -1,23 +1,23 @@
-package com.excilys.computerdatabase.services;
+package com.excilys.computerdatabase.services.impl;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 
-import com.excilys.computerdatabase.daos.ComputerDAOImpl;
 import com.excilys.computerdatabase.daos.ConnectionMySQL;
+import com.excilys.computerdatabase.daos.impl.ComputerDAOImpl;
 import com.excilys.computerdatabase.dtos.CompanyDTO;
 import com.excilys.computerdatabase.dtos.ComputerDTO;
 import com.excilys.computerdatabase.dtos.Page;
 import com.excilys.computerdatabase.exceptions.ComputerNotFoundException;
-import com.excilys.computerdatabase.interfaces.ComputerService;
-import com.excilys.computerdatabase.interfaces.PageServ;
 import com.excilys.computerdatabase.mappers.CompanyMapper;
 import com.excilys.computerdatabase.mappers.ComputerMapper;
 import com.excilys.computerdatabase.models.Computer;
+import com.excilys.computerdatabase.services.interfaces.ComputerService;
+import com.excilys.computerdatabase.services.interfaces.PageService;
 
-public class ComputerServiceImpl implements ComputerService, PageServ<ComputerDTO> {
+public class ComputerServiceImpl implements ComputerService, PageService<ComputerDTO> {
 
     private ComputerDAOImpl computerDAO;
 
@@ -45,7 +45,7 @@ public class ComputerServiceImpl implements ComputerService, PageServ<ComputerDT
 
     @Override
     public Page<ComputerDTO> getPage(int pageNumero, int length) {
-        return getPage(pageNumero, length, null, Computer.FIELD_NAME, "ASC");
+        return getPage(pageNumero, length, null, "name", "ASC");
     }
 
     @Override

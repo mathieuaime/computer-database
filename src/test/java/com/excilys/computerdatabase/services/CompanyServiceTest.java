@@ -13,7 +13,7 @@ import org.junit.Test;
 import org.slf4j.Logger;
 
 import com.excilys.computerdatabase.config.Config;
-import com.excilys.computerdatabase.services.CompanyServiceImpl;
+import com.excilys.computerdatabase.services.impl.CompanyServiceImpl;
 
 public class CompanyServiceTest extends DatabaseTestCase {
 

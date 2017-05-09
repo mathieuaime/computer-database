@@ -5,15 +5,16 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.slf4j.Logger;
 
 import com.excilys.computerdatabase.config.Config;
-import com.excilys.computerdatabase.daos.CompanyDAOImpl;
 import com.excilys.computerdatabase.dtos.ComputerDTO;
 import com.excilys.computerdatabase.models.Company;
 import com.excilys.computerdatabase.models.Computer;
-import com.excilys.computerdatabase.services.CompanyServiceImpl;
+import com.excilys.computerdatabase.services.impl.CompanyServiceImpl;
 
 public class ComputerMapper {
 
@@ -23,12 +24,11 @@ public class ComputerMapper {
             .ofPattern(Config.getProperties().getProperty("date_format"));
 
     private static String url;
-    
+
     private static CompanyServiceImpl cDAO = new CompanyServiceImpl();
 
     /**
      * Create a computer from a ResultSet.
-     * 
      * @param rset the ResultSet
      * @return Computer
      */
@@ -37,15 +37,15 @@ public class ComputerMapper {
         Computer computer = null;
 
         try {
-            Date introducedComputer = rset.getDate(Computer.TABLE_NAME + Computer.FIELD_INTRODUCED);
-            Date discontinuedComputer = rset.getDate(Computer.TABLE_NAME + Computer.FIELD_DISCONTINUED);
+            Date introducedComputer = rset.getDate("computerintroduced");
+            Date discontinuedComputer = rset.getDate("computerdiscontinued");
 
             Company company = new Company.Builder(
-                    rset.getString(Computer.TABLE_NAME + Company.TABLE_NAME + Company.FIELD_NAME))
-                            .id(rset.getLong(Computer.TABLE_NAME + Company.TABLE_NAME + Company.FIELD_ID)).build();
+                    rset.getString("computercompanyname"))
+                            .id(rset.getLong("computercompanyid")).build();
 
-            computer = new Computer.Builder(rset.getString(Computer.TABLE_NAME + Computer.FIELD_NAME))
-                    .id(rset.getLong(Computer.TABLE_NAME + Computer.FIELD_ID))
+            computer = new Computer.Builder(rset.getString("computername"))
+                    .id(rset.getLong("computerid"))
                     .introduced((introducedComputer != null ? introducedComputer.toLocalDate() : null))
                     .discontinued((discontinuedComputer != null ? discontinuedComputer.toLocalDate() : null))
                     .company(company).build();
@@ -60,10 +60,28 @@ public class ComputerMapper {
     }
 
     /**
+     * Create a computer from a ResultSet.
+     * @param rset the ResultSet
+     * @return Computer
+     */
+    public static List<Computer> getComputers(ResultSet rset) {
+
+        List<Computer> computers = new ArrayList<>();
+
+        try {
+            while (rset.next()) {
+                computers.add(getComputer(rset));
+            }
+        } catch (SQLException e) {
+            LOGGER.debug("Exception " + e);
+        }
+
+        return computers;
+    }
+
+    /**
      * Create a computer from a DTO.
-     * 
-     * @param computerDTO
-     *            the computerDTO
+     * @param computerDTO the computerDTO
      * @return Computer
      */
     public static Computer createBean(ComputerDTO computerDTO) {
@@ -74,14 +92,13 @@ public class ComputerMapper {
                 : LocalDate.parse(computerDTO.getDiscontinued(), DATE_FORMATTER));
 
         return new Computer.Builder(computerDTO.getName()).id(computerDTO.getId()).introduced(introduced)
-                .discontinued(discontinued).company(CompanyMapper.createBean(cDAO.getById(computerDTO.getCompany().getId()))).build();
+                .discontinued(discontinued)
+                .company(CompanyMapper.createBean(cDAO.getById(computerDTO.getCompany().getId()))).build();
     }
 
     /**
      * Create a DTO from a computer.
-     * 
-     * @param computer
-     *            the computer
+     * @param computer the computer
      * @return ComputerDTO
      */
     public static ComputerDTO createDTO(Computer computer) {

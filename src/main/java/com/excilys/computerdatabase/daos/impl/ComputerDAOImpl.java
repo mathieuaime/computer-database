@@ -1,4 +1,4 @@
-package com.excilys.computerdatabase.daos;
+package com.excilys.computerdatabase.daos.impl;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -11,8 +11,9 @@ import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 
+import com.excilys.computerdatabase.daos.ConnectionMySQL;
+import com.excilys.computerdatabase.daos.interfaces.ComputerDAO;
 import com.excilys.computerdatabase.exceptions.ComputerNotFoundException;
-import com.excilys.computerdatabase.interfaces.ComputerDAO;
 import com.excilys.computerdatabase.mappers.CompanyMapper;
 import com.excilys.computerdatabase.mappers.ComputerMapper;
 import com.excilys.computerdatabase.models.Company;
@@ -24,53 +25,39 @@ public class ComputerDAOImpl implements ComputerDAO {
     private static final String QUERY_FIND_COMPUTER                     = "select computer.id AS computerid, computer.name AS computername, "
                                                                         + "computer.introduced AS computerintroduced, computer.discontinued AS computerdiscontinued, "
                                                                         + "company.id AS computercompanyid, company.name AS computercompanyname "
-                                                                        + "FROM computer " 
+                                                                        + "FROM computer "
                                                                         + "LEFT JOIN company ON computer.company_id=company.id ";
-    
-    private static final String QUERY_FIND_COMPUTER_ORDER_BY_COMPANY    = "SELECT " + Computer.TABLE_NAME + "." + Computer.FIELD_ID + " AS "
-                                                                        + Computer.TABLE_NAME + Computer.FIELD_ID + ", "
-                                                                        + Computer.TABLE_NAME + "." + Computer.FIELD_NAME + " AS "
-                                                                        + Computer.TABLE_NAME + Computer.FIELD_NAME + ", "
-                                                                        + Computer.TABLE_NAME + "." + Computer.FIELD_INTRODUCED + " AS "
-                                                                        + Computer.TABLE_NAME + Computer.FIELD_INTRODUCED + ", "
-                                                                        + Computer.TABLE_NAME + "." + Computer.FIELD_DISCONTINUED + " AS "
-                                                                        + Computer.TABLE_NAME + Computer.FIELD_DISCONTINUED + ", "
-                                                                        + Company.TABLE_NAME + "." + Company.FIELD_ID + " AS "
-                                                                        + Computer.TABLE_NAME + Company.TABLE_NAME + Company.FIELD_ID + ", "
-                                                                        + Company.TABLE_NAME + "." + Company.FIELD_NAME + " AS "
-                                                                        + Computer.TABLE_NAME + Company.TABLE_NAME + Company.FIELD_NAME
-                                                                        + " FROM " + Company.TABLE_NAME + " LEFT JOIN " + Computer.TABLE_NAME + " ON " + Computer.TABLE_NAME + "."
-                                                                        + Computer.FIELD_COMPANY_ID + "=" + Company.TABLE_NAME + "." + Company.FIELD_ID;
 
-    private static final String QUERY_FIND_COMPUTER_BY_ID               = QUERY_FIND_COMPUTER + " WHERE " + Computer.TABLE_NAME + "."
-                                                                        + Computer.FIELD_ID + " = ?";
+    private static final String QUERY_FIND_COMPUTER_ORDER_BY_COMPANY    = "SELECT computer.id AS computerid,"
+                                                                        + " computer.name AS computername,"
+                                                                        + " computer.introduced AS computerintroduced,"
+                                                                        + " computer.discontinued AS computerdiscontinued,"
+                                                                        + " company.name AS computercompanyname,"
+                                                                        + " company.name AS computercompanyname"
+                                                                        + " FROM company LEFT JOIN computer ON computer.company_id = company.id";
 
-    private static final String QUERY_FIND_COMPUTER_BY_NAME             = QUERY_FIND_COMPUTER + " WHERE " + Computer.TABLE_NAME
-                                                                        + "." + Computer.FIELD_NAME + " = ?";
+    private static final String QUERY_FIND_COMPUTER_BY_ID               = QUERY_FIND_COMPUTER + " WHERE computer.id = ?";
 
-    private static final String QUERY_ADD_COMPUTER                      = "INSERT INTO " + Computer.TABLE_NAME + " (" + Computer.FIELD_NAME + ", " + Computer.FIELD_INTRODUCED + ", " + Computer.FIELD_DISCONTINUED + ", "
-                                                                        + Computer.FIELD_COMPANY_ID + ") VALUES(?, ?, ?, ?)";
+    private static final String QUERY_FIND_COMPUTER_BY_NAME             = QUERY_FIND_COMPUTER + " WHERE computer.name = ?";
 
-    private static final String QUERY_UPDATE_COMPUTER                   = "UPDATE " + Computer.TABLE_NAME + " SET " + Computer.FIELD_NAME
-                                                                        + " = ?, " + Computer.FIELD_INTRODUCED + " = ?, " + Computer.FIELD_DISCONTINUED + " = ?, "
-                                                                        + Computer.FIELD_COMPANY_ID + " = ? " + " WHERE " + Computer.FIELD_ID + " = ?";
+    private static final String QUERY_ADD_COMPUTER                      = "INSERT INTO computer (name, introduced, discontinued, company_id) VALUES(?, ?, ?, ?)";
 
-    private static final String QUERY_DELETE_COMPUTER                   = "DELETE FROM " + Computer.TABLE_NAME + " WHERE "
-                                                                        + Computer.FIELD_ID + " IN (";
-    
+    private static final String QUERY_UPDATE_COMPUTER                   = "UPDATE computer SET name = ?, introduced = ?, discontinued = ?, company_id = ? " + " WHERE id = ?";
+
+    private static final String QUERY_DELETE_COMPUTER                   = "DELETE FROM computer WHERE id IN (";
+
     private static final String QUERY_DELETE_COMPUTER_OF_COMPANY        = "DELETE FROM computer WHERE company_id =  ?";
 
-    private static final String QUERY_FIND_COMPANY                      = "SELECT " + Company.TABLE_NAME + "." + Company.FIELD_ID + ", "
-                                                                        + Company.TABLE_NAME + "." + Company.FIELD_NAME + " FROM " + Company.TABLE_NAME + " INNER JOIN "
-                                                                        + Computer.TABLE_NAME + " ON " + Computer.FIELD_COMPANY_ID + " = " + Company.TABLE_NAME + "."
-                                                                        + Company.FIELD_ID + " WHERE " + Computer.TABLE_NAME + "." + Computer.FIELD_ID + " = ? ";
+    private static final String QUERY_FIND_COMPANY                      = "SELECT company.id, company.name FROM company"
+                                                                        + " INNER JOIN computer ON company_id = company.id"
+                                                                        + " WHERE computer.id = ? ";
 
     private static final String QUERY_COUNT_COMPUTERS                   = "select count(id) as count from computer";
-    
+
     private static final String QUERY_COUNT_COMPUTERS_SEARCH            = "SELECT (select count(id) from computer where name like ?) +" +
                                                                         "(select count(computer.id) from computer inner join (select distinct(id) from company where name like ?) c on  computer.company_id = c.id) -" +
                                                                         "(select count(computer.id) from computer inner join company on computer.company_id = company.id where computer.name like ? and company.name like ?) as count";
-    
+
     private static int countTotal = -1;
 
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(ComputerDAOImpl.class);
@@ -83,20 +70,20 @@ public class ComputerDAOImpl implements ComputerDAO {
     @Override
     public List<Computer> findAll(int offset, int length, String search, String column, String order) {
         List<Computer> computers = new ArrayList<>();
-        
+
         column = column == null ? "name" : column;
         order = order == null ? "ASC" : order;
         length = length == 0 ? count(null) : length;
-        
+
         String query = "";
         boolean isSearch = search != null && !search.equals("");
-        
+
         // recherche ordonnée par company
         if (column.startsWith("company")) {
             query = QUERY_FIND_COMPUTER_ORDER_BY_COMPANY
-                    + (isSearch ? " WHERE " + Computer.TABLE_NAME + "." + Computer.FIELD_NAME + " LIKE '" + search
-                    + "%' OR " + Company.TABLE_NAME + "." + Company.FIELD_NAME + " LIKE '" + search + "%'" : "")
-                    + " ORDER BY " + Computer.TABLE_NAME + column + " " + order
+                    + (isSearch ? " WHERE computer.name LIKE '" + search
+                    + "%' OR company.name LIKE '" + search + "%'" : "")
+                    + " ORDER BY computer" + column + " " + order
                     + " LIMIT " + length + " OFFSET " + offset;
         } else {
             query = "(" + QUERY_FIND_COMPUTER;
@@ -105,25 +92,25 @@ public class ComputerDAOImpl implements ComputerDAO {
                 query += " WHERE computer.name LIKE '" + search + "%'";
             }
 
-            query += " ORDER BY " + Computer.TABLE_NAME + column + " " + order;
+            query += " ORDER BY computer" + column + " " + order;
 
             query += " LIMIT " + length + " OFFSET " + offset + ")";
-            
+
             if (isSearch) {
 
                 query += " union ";
-    
+
                 query += "(" + QUERY_FIND_COMPUTER;
-    
+
                 query += " WHERE company.name LIKE '" + search + "%'";
-    
-                query += " ORDER BY " + Computer.TABLE_NAME + column + " " + order;
-    
+
+                query += " ORDER BY computer" + column + " " + order;
+
                 query += " LIMIT " + length + " OFFSET " + offset + ")";
             }
 
         }
-        
+
         LOGGER.debug(query);
 
         try (Connection con = ConnectionMySQL.getConnection();
@@ -131,21 +118,12 @@ public class ComputerDAOImpl implements ComputerDAO {
 
             con.setReadOnly(true);
 
-            //long startTime = System.currentTimeMillis();
-            final ResultSet rset = stmt.executeQuery();
-            //long stopTime = System.currentTimeMillis();
-            
-            //LOGGER.debug((stopTime - startTime) + "ms : " + query);
-
-            while (rset.next()) {
-                computers.add(ComputerMapper.getComputer(rset));
-            }
+            computers = ComputerMapper.getComputers(stmt.executeQuery());
 
         } catch (SQLException e) {
-            //if (LOGGER.isDebugEnabled()) {
+            if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Exception: " + e);
-                e.printStackTrace();
-            //}
+            }
         }
 
         return computers;
@@ -163,8 +141,7 @@ public class ComputerDAOImpl implements ComputerDAO {
             stmt.setLong(1, id);
             final ResultSet rset = stmt.executeQuery();
 
-            if (rset.next()) {
-
+            if (rset.first()) {
                 computer = ComputerMapper.getComputer(rset);
             }
 
@@ -186,14 +163,8 @@ public class ComputerDAOImpl implements ComputerDAO {
 
             con.setReadOnly(true);
             stmt.setString(1, name);
-            final ResultSet rset = stmt.executeQuery();
-
-            while (rset.next()) {
-
-                Computer computer = ComputerMapper.getComputer(rset);
-
-                computers.add(computer);
-            }
+            
+            computers = ComputerMapper.getComputers(stmt.executeQuery());
 
         } catch (SQLException e) {
             if (LOGGER.isDebugEnabled()) {
@@ -223,7 +194,7 @@ public class ComputerDAOImpl implements ComputerDAO {
                 //long startTime = System.currentTimeMillis();
                 stmt.executeUpdate();
                 //long stopTime = System.currentTimeMillis();
-                
+
                 //LOGGER.debug((stopTime - startTime) + "ms : " + QUERY_ADD_COMPUTER);
 
                 ResultSet resultSet = stmt.getGeneratedKeys();
@@ -270,7 +241,7 @@ public class ComputerDAOImpl implements ComputerDAO {
                 stmt.setObject(3, computer.getDiscontinued());
                 stmt.setLong(4, computer.getCompany().getId());
                 stmt.setLong(5, computer.getId());
-                
+
                 //long startTime = System.currentTimeMillis();
                 stmt.executeUpdate();
                 //long stopTime = System.currentTimeMillis();
@@ -298,14 +269,16 @@ public class ComputerDAOImpl implements ComputerDAO {
     public void delete(long id) throws ComputerNotFoundException {
         delete(new ArrayList<Long>(Arrays.asList(id)));
     }
-    
+
+
+    @Override
     public void deleteFromCompany(long companyId) {
-        
+
         Connection con;
-        
+
         try {
             con = ConnectionMySQL.getConnection();
-            
+
             con.setAutoCommit(false);
 
             try (PreparedStatement stmt = con.prepareStatement(QUERY_DELETE_COMPUTER_OF_COMPANY);) {
@@ -315,7 +288,7 @@ public class ComputerDAOImpl implements ComputerDAO {
                 stmt.setLong(1, companyId);
                 stmt.executeUpdate();
 
-                countTotal = -1;//a modifier
+                countTotal = -1; // a modifier
 
             } catch (SQLException e) {
                 con.rollback();
@@ -360,7 +333,7 @@ public class ComputerDAOImpl implements ComputerDAO {
                     stmt.setString(3, search);
                     stmt.setString(4, search);
                 }
-                
+
                 LOGGER.debug(stmt.toString());
 
                 final ResultSet rset = stmt.executeQuery();
@@ -401,7 +374,7 @@ public class ComputerDAOImpl implements ComputerDAO {
             stmt.setLong(1, id);
             final ResultSet rset = stmt.executeQuery();
 
-            if (rset.next()) {
+            if (rset.first()) {
                 company = CompanyMapper.getCompany(rset);
             }
 
@@ -436,7 +409,7 @@ public class ComputerDAOImpl implements ComputerDAO {
                 stmt.executeUpdate();
 
                 con.commit();
-                
+
                 countTotal -= listId.size();
 
                 //LOGGER.info("Info: Computer " + ids + " sucessfully deleted");

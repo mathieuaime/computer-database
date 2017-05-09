@@ -1,4 +1,4 @@
-package com.excilys.computerdatabase.services;
+package com.excilys.computerdatabase.services.impl;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -6,20 +6,19 @@ import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 
-import com.excilys.computerdatabase.daos.CompanyDAOImpl;
-import com.excilys.computerdatabase.daos.ComputerDAOImpl;
 import com.excilys.computerdatabase.daos.ConnectionMySQL;
+import com.excilys.computerdatabase.daos.impl.CompanyDAOImpl;
+import com.excilys.computerdatabase.daos.impl.ComputerDAOImpl;
 import com.excilys.computerdatabase.dtos.CompanyDTO;
 import com.excilys.computerdatabase.dtos.ComputerDTO;
 import com.excilys.computerdatabase.dtos.Page;
 import com.excilys.computerdatabase.exceptions.CompanyNotFoundException;
-import com.excilys.computerdatabase.interfaces.CompanyService;
-import com.excilys.computerdatabase.interfaces.PageServ;
 import com.excilys.computerdatabase.mappers.CompanyMapper;
 import com.excilys.computerdatabase.mappers.ComputerMapper;
-import com.excilys.computerdatabase.models.Company;
+import com.excilys.computerdatabase.services.interfaces.CompanyService;
+import com.excilys.computerdatabase.services.interfaces.PageService;
 
-public class CompanyServiceImpl implements CompanyService, PageServ<CompanyDTO> {
+public class CompanyServiceImpl implements CompanyService, PageService<CompanyDTO> {
 
     private CompanyDAOImpl companyDAO;
     private ComputerDAOImpl computerDAO;
@@ -39,7 +38,7 @@ public class CompanyServiceImpl implements CompanyService, PageServ<CompanyDTO> 
         ConnectionMySQL.open();
         List<CompanyDTO> l = companyDAO.findAll().stream().map(it -> CompanyMapper.createDTO(it)).collect(Collectors.toList());
         ConnectionMySQL.close();
-        
+
         return l;
     }
 
@@ -48,7 +47,7 @@ public class CompanyServiceImpl implements CompanyService, PageServ<CompanyDTO> 
         ConnectionMySQL.open();
         CompanyDTO c = CompanyMapper.createDTO(companyDAO.getById(id));
         ConnectionMySQL.close();
-        
+
         return c;
     }
 
@@ -69,7 +68,7 @@ public class CompanyServiceImpl implements CompanyService, PageServ<CompanyDTO> 
 
     @Override
     public Page<CompanyDTO> getPage(int pageNumero, int length) {
-        Page<CompanyDTO> p = getPage(pageNumero, length, null, "ASC", Company.FIELD_NAME);
+        Page<CompanyDTO> p = getPage(pageNumero, length, null, "ASC", "name");
 
         return p;
     }
@@ -100,7 +99,7 @@ public class CompanyServiceImpl implements CompanyService, PageServ<CompanyDTO> 
         computerDAO.deleteFromCompany(id);
 
         companyDAO.delete(id);
-        
+
         try {
             ConnectionMySQL.getConnection().commit();
         } catch (SQLException e) {

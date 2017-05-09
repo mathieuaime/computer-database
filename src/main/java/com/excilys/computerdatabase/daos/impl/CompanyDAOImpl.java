@@ -1,4 +1,4 @@
-package com.excilys.computerdatabase.daos;
+package com.excilys.computerdatabase.daos.impl;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -10,8 +10,9 @@ import java.util.List;
 
 import org.slf4j.Logger;
 
+import com.excilys.computerdatabase.daos.ConnectionMySQL;
+import com.excilys.computerdatabase.daos.interfaces.CompanyDAO;
 import com.excilys.computerdatabase.exceptions.CompanyNotFoundException;
-import com.excilys.computerdatabase.interfaces.CompanyDAO;
 import com.excilys.computerdatabase.mappers.CompanyMapper;
 import com.excilys.computerdatabase.mappers.ComputerMapper;
 import com.excilys.computerdatabase.models.Company;
@@ -20,35 +21,32 @@ import com.excilys.computerdatabase.models.Computer;
 public class CompanyDAOImpl implements CompanyDAO {
 
     // Search all the companies
-    private static final String QUERY_FIND_COMPANIES        = "SELECT * FROM " + Company.TABLE_NAME;
+    private static final String QUERY_FIND_COMPANIES        = "SELECT * FROM company";
 
     // Search one company by id
-    private static final String QUERY_FIND_COMPANY_BY_ID    = QUERY_FIND_COMPANIES + " WHERE " + Company.FIELD_ID + " = ? ";
+    private static final String QUERY_FIND_COMPANY_BY_ID    = QUERY_FIND_COMPANIES + " WHERE id = ? ";
 
     // Search one company by name
-    private static final String QUERY_FIND_COMPANY_BY_NAME  = QUERY_FIND_COMPANIES + " WHERE " + Company.FIELD_NAME + " = ? ";
+    private static final String QUERY_FIND_COMPANY_BY_NAME  = QUERY_FIND_COMPANIES + " WHERE name = ? ";
 
     // Search the computers of a company
-    private static final String QUERY_FIND_COMPUTERS        = "SELECT "
-                                                            + Computer.TABLE_NAME + "." + Computer.FIELD_ID + " AS " + Computer.TABLE_NAME + Computer.FIELD_ID + ", "
-                                                            + Computer.TABLE_NAME + "." + Computer.FIELD_NAME + " AS " + Computer.TABLE_NAME + Computer.FIELD_NAME + ", "
-                                                            + Computer.TABLE_NAME + "." + Computer.FIELD_INTRODUCED + " AS " + Computer.TABLE_NAME + Computer.FIELD_INTRODUCED + ", "
-                                                            + Computer.TABLE_NAME + "." + Computer.FIELD_DISCONTINUED + " AS " + Computer.TABLE_NAME + Computer.FIELD_DISCONTINUED + ", "
-                                                            + Company.TABLE_NAME + "." + Company.FIELD_ID + " AS " + Computer.TABLE_NAME + Company.TABLE_NAME + Company.FIELD_ID + ", "
-                                                            + Company.TABLE_NAME + "." + Company.FIELD_NAME + " AS " + Computer.TABLE_NAME + Company.TABLE_NAME + Company.FIELD_NAME
-                                                            + " FROM " + Computer.TABLE_NAME
-                                                            + " INNER JOIN " + Company.TABLE_NAME
-                                                            + " ON " + Computer.FIELD_COMPANY_ID + " = " + Company.TABLE_NAME + "." + Company.FIELD_ID
-                                                            + " WHERE " + Company.TABLE_NAME + "." + Company.FIELD_ID + " =  ?";
+    private static final String QUERY_FIND_COMPUTERS        = "SELECT computer.id AS computerid,"
+                                                            + " computer.name AS computername,"
+                                                            + " computer.introduced AS computerintroduced,"
+                                                            + " computer.discontinued AS computerdiscontinued,"
+                                                            + " company.id AS computercompanyid,"
+                                                            + " company.name AS computercompanyname"
+                                                            + " FROM computer"
+                                                            + " INNER JOIN company ON company_id = company.id"
+                                                            + " WHERE company.id =  ?";
 
-    private static final String QUERY_DELETE_COMPANY        = "DELETE FROM " + Company.TABLE_NAME
-                                                            + " WHERE " + Company.FIELD_ID + " = ?";
+    private static final String QUERY_DELETE_COMPANY        = "DELETE FROM company WHERE id = ?";
 
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(CompanyDAOImpl.class);
 
     @Override
     public List<Company> findAll() {
-        return findAll(-1, -1, Company.FIELD_NAME);
+        return findAll(0, -1, "name");
     }
 
     @Override
@@ -58,17 +56,10 @@ public class CompanyDAOImpl implements CompanyDAO {
         try (Connection con = ConnectionMySQL.getConnection();
                 PreparedStatement stmt = con.prepareStatement(QUERY_FIND_COMPANIES
                         + " ORDER BY " + order
-                        + (length != -1 ? " LIMIT " + length : "")
-                        + (length != -1 && offset != -1 ? " OFFSET " + offset : ""));) {
+                        + (length != -1 ? " LIMIT " + length + " OFFSET " + offset : ""));) {
 
             con.setReadOnly(true);
-
-            final ResultSet rset = stmt.executeQuery();
-
-            while (rset.next()) {
-                Company company = CompanyMapper.getCompany(rset);
-                companies.add(company);
-            }
+            companies = CompanyMapper.getCompanies(stmt.executeQuery());
 
         } catch (SQLException e) {
             if (LOGGER.isDebugEnabled()) {
@@ -90,7 +81,7 @@ public class CompanyDAOImpl implements CompanyDAO {
             stmt.setLong(1, id);
             final ResultSet rset = stmt.executeQuery();
 
-            if (rset.next()) {
+            if (rset.first()) {
                 company = CompanyMapper.getCompany(rset);
             }
 
@@ -112,12 +103,8 @@ public class CompanyDAOImpl implements CompanyDAO {
 
             con.setReadOnly(true);
             stmt.setString(1, name);
-            final ResultSet rset = stmt.executeQuery();
 
-            while (rset.next()) {
-                Company company = CompanyMapper.getCompany(rset);
-                companies.add(company);
-            }
+            companies = CompanyMapper.getCompanies(stmt.executeQuery());
 
         } catch (SQLException e) {
             if (LOGGER.isDebugEnabled()) {
@@ -138,14 +125,7 @@ public class CompanyDAOImpl implements CompanyDAO {
             con.setReadOnly(true);
             stmt.setLong(1, id);
 
-            final ResultSet rset = stmt.executeQuery();
-
-            while (rset.next()) {
-
-                Computer computer = ComputerMapper.getComputer(rset);
-
-                computers.add(computer);
-            }
+            computers = ComputerMapper.getComputers(stmt.executeQuery());
 
         } catch (SQLException e) {
             if (LOGGER.isDebugEnabled()) {
@@ -158,11 +138,11 @@ public class CompanyDAOImpl implements CompanyDAO {
 
     @Override
     public void delete(long id) throws CompanyNotFoundException {
-        
+
         Connection con;
-        
+
         try {
-            
+
             con = ConnectionMySQL.getConnection();
 
             con.setAutoCommit(false);
@@ -173,7 +153,6 @@ public class CompanyDAOImpl implements CompanyDAO {
 
                 stmt.setLong(1, id);
                 stmt.executeUpdate();
-
 
             } catch (SQLException e) {
                 con.rollback();

@@ -2,10 +2,6 @@ package com.excilys.computerdatabase.models;
 
 public class Company {
 
-    public static final String TABLE_NAME = "company";
-    public static final String FIELD_ID = "id";
-    public static final String FIELD_NAME = "name";
-
     private long id;
     private String name;
 

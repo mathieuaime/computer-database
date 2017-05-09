@@ -9,12 +9,6 @@ import com.excilys.computerdatabase.exceptions.NameEmptyException;
 
 public class Computer {
 
-    public static final String TABLE_NAME = "computer";
-    public static final String FIELD_ID = "id";
-    public static final String FIELD_NAME = "name";
-    public static final String FIELD_INTRODUCED = "introduced";
-    public static final String FIELD_DISCONTINUED = "discontinued";
-    public static final String FIELD_COMPANY_ID = "company_id";
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern(Config.getProperties().getProperty("date_format"));
 
     private long id;

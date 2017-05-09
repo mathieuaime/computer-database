@@ -1,4 +1,4 @@
-package com.excilys.computerdatabase.interfaces;
+package com.excilys.computerdatabase.services.interfaces;
 
 import java.util.List;
 

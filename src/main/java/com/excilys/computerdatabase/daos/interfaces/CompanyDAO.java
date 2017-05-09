@@ -1,4 +1,4 @@
-package com.excilys.computerdatabase.interfaces;
+package com.excilys.computerdatabase.daos.interfaces;
 
 import java.util.List;
 

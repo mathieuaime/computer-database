@@ -20,14 +20,14 @@ import com.excilys.computerdatabase.exceptions.IntroducedAfterDiscontinuedExcept
 import com.excilys.computerdatabase.exceptions.NameEmptyException;
 import com.excilys.computerdatabase.mappers.ComputerMapper;
 import com.excilys.computerdatabase.models.Computer;
-import com.excilys.computerdatabase.services.CompanyServiceImpl;
-import com.excilys.computerdatabase.services.ComputerServiceImpl;
+import com.excilys.computerdatabase.services.impl.CompanyServiceImpl;
+import com.excilys.computerdatabase.services.impl.ComputerServiceImpl;
 import com.excilys.computerdatabase.validators.ComputerValidator;
 
 public class EditComputerServlet extends HttpServlet {
 
     private static final long serialVersionUID = -82009216108348436L;
-    
+
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(EditComputerServlet.class);
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern(Config.getProperties().getProperty("date_format"));
@@ -54,7 +54,7 @@ public class EditComputerServlet extends HttpServlet {
      */
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         request.setAttribute("dateFormat", Config.getProperties().getProperty("date_format"));
 
         int idComputer = (request.getParameter("id") != null ? Integer.parseInt(request.getParameter("id")) : 0);
@@ -74,7 +74,7 @@ public class EditComputerServlet extends HttpServlet {
         //long startTime = System.currentTimeMillis();
         request.setAttribute("companies", companyService.get());
         //long stopTime = System.currentTimeMillis();
-        
+
         //LOGGER.debug((stopTime - startTime) + " ms");
 
         view.forward(request, response);
@@ -93,7 +93,7 @@ public class EditComputerServlet extends HttpServlet {
 
         ComputerDTO computerDTO = new ComputerDTO();
         CompanyDTO companyDTO = new CompanyDTO();
-        
+
         String introduced = request.getParameter("introduced");
         String discontinued = request.getParameter("discontinued");
 
@@ -104,7 +104,7 @@ public class EditComputerServlet extends HttpServlet {
         computerDTO.setIntroduced(!introduced.equals("") ? LocalDate.parse(introduced, DateTimeFormatter.ofPattern("yyyy-MM-dd")).format(DATE_FORMATTER) : "");
         computerDTO.setDiscontinued(!discontinued.equals("") ? LocalDate.parse(discontinued, DateTimeFormatter.ofPattern("yyyy-MM-dd")).format(DATE_FORMATTER) : "");
         computerDTO.setCompany(companyDTO);
-        
+
         //LOGGER.debug(computerDTO.toString());
 
         Computer computer = ComputerMapper.createBean(computerDTO);
