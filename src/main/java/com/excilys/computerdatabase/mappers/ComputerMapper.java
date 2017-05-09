@@ -60,9 +60,9 @@ public class ComputerMapper {
     }
 
     /**
-     * Create a computer from a ResultSet.
+     * Create a list of computers from a ResultSet.
      * @param rset the ResultSet
-     * @return Computer
+     * @return List Computer
      */
     public static List<Computer> getComputers(ResultSet rset) {
 

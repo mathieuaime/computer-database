@@ -10,7 +10,7 @@ public interface CompanyDAO {
 
     /**
      * Returns the list of the companies.
-     * @return List<Company>
+     * @return List Company
      */
     List<Company> findAll();
 
@@ -19,7 +19,7 @@ public interface CompanyDAO {
      * @param offset the first company
      * @param length the number of companies
      * @param order the field for order by
-     * @return List<Company>
+     * @return List Company
      */
     List<Company> findAll(int offset, int length, String order);
 
@@ -33,14 +33,14 @@ public interface CompanyDAO {
     /**
      * Returns the list of the companies found by their names.
      * @param name name of the company
-     * @return List<Company>
+     * @return List Company
      */
     List<Company> getByName(String name);
 
     /**
      * Returns the computer of the company id.
      * @param id id of the company
-     * @return List<Computer>
+     * @return List Computer
      */
     List<Computer> getComputers(long id);
 

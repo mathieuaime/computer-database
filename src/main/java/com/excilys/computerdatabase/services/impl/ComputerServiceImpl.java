@@ -3,8 +3,6 @@ package com.excilys.computerdatabase.services.impl;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.slf4j.Logger;
-
 import com.excilys.computerdatabase.daos.ConnectionMySQL;
 import com.excilys.computerdatabase.daos.impl.ComputerDAOImpl;
 import com.excilys.computerdatabase.dtos.CompanyDTO;
@@ -18,15 +16,10 @@ import com.excilys.computerdatabase.services.interfaces.ComputerService;
 import com.excilys.computerdatabase.services.interfaces.PageService;
 
 public enum ComputerServiceImpl implements ComputerService, PageService<ComputerDTO> {
-    
+
     INSTANCE;
 
     private ComputerDAOImpl computerDAO = ComputerDAOImpl.INSTANCE;
-
-    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(ComputerServiceImpl.class);
-
-    private long startTime;
-    private long stopTime;
 
     @Override
     public List<ComputerDTO> get() {

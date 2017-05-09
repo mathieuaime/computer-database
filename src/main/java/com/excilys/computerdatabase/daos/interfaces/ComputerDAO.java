@@ -10,7 +10,7 @@ public interface ComputerDAO {
 
     /**
      * Returns the list of the computers.
-     * @return List<Computer>
+     * @return List Computer
      */
     List<Computer> findAll();
 
@@ -21,7 +21,7 @@ public interface ComputerDAO {
      * @param search the field to search for
      * @param sort the field to sort for
      * @param order the field to order by
-     * @return List<Computer>
+     * @return List Computer
      */
     List<Computer> findAll(int offset, int length, String search, String sort, String order);
 
@@ -35,7 +35,7 @@ public interface ComputerDAO {
     /**
      * Returns the list of the computers found by its name.
      * @param name the name of the computer
-     * @return List<Computer>
+     * @return List Computer
      */
     List<Computer> getByName(String name);
 

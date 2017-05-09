@@ -165,7 +165,7 @@ public enum ComputerDAOImpl implements ComputerDAO {
 
             con.setReadOnly(true);
             stmt.setString(1, name);
-            
+
             computers = ComputerMapper.getComputers(stmt.executeQuery());
 
         } catch (SQLException e) {

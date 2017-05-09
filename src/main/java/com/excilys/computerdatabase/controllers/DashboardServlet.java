@@ -10,8 +10,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
-
 import com.excilys.computerdatabase.config.Config;
 import com.excilys.computerdatabase.exceptions.ComputerNotFoundException;
 import com.excilys.computerdatabase.services.impl.ComputerServiceImpl;
@@ -22,8 +20,6 @@ public class DashboardServlet extends HttpServlet {
 
     private static final int PAGE_DEFAULT = Integer.parseInt(Config.getProperties().getProperty("page_default"));
     private static final int PAGE_SIZE_DEFAULT = Integer.parseInt(Config.getProperties().getProperty("page_size_default"));
-
-    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(DashboardServlet.class);
 
     private ComputerServiceImpl computerService = ComputerServiceImpl.INSTANCE;
 

@@ -15,26 +15,6 @@ public class CompanyMapper {
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(CompanyMapper.class);
 
     /**
-     * Create a list of companies from a ResultSet.
-     * @param rset the ResultSet
-     * @return List<Company>
-     */
-    public static List<Company> getCompanies(ResultSet rset) {
-
-        List<Company> companies = new ArrayList<>();
-
-        try {
-            while (rset.next()) {
-                companies.add(getCompany(rset));
-            }
-        } catch (SQLException e) {
-            LOGGER.debug("Exception: " + e);
-        }
-
-        return companies;
-    }
-
-    /**
      * Create a company from a ResultSet.
      * @param rset the ResultSet
      * @return Company
@@ -52,6 +32,26 @@ public class CompanyMapper {
         }
 
         return company;
+    }
+
+    /**
+     * Create a list of companies from a ResultSet.
+     * @param rset the ResultSet
+     * @return List Company
+     */
+    public static List<Company> getCompanies(ResultSet rset) {
+
+        List<Company> companies = new ArrayList<>();
+
+        try {
+            while (rset.next()) {
+                companies.add(getCompany(rset));
+            }
+        } catch (SQLException e) {
+            LOGGER.debug("Exception: " + e);
+        }
+
+        return companies;
     }
 
     /**

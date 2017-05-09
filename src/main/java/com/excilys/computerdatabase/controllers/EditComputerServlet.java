@@ -10,8 +10,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
-
 import com.excilys.computerdatabase.config.Config;
 import com.excilys.computerdatabase.dtos.CompanyDTO;
 import com.excilys.computerdatabase.dtos.ComputerDTO;
@@ -27,8 +25,6 @@ import com.excilys.computerdatabase.validators.ComputerValidator;
 public class EditComputerServlet extends HttpServlet {
 
     private static final long serialVersionUID = -82009216108348436L;
-
-    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(EditComputerServlet.class);
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern(Config.getProperties().getProperty("date_format"));
 

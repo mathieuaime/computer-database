@@ -19,7 +19,7 @@ import com.excilys.computerdatabase.models.Company;
 import com.excilys.computerdatabase.models.Computer;
 
 public enum CompanyDAOImpl implements CompanyDAO {
-    
+
     INSTANCE;
 
     // Search all the companies

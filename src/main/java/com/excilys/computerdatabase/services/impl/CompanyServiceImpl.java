@@ -4,8 +4,6 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.slf4j.Logger;
-
 import com.excilys.computerdatabase.daos.ConnectionMySQL;
 import com.excilys.computerdatabase.daos.impl.CompanyDAOImpl;
 import com.excilys.computerdatabase.daos.impl.ComputerDAOImpl;
@@ -19,13 +17,11 @@ import com.excilys.computerdatabase.services.interfaces.CompanyService;
 import com.excilys.computerdatabase.services.interfaces.PageService;
 
 public enum CompanyServiceImpl implements CompanyService, PageService<CompanyDTO> {
-    
+
     INSTANCE;
 
     private CompanyDAOImpl companyDAO = CompanyDAOImpl.INSTANCE;
     private ComputerDAOImpl computerDAO = ComputerDAOImpl.INSTANCE;
-
-    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(CompanyService.class);
 
     @Override
     public List<CompanyDTO> get() {

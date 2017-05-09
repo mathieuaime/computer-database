@@ -4,9 +4,6 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 import com.excilys.computerdatabase.config.Config;
-import com.excilys.computerdatabase.exceptions.IntroducedAfterDiscontinuedException;
-import com.excilys.computerdatabase.exceptions.NameEmptyException;
-
 public class Computer {
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern(Config.getProperties().getProperty("date_format"));
@@ -120,8 +117,6 @@ public class Computer {
         /**
          * Build the Company.
          * @return Computer
-         * @throws IntroducedAfterDiscontinuedException exception when introduced date > discontinued date
-         * @throws NameEmptyException exception when the name is empty
          */
         public Computer build() {
             return computer;

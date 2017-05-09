@@ -10,8 +10,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
-
 import com.excilys.computerdatabase.config.Config;
 import com.excilys.computerdatabase.dtos.CompanyDTO;
 import com.excilys.computerdatabase.dtos.ComputerDTO;
@@ -32,8 +30,6 @@ public class AddComputerServlet extends HttpServlet {
     private CompanyServiceImpl companyService = CompanyServiceImpl.INSTANCE;
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern(Config.getProperties().getProperty("date_format"));
-
-    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(AddComputerServlet.class);
 
     /**
      * GET addComputer.

@@ -5,15 +5,13 @@ import java.util.List;
 import com.excilys.computerdatabase.dtos.CompanyDTO;
 import com.excilys.computerdatabase.dtos.ComputerDTO;
 import com.excilys.computerdatabase.exceptions.ComputerNotFoundException;
-import com.excilys.computerdatabase.exceptions.IntroducedAfterDiscontinuedException;
-import com.excilys.computerdatabase.exceptions.NameEmptyException;
 import com.excilys.computerdatabase.models.Computer;
 
 public interface ComputerService {
 
     /**
      * Returns the list of the computers.
-     * @return List<ComputerDTO>
+     * @return List ComputerDTO
      */
     List<ComputerDTO> get();
 
@@ -28,7 +26,7 @@ public interface ComputerService {
     /**
      * Returns the list of computers of name name.
      * @param name the name of the computer
-     * @return List<ComputerDTO>
+     * @return List ComputerDTO
      * @throws ComputerNotFoundException exception when the computer is not found
      */
     List<ComputerDTO> getByName(String name) throws ComputerNotFoundException;
@@ -36,8 +34,6 @@ public interface ComputerService {
     /**
      * Add a computer.
      * @param computer the computer to add
-     * @throws IntroducedAfterDiscontinuedException exception when the introduced date is before the dicontinued date
-     * @throws NameEmptyException exception when the name is empty
      * @return ComputerDTO
      */
     ComputerDTO add(Computer computer);
@@ -46,8 +42,6 @@ public interface ComputerService {
      * Update a computer.
      * @param computer the computer to update
      * @throws ComputerNotFoundException exception when the computer is not found
-     * @throws IntroducedAfterDiscontinuedException exception when the introduced date is before the dicontinued date
-     * @throws NameEmptyException exception when the name is empty
      */
     void update(Computer computer) throws ComputerNotFoundException;
 
