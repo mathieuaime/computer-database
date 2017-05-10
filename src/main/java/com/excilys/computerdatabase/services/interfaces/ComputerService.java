@@ -4,16 +4,11 @@ import java.util.List;
 
 import com.excilys.computerdatabase.dtos.CompanyDTO;
 import com.excilys.computerdatabase.dtos.ComputerDTO;
+import com.excilys.computerdatabase.exceptions.CompanyNotFoundException;
 import com.excilys.computerdatabase.exceptions.ComputerNotFoundException;
 import com.excilys.computerdatabase.models.Computer;
 
 public interface ComputerService {
-
-    /**
-     * Returns the list of the computers.
-     * @return List ComputerDTO
-     */
-    List<ComputerDTO> get();
 
     /**
      * Returns the computer of id id.
@@ -70,6 +65,8 @@ public interface ComputerService {
      * Returns the company of the computer id.
      * @param id the id of the computer
      * @return CompanyDTO
+     * @throws CompanyNotFoundException Company Not Found Exception
+     * @throws ComputerNotFoundException Computer Not Found Exception
      */
-    CompanyDTO getCompany(long id);
+    CompanyDTO getCompany(long id) throws CompanyNotFoundException, ComputerNotFoundException;
 }

@@ -2,6 +2,7 @@ package com.excilys.computerdatabase.daos.interfaces;
 
 import java.util.List;
 
+import com.excilys.computerdatabase.exceptions.CompanyNotFoundException;
 import com.excilys.computerdatabase.exceptions.ComputerNotFoundException;
 import com.excilys.computerdatabase.models.Company;
 import com.excilys.computerdatabase.models.Computer;
@@ -29,8 +30,9 @@ public interface ComputerDAO {
      * Return the computer found by its id.
      * @param id the id of the computer
      * @return Computer
+     * @throws ComputerNotFoundException ComputerNotFoundException
      */
-    Computer getById(long id);
+    Computer getById(long id) throws ComputerNotFoundException;
 
     /**
      * Returns the list of the computers found by its name.
@@ -78,12 +80,15 @@ public interface ComputerDAO {
      * Returns the Company of the computer id.
      * @param id the id of the computer
      * @return Company
+     * @throws CompanyNotFoundException Company Not Found Exception
+     * @throws ComputerNotFoundException Computer Not Found Exception
      */
-    Company getCompany(long id);
+    Company getCompany(long id) throws CompanyNotFoundException, ComputerNotFoundException;
 
     /**
      * Delete the computer of the company id.
      * @param companyId the company id
+     * @throws CompanyNotFoundException Company Not Found
      */
-    void deleteFromCompany(long companyId);
+    void deleteFromCompany(long companyId) throws CompanyNotFoundException;
 }

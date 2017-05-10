@@ -13,10 +13,13 @@ import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
 import org.dbunit.ext.mysql.MySqlDataTypeFactory;
+import org.dbunit.operation.DatabaseOperation;
 import org.junit.Test;
-import org.slf4j.Logger;
 
 import com.excilys.computerdatabase.config.Config;
+import com.excilys.computerdatabase.dtos.ComputerDTO;
+import com.excilys.computerdatabase.exceptions.CompanyNotFoundException;
+import com.excilys.computerdatabase.exceptions.ComputerNotFoundException;
 import com.excilys.computerdatabase.mappers.ComputerMapper;
 import com.excilys.computerdatabase.models.Company;
 import com.excilys.computerdatabase.models.Computer;
@@ -28,8 +31,6 @@ public class ComputerServiceTest extends DatabaseTestCase {
     private Company comp1;
     private Computer c1;
     private Computer c2;
-
-    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(ComputerServiceTest.class);
 
     private static final String SAMPLE_TEST_XML = "src/test/resources/db-sample.xml";
 
@@ -58,48 +59,47 @@ public class ComputerServiceTest extends DatabaseTestCase {
      */
     @Test
     public void testGetById() {
-
         try {
-
             assertEquals(1, computerService.getById(1L).getId());
-
-            assertNull(computerService.getById(1000L));
-
-        } catch (Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Exception: " + e);
-            }
+        } catch (ComputerNotFoundException e) {
+            fail("Computer Not Found");
         }
     }
 
     /**
-     * Test get by name.
+     * Test get by id.
      */
     @Test
-    public void testGetByName() {
-
+    public void testGetByIdNonPresent() {
         try {
-
-            assertEquals(1, computerService.getByName("Computer1").size());
-            assertEquals(1, computerService.getByName("Computer1").get(0).getId());
-
-            assertEquals(2, computerService.getByName("Computer2").size());
-
-            assertEquals(0, computerService.getByName("Computer1000").size());
-
-        } catch (Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Exception: " + e);
-            }
+            computerService.getById(1000L);
+            fail("Exception Not Thrown");
+        } catch (ComputerNotFoundException e) {
         }
     }
 
     /**
-     * Test get.
+     * Test get by name with zero value.
      */
     @Test
-    public void testGetAll() {
-        assertEquals(4, computerService.getPage().getObjectNumber());
+    public void testGetByNameZeroValue() {
+        assertEquals(0, computerService.getByName("Computer1000").size());
+    }
+
+    /**
+     * Test get by name with one value.
+     */
+    @Test
+    public void testGetByNameOneValue() {
+        assertEquals(1, computerService.getByName("Computer1").size());
+    }
+
+    /**
+     * Test get by name with many value.
+     */
+    @Test
+    public void testGetByNameManyValue() {
+        assertEquals(2, computerService.getByName("Computer2").size());
     }
 
     /**
@@ -107,7 +107,31 @@ public class ComputerServiceTest extends DatabaseTestCase {
      */
     @Test
     public void testGetPage() {
+        assertEquals(4, computerService.getPage().getObjectNumber());
+    }
+
+    /**
+     * Test getPage.
+     */
+    @Test
+    public void testGetPageWithLimit() {
         assertEquals(2, computerService.getPage(1, 2).getObjectNumber());
+    }
+
+    /**
+     * Test getPage.
+     */
+    @Test
+    public void testGetPageWithSearch() {
+        assertEquals(2, computerService.getPage(1, 2, "Compu", null, null).getObjectNumber());
+    }
+
+    /**
+     * Test getPage.
+     */
+    @Test
+    public void testGetPageWithSearchNotFound() {
+        assertEquals(0, computerService.getPage(1, 2, "Compurdg", null, null).getObjectNumber());
     }
 
     /**
@@ -115,18 +139,35 @@ public class ComputerServiceTest extends DatabaseTestCase {
      */
     @Test
     public void testAdd() {
+        
+        computerService.add(c1);
 
-        try {            
-            computerService.add(c1);
-            
+        try {
             Computer c = ComputerMapper.createBean(computerService.getById(c1.getId()));
-
             assertEquals(c1, c);
+        } catch (ComputerNotFoundException e) {
+            fail("Computer Not Added");
+        } catch (CompanyNotFoundException e) {
+            fail("Company Not Found");
+        }
+    }
 
-        } catch (Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Exception: " + e);
-            }
+    /**
+     * Test add.
+     */
+    @Test
+    public void testAddNonPresentCompany() {
+        
+        computerService.add(c1);
+
+        try {
+            ComputerDTO c = computerService.getById(c1.getId());
+            c.getCompany().setId(1000L);
+            ComputerMapper.createBean(c);
+            fail("Exception Not Thrown");
+        } catch (ComputerNotFoundException e) {
+            fail("Computer Not Added");
+        } catch (CompanyNotFoundException e) {
         }
     }
 
@@ -135,19 +176,35 @@ public class ComputerServiceTest extends DatabaseTestCase {
      */
     @Test
     public void testUpdate() {
+        
+        c1.setId(1L);
+        try {
+            computerService.update(c1);
+        } catch (ComputerNotFoundException e1) {
+            fail("Computer Not Found");
+        }
 
         try {
-            c1.setId(1);
-            computerService.update(c1);
-            
             Computer c = ComputerMapper.createBean(computerService.getById(c1.getId()));
-
             assertEquals(c1, c);
+        } catch (ComputerNotFoundException e) {
+            fail("Computer Not Updated");
+        } catch (CompanyNotFoundException e) {
+            fail("Company Not Found");
+        }
+    }
+    
+    /**
+     * Test update.
+     */
+    @Test
+    public void testUpdateNonPresent() {
 
-        } catch (Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Exception: " + e);
-            }
+        c1.setId(1500L);
+        try {
+            computerService.update(c1);
+            fail("Exception Not Thrown");
+        } catch (ComputerNotFoundException e) {
         }
     }
 
@@ -157,17 +214,27 @@ public class ComputerServiceTest extends DatabaseTestCase {
     @Test
     public void testDelete() {
         try {
-            
-            assertEquals(1L, computerService.getById(1L).getId());
-
             computerService.delete(1L);
+        } catch (ComputerNotFoundException e) {
+            fail("Computer Not Found");
+        }
+        
+        try {
+            computerService.getById(1L);
+            fail("Computer Not Deleted");
+        } catch (ComputerNotFoundException e) {
+        }
+    }
 
-            assertNull(computerService.getById(1L));
-
+    /**
+     * Test delete non present computer.
+     */
+    @Test
+    public void testDeleteNonPresent() {
+        try {
+            computerService.delete(1500L);
+            fail("Exception Not Thrown");
         } catch (Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Exception: " + e);
-            }
         }
     }
 
@@ -177,19 +244,30 @@ public class ComputerServiceTest extends DatabaseTestCase {
     @Test
     public void testDeleteList() {
         try {
-            
-            assertEquals(1L, computerService.getById(1L).getId());
-            assertEquals(2L, computerService.getById(2L).getId());
-
             computerService.delete(new ArrayList<Long>(Arrays.asList(1L, 2L)));
-
-            assertNull(computerService.getById(1L));
-            assertNull(computerService.getById(2L));
-
+            computerService.getById(1L);
+            computerService.getById(2L);
+            fail("Computer Not Deleted");
         } catch (Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Exception: " + e);
+        }
+    }
+
+    /**
+     * Test delete.
+     */
+    @Test
+    public void testDeleteListNotFound() {
+        try {
+            computerService.delete(new ArrayList<Long>(Arrays.asList(1L, 1500L)));
+            fail("Exception Not Thrown");
+        } catch (ComputerNotFoundException e) {
+            try {
+                computerService.getById(1L);
+                computerService.getById(2L);
+            } catch (ComputerNotFoundException e1) {
+                fail("Computer Deleted");
             }
+            
         }
     }
 
@@ -198,15 +276,40 @@ public class ComputerServiceTest extends DatabaseTestCase {
      */
     @Test
     public void testGetCompany() {
-
         try {
-
             assertEquals(1L, computerService.getCompany(1L).getId());
+        } catch (ComputerNotFoundException e) {
+            fail("Computer Not Found");
+        } catch (CompanyNotFoundException e) {
+            fail("Company Not Found");
+        }
+    }
 
-        } catch (Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Exception: " + e);
-            }
+    /**
+     * Test getCompany when the computer does not exist.
+     */
+    @Test
+    public void testGetCompanyComputerNonPresent() {
+        try {
+            computerService.getCompany(1500L);
+            fail("Exception Not Thrown");
+        } catch (ComputerNotFoundException e) {
+        } catch (CompanyNotFoundException e) {
+            fail("Bad Exception Thrown");
+        }
+    }
+
+    /**
+     * Test getCompany when the company does not exist.
+     */
+    @Test
+    public void testGetCompanyCompanyNonPresent() {
+        try {
+            computerService.getCompany(3L);
+            fail("Exception Not Thrown");
+        } catch (ComputerNotFoundException e) {
+            fail("Bad Exception Thrown");
+        } catch (CompanyNotFoundException e) {
         }
     }
 
@@ -228,5 +331,16 @@ public class ComputerServiceTest extends DatabaseTestCase {
     @Override
     protected void setUpDatabaseConfig(DatabaseConfig config) {
         config.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new MySqlDataTypeFactory());
+    }
+
+    @Override
+    protected DatabaseOperation getSetUpOperation() throws Exception {
+        return DatabaseOperation.CLEAN_INSERT; // by default (will do DELETE_ALL
+                                               // + INSERT)
+    }
+
+    @Override
+    protected DatabaseOperation getTearDownOperation() throws Exception {
+        return DatabaseOperation.NONE; // by default
     }
 }

@@ -9,17 +9,12 @@ import com.excilys.computerdatabase.exceptions.CompanyNotFoundException;
 public interface CompanyService {
 
     /**
-     * Returns the list of the companies.
-     * @return List CompanyDTO
-     */
-    List<CompanyDTO> get();
-
-    /**
      * Returns the company id.
      * @param id the id of the company
      * @return CompanyDTO
+     * @throws CompanyNotFoundException Company Not Found
      */
-    CompanyDTO getById(long id);
+    CompanyDTO getById(long id) throws CompanyNotFoundException;
 
     /**
      * Returns the list of companies named name.
@@ -32,8 +27,9 @@ public interface CompanyService {
      * Returns the list of the computers of the company id.
      * @param id the id of the company
      * @return List ComputerDTO
+     * @throws CompanyNotFoundException Company Not Found
      */
-    List<ComputerDTO> getComputers(long id);
+    List<ComputerDTO> getComputers(long id) throws CompanyNotFoundException;
 
     /**
      * Delete the company id and all its computers.

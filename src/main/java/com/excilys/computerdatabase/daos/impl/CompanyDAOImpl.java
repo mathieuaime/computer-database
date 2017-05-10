@@ -39,7 +39,7 @@ public enum CompanyDAOImpl implements CompanyDAO {
                                                             + " company.id AS computercompanyid,"
                                                             + " company.name AS computercompanyname"
                                                             + " FROM computer"
-                                                            + " INNER JOIN company ON company_id = company.id"
+                                                            + " LEFT JOIN company ON company_id = company.id"
                                                             + " WHERE company.id =  ?";
 
     private static final String QUERY_DELETE_COMPANY        = "DELETE FROM company WHERE id = ?";
@@ -75,7 +75,7 @@ public enum CompanyDAOImpl implements CompanyDAO {
     }
 
     @Override
-    public Company getById(long id) {
+    public Company getById(long id) throws CompanyNotFoundException {
         Company company = null;
 
         try {
@@ -89,6 +89,8 @@ public enum CompanyDAOImpl implements CompanyDAO {
 
                 if (rset.first()) {
                     company = CompanyMapper.getCompany(rset);
+                } else {
+                    throw new CompanyNotFoundException("Company Not Found");
                 }
             }
 
@@ -126,18 +128,17 @@ public enum CompanyDAOImpl implements CompanyDAO {
     }
 
     @Override
-    public List<Computer> getComputers(long id) {
+    public List<Computer> getComputers(long id) throws CompanyNotFoundException {
         List<Computer> computers = new ArrayList<>();
 
         try {
             Connection con = ConnectionMySQL.getConnection();
 
             try (PreparedStatement stmt = con.prepareStatement(QUERY_FIND_COMPUTERS);) {
-
                 con.setReadOnly(true);
                 stmt.setLong(1, id);
-
-                computers = ComputerMapper.getComputers(stmt.executeQuery());
+                final ResultSet rset = stmt.executeQuery();
+                computers = ComputerMapper.getComputers(rset);
             }
 
         } catch (SQLException e) {
@@ -163,7 +164,10 @@ public enum CompanyDAOImpl implements CompanyDAO {
                 con.setReadOnly(false);
 
                 stmt.setLong(1, id);
-                stmt.executeUpdate();
+
+                if (stmt.executeUpdate() == 0) {
+                    throw new CompanyNotFoundException("Company Not Found");
+                }
 
             } catch (SQLException e) {
                 con.rollback();

@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.excilys.computerdatabase.config.Config;
 import com.excilys.computerdatabase.dtos.CompanyDTO;
 import com.excilys.computerdatabase.dtos.ComputerDTO;
+import com.excilys.computerdatabase.exceptions.CompanyNotFoundException;
 import com.excilys.computerdatabase.exceptions.IntroducedAfterDiscontinuedException;
 import com.excilys.computerdatabase.exceptions.NameEmptyException;
 import com.excilys.computerdatabase.mappers.ComputerMapper;
@@ -43,7 +44,7 @@ public class AddComputerServlet extends HttpServlet {
 
         RequestDispatcher view = request.getRequestDispatcher("WEB-INF/views/addComputer.jsp");
 
-        request.setAttribute("companies", companyService.get());
+        request.setAttribute("companies", companyService.getPage().getObjects());
 
         view.forward(request, response);
 
@@ -72,20 +73,21 @@ public class AddComputerServlet extends HttpServlet {
         computerDTO.setDiscontinued(!discontinued.equals("") ? LocalDate.parse(discontinued, DateTimeFormatter.ofPattern("yyyy-MM-dd")).format(DATE_FORMATTER) : "");
         computerDTO.setCompany(companyDTO);
 
-        Computer computer =  ComputerMapper.createBean(computerDTO);
-
         try {
+            Computer computer =  ComputerMapper.createBean(computerDTO);
             ComputerValidator.validate(computer);
             response.sendRedirect("dashboard");
+            computerService.add(computer);
         } catch (IntroducedAfterDiscontinuedException e) {
             request.setAttribute("error", "La date d'ajout doit être antérieure à la date de retrait");
             doGet(request, response);
         } catch (NameEmptyException e) {
             request.setAttribute("error", "Le nom doit être spécifié");
             doGet(request, response);
+        } catch (CompanyNotFoundException e) {
+            request.setAttribute("error", "La company n'existe pas");
+            doGet(request, response);
         }
-
-        computerService.add(computer);
     }
 
 }

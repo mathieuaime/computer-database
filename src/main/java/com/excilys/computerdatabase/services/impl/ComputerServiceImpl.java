@@ -8,6 +8,7 @@ import com.excilys.computerdatabase.daos.impl.ComputerDAOImpl;
 import com.excilys.computerdatabase.dtos.CompanyDTO;
 import com.excilys.computerdatabase.dtos.ComputerDTO;
 import com.excilys.computerdatabase.dtos.Page;
+import com.excilys.computerdatabase.exceptions.CompanyNotFoundException;
 import com.excilys.computerdatabase.exceptions.ComputerNotFoundException;
 import com.excilys.computerdatabase.mappers.CompanyMapper;
 import com.excilys.computerdatabase.mappers.ComputerMapper;
@@ -20,11 +21,6 @@ public enum ComputerServiceImpl implements ComputerService, PageService<Computer
     INSTANCE;
 
     private ComputerDAOImpl computerDAO = ComputerDAOImpl.INSTANCE;
-
-    @Override
-    public List<ComputerDTO> get() {
-        return getPage().getObjects();
-    }
 
     @Override
     public Page<ComputerDTO> getPage() {
@@ -51,11 +47,12 @@ public enum ComputerServiceImpl implements ComputerService, PageService<Computer
     @Override
     public ComputerDTO getById(long id) throws ComputerNotFoundException {
         ConnectionMySQL.open();
-        Computer computer = computerDAO.getById(id);
-        ConnectionMySQL.close();
+        Computer computer = null;
 
-        if (computer == null) {
-            throw new ComputerNotFoundException("Computer Not Found");
+        try {
+            computer = computerDAO.getById(id);
+        } finally {
+            ConnectionMySQL.close();
         }
 
         return ComputerMapper.createDTO(computer);
@@ -83,22 +80,31 @@ public enum ComputerServiceImpl implements ComputerService, PageService<Computer
     @Override
     public void update(Computer computer) throws ComputerNotFoundException {
         ConnectionMySQL.open();
-        computerDAO.update(computer);
-        ConnectionMySQL.close();
+        try {
+            computerDAO.update(computer);
+        } finally {
+            ConnectionMySQL.close();
+        }
     }
 
     @Override
     public void delete(long id) throws ComputerNotFoundException {
         ConnectionMySQL.open();
-        computerDAO.delete(id);
-        ConnectionMySQL.close();
+        try {
+            computerDAO.delete(id);
+        } finally {
+            ConnectionMySQL.close();
+        }
     }
 
     @Override
     public void delete(List<Long> ids) throws ComputerNotFoundException {
         ConnectionMySQL.open();
-        computerDAO.delete(ids);
-        ConnectionMySQL.close();
+        try {
+            computerDAO.delete(ids);
+        } finally {
+            ConnectionMySQL.close();
+        }
     }
 
     @Override
@@ -111,10 +117,14 @@ public enum ComputerServiceImpl implements ComputerService, PageService<Computer
     }
 
     @Override
-    public CompanyDTO getCompany(long id) {
+    public CompanyDTO getCompany(long id) throws CompanyNotFoundException, ComputerNotFoundException {
         ConnectionMySQL.open();
-        CompanyDTO c = CompanyMapper.createDTO(computerDAO.getCompany(id));
-        ConnectionMySQL.close();
+        CompanyDTO c;
+        try {
+            c = CompanyMapper.createDTO(computerDAO.getCompany(id));
+        } finally {
+            ConnectionMySQL.close();
+        }
 
         return c;
     }

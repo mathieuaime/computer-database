@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 
 import com.excilys.computerdatabase.config.Config;
 import com.excilys.computerdatabase.dtos.ComputerDTO;
+import com.excilys.computerdatabase.exceptions.CompanyNotFoundException;
 import com.excilys.computerdatabase.models.Company;
 import com.excilys.computerdatabase.models.Computer;
 import com.excilys.computerdatabase.services.impl.CompanyServiceImpl;
@@ -83,8 +84,9 @@ public class ComputerMapper {
      * Create a computer from a DTO.
      * @param computerDTO the computerDTO
      * @return Computer
+     * @throws CompanyNotFoundException Company Not Found
      */
-    public static Computer createBean(ComputerDTO computerDTO) {
+    public static Computer createBean(ComputerDTO computerDTO) throws CompanyNotFoundException {
 
         LocalDate introduced = (computerDTO.getIntroduced().equals("") ? null
                 : LocalDate.parse(computerDTO.getIntroduced(), DATE_FORMATTER));
@@ -104,14 +106,17 @@ public class ComputerMapper {
     public static ComputerDTO createDTO(Computer computer) {
         ComputerDTO computerDTO = new ComputerDTO();
 
-        LocalDate introduced = computer.getIntroduced();
-        LocalDate discontinued = computer.getDiscontinued();
+        if (computer != null) {
 
-        computerDTO.setId(computer.getId());
-        computerDTO.setName(computer.getName());
-        computerDTO.setIntroduced((introduced != null ? introduced.format(DATE_FORMATTER) : ""));
-        computerDTO.setDiscontinued((discontinued != null ? discontinued.format(DATE_FORMATTER) : ""));
-        computerDTO.setCompany(CompanyMapper.createDTO(computer.getCompany()));
+            LocalDate introduced = computer.getIntroduced();
+            LocalDate discontinued = computer.getDiscontinued();
+
+            computerDTO.setId(computer.getId());
+            computerDTO.setName(computer.getName());
+            computerDTO.setIntroduced((introduced != null ? introduced.format(DATE_FORMATTER) : ""));
+            computerDTO.setDiscontinued((discontinued != null ? discontinued.format(DATE_FORMATTER) : ""));
+            computerDTO.setCompany(CompanyMapper.createDTO(computer.getCompany()));
+        }
 
         return computerDTO;
     }

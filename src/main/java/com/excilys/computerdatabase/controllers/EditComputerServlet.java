@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.excilys.computerdatabase.config.Config;
 import com.excilys.computerdatabase.dtos.CompanyDTO;
 import com.excilys.computerdatabase.dtos.ComputerDTO;
+import com.excilys.computerdatabase.exceptions.CompanyNotFoundException;
 import com.excilys.computerdatabase.exceptions.ComputerNotFoundException;
 import com.excilys.computerdatabase.exceptions.IntroducedAfterDiscontinuedException;
 import com.excilys.computerdatabase.exceptions.NameEmptyException;
@@ -59,7 +60,7 @@ public class EditComputerServlet extends HttpServlet {
         request.setAttribute("computer", computerDTO);
 
         //long startTime = System.currentTimeMillis();
-        request.setAttribute("companies", companyService.get());
+        request.setAttribute("companies", companyService.getPage().getObjects());
         //long stopTime = System.currentTimeMillis();
 
         //LOGGER.debug((stopTime - startTime) + " ms");
@@ -94,9 +95,8 @@ public class EditComputerServlet extends HttpServlet {
 
         //LOGGER.debug(computerDTO.toString());
 
-        Computer computer = ComputerMapper.createBean(computerDTO);
-
         try {
+            Computer computer = ComputerMapper.createBean(computerDTO);
             ComputerValidator.validate(computer);
             computerService.update(computer);
             response.sendRedirect("dashboard");
@@ -108,6 +108,9 @@ public class EditComputerServlet extends HttpServlet {
             doGet(request, response);
         } catch (ComputerNotFoundException e) {
             request.setAttribute("error", "Le computer n'existe pas");
+            doGet(request, response);
+        } catch (CompanyNotFoundException e) {
+            request.setAttribute("error", "La company n'existe pas");
             doGet(request, response);
         }
     }

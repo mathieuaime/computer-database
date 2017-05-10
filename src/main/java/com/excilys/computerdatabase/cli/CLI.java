@@ -43,7 +43,7 @@ public class CLI {
      * Print the list of the companies.
      */
     public static void printListCompanies() {
-        for (CompanyDTO c : companyService.get()) {
+        for (CompanyDTO c : companyService.getPage().getObjects()) {
             System.out.println(c);
         }
     }
@@ -52,7 +52,7 @@ public class CLI {
      * Print the list of the computers.
      */
     public static void printListComputers() {
-        for (ComputerDTO c : computerService.get()) {
+        for (ComputerDTO c : computerService.getPage().getObjects()) {
             System.out.println(c);
         }
     }
@@ -155,6 +155,8 @@ public class CLI {
                     System.out.println("La date d'ajout doit être antérieure à la date de retrait");
                 } catch (NameEmptyException e) {
                     System.out.println("Le nom doit être non nul");
+                } catch (CompanyNotFoundException e) {
+                    System.out.println("La company n'existe pas");
                 }
                 break;
 
@@ -201,6 +203,8 @@ public class CLI {
                     System.out.println("La date d'ajout doit être antérieure à la date de retrait");
                 } catch (NameEmptyException e) {
                     System.out.println("Le nom doit être non nul");
+                } catch (CompanyNotFoundException e) {
+                    System.out.println("La company n'existe pas");
                 }
                 break;
 

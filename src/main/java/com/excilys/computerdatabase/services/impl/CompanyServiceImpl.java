@@ -24,21 +24,13 @@ public enum CompanyServiceImpl implements CompanyService, PageService<CompanyDTO
     private ComputerDAOImpl computerDAO = ComputerDAOImpl.INSTANCE;
 
     @Override
-    public List<CompanyDTO> get() {
+    public CompanyDTO getById(long id) throws CompanyNotFoundException {
         ConnectionMySQL.open();
-        List<CompanyDTO> l = companyDAO.findAll().stream().map(it -> CompanyMapper.createDTO(it)).collect(Collectors.toList());
-        ConnectionMySQL.close();
-
-        return l;
-    }
-
-    @Override
-    public CompanyDTO getById(long id) {
-        ConnectionMySQL.open();
-        CompanyDTO c = CompanyMapper.createDTO(companyDAO.getById(id));
-        ConnectionMySQL.close();
-
-        return c;
+        try {
+            return CompanyMapper.createDTO(companyDAO.getById(id));
+        } finally {
+            ConnectionMySQL.close();
+        }
     }
 
     @Override
@@ -51,16 +43,12 @@ public enum CompanyServiceImpl implements CompanyService, PageService<CompanyDTO
 
     @Override
     public Page<CompanyDTO> getPage() {
-        Page<CompanyDTO> p = new Page<CompanyDTO>(get(), 1);
-
-        return p;
+        return getPage(1, -1);
     }
 
     @Override
     public Page<CompanyDTO> getPage(int pageNumero, int length) {
-        Page<CompanyDTO> p = getPage(pageNumero, length, null, "ASC", "name");
-
-        return p;
+        return getPage(pageNumero, length, null, "ASC", "name");
     }
 
     @Override
@@ -73,30 +61,27 @@ public enum CompanyServiceImpl implements CompanyService, PageService<CompanyDTO
     }
 
     @Override
-    public List<ComputerDTO> getComputers(long id) {
+    public List<ComputerDTO> getComputers(long id) throws CompanyNotFoundException {
         ConnectionMySQL.open();
-        List<ComputerDTO> l = companyDAO.getComputers(id).stream().map(it -> ComputerMapper.createDTO(it))
-                .collect(Collectors.toList());
-        ConnectionMySQL.close();
-
-        return l;
+        try {
+            return companyDAO.getComputers(id).stream().map(it -> ComputerMapper.createDTO(it))
+                    .collect(Collectors.toList());
+        } finally {
+            ConnectionMySQL.close();
+        }
     }
 
     @Override
     public void delete(long id) throws CompanyNotFoundException {
         ConnectionMySQL.open();
-
-        computerDAO.deleteFromCompany(id);
-
-        companyDAO.delete(id);
-
         try {
+            computerDAO.deleteFromCompany(id);
+            companyDAO.delete(id);
             ConnectionMySQL.getConnection().commit();
         } catch (SQLException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
+        } finally {
+            ConnectionMySQL.close();
         }
-
-        ConnectionMySQL.close();
     }
 }

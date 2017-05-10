@@ -27,8 +27,9 @@ public interface CompanyDAO {
      * Return the company found by its id.
      * @param id id of the company
      * @return Company
+     * @throws CompanyNotFoundException Company Not Found
      */
-    Company getById(long id);
+    Company getById(long id) throws CompanyNotFoundException;
 
     /**
      * Returns the list of the companies found by their names.
@@ -41,8 +42,9 @@ public interface CompanyDAO {
      * Returns the computer of the company id.
      * @param id id of the company
      * @return List Computer
+     * @throws CompanyNotFoundException Company Not Found
      */
-    List<Computer> getComputers(long id);
+    List<Computer> getComputers(long id) throws CompanyNotFoundException;
 
     /**
      * Delete a company and all its computers.
