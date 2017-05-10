@@ -10,11 +10,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
-
 import com.excilys.computerdatabase.config.Config;
 import com.excilys.computerdatabase.exceptions.ComputerNotFoundException;
-import com.excilys.computerdatabase.services.ComputerServiceImpl;
+import com.excilys.computerdatabase.services.impl.ComputerServiceImpl;
 
 public class DashboardServlet extends HttpServlet {
 
@@ -22,14 +20,8 @@ public class DashboardServlet extends HttpServlet {
 
     private static final int PAGE_DEFAULT = Integer.parseInt(Config.getProperties().getProperty("page_default"));
     private static final int PAGE_SIZE_DEFAULT = Integer.parseInt(Config.getProperties().getProperty("page_size_default"));
-    
-    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(DashboardServlet.class);
-    
-    private ComputerServiceImpl computerService;
-    
-    public DashboardServlet() {
-        computerService = new ComputerServiceImpl();
-    }
+
+    private ComputerServiceImpl computerService = ComputerServiceImpl.INSTANCE;
 
     /**
      * GET Dashboard.
@@ -75,8 +67,6 @@ public class DashboardServlet extends HttpServlet {
         String[] listComputersToDelete = request.getParameter("selection").split(",");
 
         List<Long> ids = new ArrayList<Long>(listComputersToDelete.length);
-
-        ComputerServiceImpl computerService = new ComputerServiceImpl();
 
         for (String s : listComputersToDelete) {
             ids.add(Long.parseLong(s));

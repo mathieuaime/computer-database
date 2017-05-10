@@ -3,7 +3,6 @@ package com.excilys.computerdatabase.controllers;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -11,39 +10,27 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
-
 import com.excilys.computerdatabase.config.Config;
 import com.excilys.computerdatabase.dtos.CompanyDTO;
 import com.excilys.computerdatabase.dtos.ComputerDTO;
+import com.excilys.computerdatabase.exceptions.CompanyNotFoundException;
 import com.excilys.computerdatabase.exceptions.IntroducedAfterDiscontinuedException;
 import com.excilys.computerdatabase.exceptions.NameEmptyException;
 import com.excilys.computerdatabase.mappers.ComputerMapper;
 import com.excilys.computerdatabase.models.Computer;
-import com.excilys.computerdatabase.services.CompanyServiceImpl;
-import com.excilys.computerdatabase.services.ComputerServiceImpl;
+import com.excilys.computerdatabase.services.impl.CompanyServiceImpl;
+import com.excilys.computerdatabase.services.impl.ComputerServiceImpl;
 import com.excilys.computerdatabase.validators.ComputerValidator;
 
 public class AddComputerServlet extends HttpServlet {
 
     private static final long serialVersionUID = -82009216108348436L;
 
-    private ComputerServiceImpl computerService;
+    private ComputerServiceImpl computerService = ComputerServiceImpl.INSTANCE;
 
-    private CompanyServiceImpl companyService;
+    private CompanyServiceImpl companyService = CompanyServiceImpl.INSTANCE;
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern(Config.getProperties().getProperty("date_format"));
-
-    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(AddComputerServlet.class);
-
-    /**
-     * AddComputerServlet default constructor : initialize the daos.
-     */
-    public AddComputerServlet() {
-        super();
-        computerService = new ComputerServiceImpl();
-        companyService = new CompanyServiceImpl();
-    }
 
     /**
      * GET addComputer.
@@ -57,7 +44,7 @@ public class AddComputerServlet extends HttpServlet {
 
         RequestDispatcher view = request.getRequestDispatcher("WEB-INF/views/addComputer.jsp");
 
-        request.setAttribute("companies", companyService.get());
+        request.setAttribute("companies", companyService.getPage().getObjects());
 
         view.forward(request, response);
 
@@ -75,7 +62,7 @@ public class AddComputerServlet extends HttpServlet {
 
         ComputerDTO computerDTO = new ComputerDTO();
         CompanyDTO companyDTO = new CompanyDTO();
-        
+
         String introduced = request.getParameter("introduced");
         String discontinued = request.getParameter("discontinued");
 
@@ -86,20 +73,21 @@ public class AddComputerServlet extends HttpServlet {
         computerDTO.setDiscontinued(!discontinued.equals("") ? LocalDate.parse(discontinued, DateTimeFormatter.ofPattern("yyyy-MM-dd")).format(DATE_FORMATTER) : "");
         computerDTO.setCompany(companyDTO);
 
-        Computer computer =  ComputerMapper.createBean(computerDTO);
-
         try {
+            Computer computer =  ComputerMapper.createBean(computerDTO);
             ComputerValidator.validate(computer);
             response.sendRedirect("dashboard");
+            computerService.add(computer);
         } catch (IntroducedAfterDiscontinuedException e) {
             request.setAttribute("error", "La date d'ajout doit être antérieure à la date de retrait");
             doGet(request, response);
         } catch (NameEmptyException e) {
             request.setAttribute("error", "Le nom doit être spécifié");
             doGet(request, response);
+        } catch (CompanyNotFoundException e) {
+            request.setAttribute("error", "La company n'existe pas");
+            doGet(request, response);
         }
-
-        computerService.add(computer);
     }
 
 }

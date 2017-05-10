@@ -10,40 +10,28 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
-
 import com.excilys.computerdatabase.config.Config;
 import com.excilys.computerdatabase.dtos.CompanyDTO;
 import com.excilys.computerdatabase.dtos.ComputerDTO;
+import com.excilys.computerdatabase.exceptions.CompanyNotFoundException;
 import com.excilys.computerdatabase.exceptions.ComputerNotFoundException;
 import com.excilys.computerdatabase.exceptions.IntroducedAfterDiscontinuedException;
 import com.excilys.computerdatabase.exceptions.NameEmptyException;
 import com.excilys.computerdatabase.mappers.ComputerMapper;
 import com.excilys.computerdatabase.models.Computer;
-import com.excilys.computerdatabase.services.CompanyServiceImpl;
-import com.excilys.computerdatabase.services.ComputerServiceImpl;
+import com.excilys.computerdatabase.services.impl.CompanyServiceImpl;
+import com.excilys.computerdatabase.services.impl.ComputerServiceImpl;
 import com.excilys.computerdatabase.validators.ComputerValidator;
 
 public class EditComputerServlet extends HttpServlet {
 
     private static final long serialVersionUID = -82009216108348436L;
-    
-    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(EditComputerServlet.class);
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern(Config.getProperties().getProperty("date_format"));
 
-    private ComputerServiceImpl computerService;
+    private ComputerServiceImpl computerService = ComputerServiceImpl.INSTANCE;
 
-    private CompanyServiceImpl companyService;
-
-    /**
-     * AddComputerServlet default constructor : initialize the daos.
-     */
-    public EditComputerServlet() {
-        super();
-        computerService = new ComputerServiceImpl();
-        companyService = new CompanyServiceImpl();
-    }
+    private CompanyServiceImpl companyService = CompanyServiceImpl.INSTANCE;
 
     /**
      * GET editComputer.
@@ -54,7 +42,7 @@ public class EditComputerServlet extends HttpServlet {
      */
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         request.setAttribute("dateFormat", Config.getProperties().getProperty("date_format"));
 
         int idComputer = (request.getParameter("id") != null ? Integer.parseInt(request.getParameter("id")) : 0);
@@ -72,9 +60,9 @@ public class EditComputerServlet extends HttpServlet {
         request.setAttribute("computer", computerDTO);
 
         //long startTime = System.currentTimeMillis();
-        request.setAttribute("companies", companyService.get());
+        request.setAttribute("companies", companyService.getPage().getObjects());
         //long stopTime = System.currentTimeMillis();
-        
+
         //LOGGER.debug((stopTime - startTime) + " ms");
 
         view.forward(request, response);
@@ -93,7 +81,7 @@ public class EditComputerServlet extends HttpServlet {
 
         ComputerDTO computerDTO = new ComputerDTO();
         CompanyDTO companyDTO = new CompanyDTO();
-        
+
         String introduced = request.getParameter("introduced");
         String discontinued = request.getParameter("discontinued");
 
@@ -104,12 +92,11 @@ public class EditComputerServlet extends HttpServlet {
         computerDTO.setIntroduced(!introduced.equals("") ? LocalDate.parse(introduced, DateTimeFormatter.ofPattern("yyyy-MM-dd")).format(DATE_FORMATTER) : "");
         computerDTO.setDiscontinued(!discontinued.equals("") ? LocalDate.parse(discontinued, DateTimeFormatter.ofPattern("yyyy-MM-dd")).format(DATE_FORMATTER) : "");
         computerDTO.setCompany(companyDTO);
-        
+
         //LOGGER.debug(computerDTO.toString());
 
-        Computer computer = ComputerMapper.createBean(computerDTO);
-
         try {
+            Computer computer = ComputerMapper.createBean(computerDTO);
             ComputerValidator.validate(computer);
             computerService.update(computer);
             response.sendRedirect("dashboard");
@@ -121,6 +108,9 @@ public class EditComputerServlet extends HttpServlet {
             doGet(request, response);
         } catch (ComputerNotFoundException e) {
             request.setAttribute("error", "Le computer n'existe pas");
+            doGet(request, response);
+        } catch (CompanyNotFoundException e) {
+            request.setAttribute("error", "La company n'existe pas");
             doGet(request, response);
         }
     }

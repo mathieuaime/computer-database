@@ -4,17 +4,8 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 import com.excilys.computerdatabase.config.Config;
-import com.excilys.computerdatabase.exceptions.IntroducedAfterDiscontinuedException;
-import com.excilys.computerdatabase.exceptions.NameEmptyException;
-
 public class Computer {
 
-    public static final String TABLE_NAME = "computer";
-    public static final String FIELD_ID = "id";
-    public static final String FIELD_NAME = "name";
-    public static final String FIELD_INTRODUCED = "introduced";
-    public static final String FIELD_DISCONTINUED = "discontinued";
-    public static final String FIELD_COMPANY_ID = "company_id";
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern(Config.getProperties().getProperty("date_format"));
 
     private long id;
@@ -126,8 +117,6 @@ public class Computer {
         /**
          * Build the Company.
          * @return Computer
-         * @throws IntroducedAfterDiscontinuedException exception when introduced date > discontinued date
-         * @throws NameEmptyException exception when the name is empty
          */
         public Computer build() {
             return computer;

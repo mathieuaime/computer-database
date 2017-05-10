@@ -5,34 +5,28 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 
 import org.dbunit.DatabaseTestCase;
+import org.dbunit.database.DatabaseConfig;
 import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
+import org.dbunit.ext.mysql.MySqlDataTypeFactory;
+import org.dbunit.operation.DatabaseOperation;
 import org.junit.Test;
-import org.slf4j.Logger;
 
 import com.excilys.computerdatabase.config.Config;
-import com.excilys.computerdatabase.services.CompanyServiceImpl;
+import com.excilys.computerdatabase.exceptions.CompanyNotFoundException;
+import com.excilys.computerdatabase.services.impl.CompanyServiceImpl;
 
 public class CompanyServiceTest extends DatabaseTestCase {
 
-    private CompanyServiceImpl companyService = new CompanyServiceImpl();
-    
+    private CompanyServiceImpl companyService = CompanyServiceImpl.INSTANCE;
+
     private static final String SAMPLE_TEST_XML = "src/test/resources/db-sample.xml";
 
     private static final String URL = Config.getProperties().getProperty("urlTest");
     private static final String USER = Config.getProperties().getProperty("user");
     private static final String PASSWORD = Config.getProperties().getProperty("password");
-    
-    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(CompanyServiceTest.class);
-
-    /**
-     * CompanyTest constructor.
-     */
-    public CompanyServiceTest() {
-        companyService = new CompanyServiceImpl();
-    }
 
     /**
      * Test get by id.
@@ -41,15 +35,22 @@ public class CompanyServiceTest extends DatabaseTestCase {
     public void testGetById() {
 
         try {
-
             assertEquals(1, companyService.getById(1).getId());
-
-            assertNull(companyService.getById(1000));
-
         } catch (Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Exception: " + e);
-            }
+            fail("Company Not Found");
+        }
+    }
+
+    /**
+     * Test get by id.
+     */
+    @Test
+    public void testGetByIdNonPresent() {
+
+        try {
+            companyService.getById(1000L);
+            fail("Exception Not Thrown");
+        } catch (CompanyNotFoundException e) {
         }
     }
 
@@ -57,31 +58,24 @@ public class CompanyServiceTest extends DatabaseTestCase {
      * Test get by name.
      */
     @Test
-    public void testGetByName() {
-
-        try {
-
-            assertEquals(1, companyService.getByName("Company1").size());
-            assertEquals(1, companyService.getByName("Company1").get(0).getId());
-            
-            assertEquals(2, companyService.getByName("Company2").size());
-
-            assertEquals(0, companyService.getByName("Company1000").size());
-
-        } catch (Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Exception: " + e);
-            }
-        }
+    public void testGetByNameZeroValue() {
+        assertEquals(0, companyService.getByName("Company1000").size());
     }
 
     /**
-     * Test get.
+     * Test get by name.
      */
     @Test
-    public void testGetAll() {
+    public void testGetByNameOneValue() {
+        assertEquals(1, companyService.getByName("Company1").size());
+    }
 
-            assertEquals(3, companyService.get().size());
+    /**
+     * Test get by name.
+     */
+    @Test
+    public void testGetByNameManyValue() {
+        assertEquals(2, companyService.getByName("Company2").size());
     }
 
     /**
@@ -89,24 +83,58 @@ public class CompanyServiceTest extends DatabaseTestCase {
      */
     @Test
     public void testGetPage() {
+        assertEquals(3, companyService.getPage().getObjectNumber());
+    }
 
-            assertEquals(1, companyService.getPage(1, 1).getObjectNumber());
+    /**
+     * Test get by id.
+     */
+    @Test
+    public void testGetPageWithLimit() {
+        assertEquals(1, companyService.getPage(1, 1).getObjectNumber());
+    }
+
+    /**
+     * Test get by id.
+     */
+    @Test
+    public void testGetPageWithSearch() {
+        assertEquals(1, companyService.getPage(1, 1, "Compa", null, null).getObjectNumber());
     }
 
     /**
      * Test getComputer.
      */
     @Test
-    public void testGetComputer() {
-
+    public void testGetComputerZeroValue() {
         try {
-
-            assertEquals(4, companyService.getComputers(1).size());
-
-        } catch (Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Exception: " + e);
-            }
+            assertEquals(0, companyService.getComputers(3L).size());
+        } catch (CompanyNotFoundException e) {
+            fail("Company Not Found");
+        }
+    }
+    
+    /**
+     * Test getComputer.
+     */
+    @Test
+    public void testGetComputerOneValue() {
+        try {
+            assertEquals(1, companyService.getComputers(2L).size());
+        } catch (CompanyNotFoundException e) {
+            fail("Company Not Found");
+        }
+    }
+    
+    /**
+     * Test getComputer.
+     */
+    @Test
+    public void testGetComputerManyValue() {
+        try {
+            assertEquals(2, companyService.getComputers(1L).size());
+        } catch (CompanyNotFoundException e) {
+            fail("Company Not Found");
         }
     }
 
@@ -116,18 +144,35 @@ public class CompanyServiceTest extends DatabaseTestCase {
     @Test
     public void testDelete() {
         try {
-            
-            assertEquals(1L, companyService.getById(1L).getId());
-
             companyService.delete(1L);
 
-            assertNull(companyService.getById(1L));
-            
-            assertEquals(0, companyService.getComputers(1L));
+            assertEquals(0, companyService.getComputers(1L).size());
 
-        } catch (Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Exception: " + e);
+            try {
+                companyService.getById(1L);
+                fail("Company Not Deleted");
+            } catch (CompanyNotFoundException e) {
+            }
+
+        } catch (CompanyNotFoundException e) {
+            fail("Company Not Found");
+        }
+    }
+    
+
+    /**
+     * Test delete.
+     */
+    @Test
+    public void testDeleteNonPresent() {
+        try {
+            companyService.delete(100L);
+            fail("Exception Not Thrown");
+        } catch (CompanyNotFoundException e) {
+            try {
+                companyService.getById(1L);
+            } catch (CompanyNotFoundException e1) {
+                fail("Company Deleted");
             }
         }
     }
@@ -145,6 +190,22 @@ public class CompanyServiceTest extends DatabaseTestCase {
         IDataSet dataSet = builder.build(new File(SAMPLE_TEST_XML));
 
         return dataSet;
+    }
+
+    @Override
+    protected void setUpDatabaseConfig(DatabaseConfig config) {
+        config.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new MySqlDataTypeFactory());
+    }
+
+    @Override
+    protected DatabaseOperation getSetUpOperation() throws Exception {
+        return DatabaseOperation.CLEAN_INSERT; // by default (will do DELETE_ALL
+                                               // + INSERT)
+    }
+
+    @Override
+    protected DatabaseOperation getTearDownOperation() throws Exception {
+        return DatabaseOperation.NONE; // by default
     }
 
 }

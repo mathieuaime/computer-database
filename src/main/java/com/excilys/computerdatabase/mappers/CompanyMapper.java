@@ -2,6 +2,8 @@ package com.excilys.computerdatabase.mappers;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.slf4j.Logger;
 
@@ -22,7 +24,7 @@ public class CompanyMapper {
         Company company = null;
 
         try {
-            company = new Company.Builder(rset.getString(Company.FIELD_NAME)).id(rset.getInt(Company.FIELD_ID)).build();
+            company = new Company.Builder(rset.getString("name")).id(rset.getInt("id")).build();
         } catch (SQLException e) {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Exception: " + e);
@@ -30,6 +32,26 @@ public class CompanyMapper {
         }
 
         return company;
+    }
+
+    /**
+     * Create a list of companies from a ResultSet.
+     * @param rset the ResultSet
+     * @return List Company
+     */
+    public static List<Company> getCompanies(ResultSet rset) {
+
+        List<Company> companies = new ArrayList<>();
+
+        try {
+            while (rset.next()) {
+                companies.add(getCompany(rset));
+            }
+        } catch (SQLException e) {
+            LOGGER.debug("Exception: " + e);
+        }
+
+        return companies;
     }
 
     /**

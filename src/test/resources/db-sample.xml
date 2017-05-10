@@ -5,14 +5,17 @@
 	<company id='2' name='Company2' />
 	<company id='3' name='Company2' />
 
-	<computer id='1' name='Computer1' company_id='1' />
-	
-	<computer id='2' name='Computer2' introduced='2017-01-01'
-		company_id='1' />
-		
-	<computer id='3' name='Computer2' discontinued='2017-01-02'
-		company_id='1' />
-		
 	<computer id='4' name='Computer3' introduced='2017-01-01'
 		discontinued='2017-01-02' company_id='1' />
+
+	<computer id='3' name='Computer2' discontinued='2017-01-02' />
+
+	<computer id='2' name='Computer2' introduced='2017-01-01'
+		company_id='2' />
+
+	<computer id='1' name='Computer1' company_id='1' />
+
+
+
+
 </dataset>

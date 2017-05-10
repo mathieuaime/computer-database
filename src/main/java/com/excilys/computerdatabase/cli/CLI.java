@@ -11,15 +11,15 @@ import com.excilys.computerdatabase.exceptions.IntroducedAfterDiscontinuedExcept
 import com.excilys.computerdatabase.exceptions.NameEmptyException;
 import com.excilys.computerdatabase.mappers.ComputerMapper;
 import com.excilys.computerdatabase.models.Computer;
-import com.excilys.computerdatabase.services.CompanyServiceImpl;
-import com.excilys.computerdatabase.services.ComputerServiceImpl;
+import com.excilys.computerdatabase.services.impl.CompanyServiceImpl;
+import com.excilys.computerdatabase.services.impl.ComputerServiceImpl;
 import com.excilys.computerdatabase.validators.ComputerValidator;
 
 public class CLI {
 
     private static Scanner scanner;
-    private static CompanyServiceImpl companyService = new CompanyServiceImpl();
-    private static ComputerServiceImpl computerService = new ComputerServiceImpl();
+    private static CompanyServiceImpl companyService = CompanyServiceImpl.INSTANCE;
+    private static ComputerServiceImpl computerService = ComputerServiceImpl.INSTANCE;
 
     private static final String DATE_FORMAT = Config.getProperties().getProperty("date_format");
 
@@ -43,7 +43,7 @@ public class CLI {
      * Print the list of the companies.
      */
     public static void printListCompanies() {
-        for (CompanyDTO c : companyService.get()) {
+        for (CompanyDTO c : companyService.getPage().getObjects()) {
             System.out.println(c);
         }
     }
@@ -52,7 +52,7 @@ public class CLI {
      * Print the list of the computers.
      */
     public static void printListComputers() {
-        for (ComputerDTO c : computerService.get()) {
+        for (ComputerDTO c : computerService.getPage().getObjects()) {
             System.out.println(c);
         }
     }
@@ -155,6 +155,8 @@ public class CLI {
                     System.out.println("La date d'ajout doit être antérieure à la date de retrait");
                 } catch (NameEmptyException e) {
                     System.out.println("Le nom doit être non nul");
+                } catch (CompanyNotFoundException e) {
+                    System.out.println("La company n'existe pas");
                 }
                 break;
 
@@ -201,6 +203,8 @@ public class CLI {
                     System.out.println("La date d'ajout doit être antérieure à la date de retrait");
                 } catch (NameEmptyException e) {
                     System.out.println("Le nom doit être non nul");
+                } catch (CompanyNotFoundException e) {
+                    System.out.println("La company n'existe pas");
                 }
                 break;
 
