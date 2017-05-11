@@ -44,10 +44,8 @@ public enum ComputerDAOImpl implements ComputerDAO {
     private static final String QUERY_FIND_COMPUTER_BY_NAME             = QUERY_FIND_COMPUTER + " WHERE computer.name = ?";
 
     private static final String QUERY_ADD_COMPUTER                      = "INSERT INTO computer (name, introduced, discontinued, company_id) VALUES(?, ?, ?, ?)";
-    
-    private static final String QUERY_LOCK_FOR_UPDATE                   = "SELECT * FROM computer WHERE id = ? FOR UPDATE";
 
-    private static final String QUERY_UPDATE_COMPUTER                   = "UPDATE computer SET name = ?, introduced = ?, discontinued = ?, company_id = ? " + " WHERE id = ?";
+    private static final String QUERY_LOCK_FOR_UPDATE                   = "SELECT * FROM computer WHERE id = ? FOR UPDATE";
 
     private static final String QUERY_DELETE_COMPUTER                   = "DELETE FROM computer WHERE id IN (";
 
@@ -233,7 +231,7 @@ public enum ComputerDAOImpl implements ComputerDAO {
     }
 
     @Override
-    public void update(Computer computer) throws ComputerNotFoundException {
+    public Computer update(Computer computer) throws ComputerNotFoundException {
 
         try {
             Connection con = ConnectionMySQL.getConnection();
@@ -269,6 +267,8 @@ public enum ComputerDAOImpl implements ComputerDAO {
                 LOGGER.debug("Exception: " + e);
             }
         }
+
+        return computer;
     }
 
     @Override
