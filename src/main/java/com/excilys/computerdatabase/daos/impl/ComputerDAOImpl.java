@@ -44,6 +44,8 @@ public enum ComputerDAOImpl implements ComputerDAO {
     private static final String QUERY_FIND_COMPUTER_BY_NAME             = QUERY_FIND_COMPUTER + " WHERE computer.name = ?";
 
     private static final String QUERY_ADD_COMPUTER                      = "INSERT INTO computer (name, introduced, discontinued, company_id) VALUES(?, ?, ?, ?)";
+    
+    private static final String QUERY_LOCK_FOR_UPDATE                   = "SELECT * FROM computer WHERE id = ? FOR UPDATE";
 
     private static final String QUERY_UPDATE_COMPUTER                   = "UPDATE computer SET name = ?, introduced = ?, discontinued = ?, company_id = ? " + " WHERE id = ?";
 
@@ -238,20 +240,25 @@ public enum ComputerDAOImpl implements ComputerDAO {
             con.setAutoCommit(false);
             con.setReadOnly(false);
 
-            try (PreparedStatement stmt = con.prepareStatement(QUERY_UPDATE_COMPUTER);) {
+            try (PreparedStatement stmt = con.prepareStatement(QUERY_LOCK_FOR_UPDATE, ResultSet.TYPE_FORWARD_ONLY,
+                    ResultSet.CONCUR_UPDATABLE);) {
+                stmt.setLong(1, computer.getId());
 
-                stmt.setString(1, computer.getName());
-                stmt.setObject(2, computer.getIntroduced());
-                stmt.setObject(3, computer.getDiscontinued());
-                stmt.setLong(4, computer.getCompany().getId());
-                stmt.setLong(5, computer.getId());
+                ResultSet rset = stmt.executeQuery();
 
-                if (stmt.executeUpdate() == 0) {
-                    throw new ComputerNotFoundException("Computer Not Found");
+                if (rset.first()) {
+
+                    rset.updateString("name", computer.getName());
+                    rset.updateObject("introduced", computer.getIntroduced());
+                    rset.updateObject("discontinued", computer.getDiscontinued());
+                    rset.updateLong("company_id", computer.getCompany().getId());
+
+                    rset.updateRow();
+
+                    con.commit();
+                } else {
+                    throw new ComputerNotFoundException("Computer not Found");
                 }
-
-                con.commit();
-
             } catch (SQLException e) {
                 con.rollback();
                 LOGGER.error("Error: " + computer + " not updated -> " + e);
