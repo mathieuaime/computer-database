@@ -17,7 +17,6 @@ import com.excilys.computerdatabase.services.interfaces.ComputerService;
 import com.excilys.computerdatabase.services.interfaces.PageService;
 
 public enum ComputerServiceImpl implements ComputerService, PageService<ComputerDTO> {
-
     INSTANCE;
 
     private ComputerDAOImpl computerDAO = ComputerDAOImpl.INSTANCE;
@@ -64,7 +63,6 @@ public enum ComputerServiceImpl implements ComputerService, PageService<Computer
         List<ComputerDTO> l = computerDAO.getByName(name).stream().map(it -> ComputerMapper.createDTO(it))
                 .collect(Collectors.toList());
         ConnectionMySQL.close();
-
         return l;
     }
 
@@ -73,15 +71,14 @@ public enum ComputerServiceImpl implements ComputerService, PageService<Computer
         ConnectionMySQL.open();
         ComputerDTO c = ComputerMapper.createDTO(computerDAO.add(computer));
         ConnectionMySQL.close();
-
         return c;
     }
 
     @Override
-    public void update(Computer computer) throws ComputerNotFoundException {
+    public ComputerDTO update(Computer computer) throws ComputerNotFoundException {
         ConnectionMySQL.open();
         try {
-            computerDAO.update(computer);
+            return ComputerMapper.createDTO(computerDAO.update(computer));
         } finally {
             ConnectionMySQL.close();
         }
@@ -112,7 +109,6 @@ public enum ComputerServiceImpl implements ComputerService, PageService<Computer
         ConnectionMySQL.open();
         int c = computerDAO.count(search);
         ConnectionMySQL.close();
-
         return c;
     }
 

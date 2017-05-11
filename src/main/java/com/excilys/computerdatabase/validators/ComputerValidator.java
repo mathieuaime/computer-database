@@ -14,13 +14,11 @@ public class ComputerValidator {
      * @throws NameEmptyException when the name is not set
      */
     private static void validateName(Computer computer) throws NameEmptyException {
-
         String name = computer.getName();
 
         if (name.equals("")) {
             throw new NameEmptyException("Name Empty");
         }
-
     }
 
     /**
@@ -29,7 +27,6 @@ public class ComputerValidator {
      * @throws IntroducedAfterDiscontinuedException when the introduced date is after the discontinued date
      */
     private static void validateDate(Computer computer) throws IntroducedAfterDiscontinuedException {
-
         LocalDate introduced = computer.getIntroduced();
         LocalDate discontinued = computer.getDiscontinued();
 

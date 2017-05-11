@@ -36,9 +36,10 @@ public interface ComputerService {
     /**
      * Update a computer.
      * @param computer the computer to update
+     * @return ComputerDTO
      * @throws ComputerNotFoundException exception when the computer is not found
      */
-    void update(Computer computer) throws ComputerNotFoundException;
+    ComputerDTO update(Computer computer) throws ComputerNotFoundException;
 
     /**
      * Delete a computer.

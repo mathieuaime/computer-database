@@ -5,9 +5,7 @@ import java.time.format.DateTimeFormatter;
 
 import com.excilys.computerdatabase.config.Config;
 public class Computer {
-
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern(Config.getProperties().getProperty("date_format"));
-
     private long id;
     private String name;
     private LocalDate introduced;
@@ -63,7 +61,6 @@ public class Computer {
     }
 
     public static class Builder {
-
         private Computer computer;
 
         /**

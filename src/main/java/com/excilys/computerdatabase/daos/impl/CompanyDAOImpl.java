@@ -19,19 +19,14 @@ import com.excilys.computerdatabase.models.Company;
 import com.excilys.computerdatabase.models.Computer;
 
 public enum CompanyDAOImpl implements CompanyDAO {
-
     INSTANCE;
 
-    // Search all the companies
     private static final String QUERY_FIND_COMPANIES        = "SELECT * FROM company";
 
-    // Search one company by id
     private static final String QUERY_FIND_COMPANY_BY_ID    = QUERY_FIND_COMPANIES + " WHERE id = ? ";
 
-    // Search one company by name
     private static final String QUERY_FIND_COMPANY_BY_NAME  = QUERY_FIND_COMPANIES + " WHERE name = ? ";
 
-    // Search the computers of a company
     private static final String QUERY_FIND_COMPUTERS        = "SELECT computer.id AS computerid,"
                                                             + " computer.name AS computername,"
                                                             + " computer.introduced AS computerintroduced,"
@@ -60,11 +55,9 @@ public enum CompanyDAOImpl implements CompanyDAO {
 
             try (PreparedStatement stmt = con.prepareStatement(QUERY_FIND_COMPANIES + " ORDER BY " + order
                     + (length != -1 ? " LIMIT " + length + " OFFSET " + offset : ""));) {
-
                 con.setReadOnly(true);
                 companies = CompanyMapper.getCompanies(stmt.executeQuery());
             }
-
         } catch (SQLException e) {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Exception: " + e);
@@ -82,7 +75,6 @@ public enum CompanyDAOImpl implements CompanyDAO {
             Connection con = ConnectionMySQL.getConnection();
 
             try (PreparedStatement stmt = con.prepareStatement(QUERY_FIND_COMPANY_BY_ID);) {
-
                 con.setReadOnly(true);
                 stmt.setLong(1, id);
                 final ResultSet rset = stmt.executeQuery();
@@ -93,7 +85,6 @@ public enum CompanyDAOImpl implements CompanyDAO {
                     throw new CompanyNotFoundException("Company Not Found");
                 }
             }
-
         } catch (SQLException e) {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Exception: " + e);
@@ -111,13 +102,11 @@ public enum CompanyDAOImpl implements CompanyDAO {
             Connection con = ConnectionMySQL.getConnection();
 
             try (PreparedStatement stmt = con.prepareStatement(QUERY_FIND_COMPANY_BY_NAME);) {
-
                 con.setReadOnly(true);
                 stmt.setString(1, name);
 
                 companies = CompanyMapper.getCompanies(stmt.executeQuery());
             }
-
         } catch (SQLException e) {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Exception: " + e);
@@ -140,7 +129,6 @@ public enum CompanyDAOImpl implements CompanyDAO {
                 final ResultSet rset = stmt.executeQuery();
                 computers = ComputerMapper.getComputers(rset);
             }
-
         } catch (SQLException e) {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Exception: " + e);
@@ -154,31 +142,24 @@ public enum CompanyDAOImpl implements CompanyDAO {
     public void delete(long id) throws CompanyNotFoundException {
 
         try {
-
             Connection con = ConnectionMySQL.getConnection();
-
             con.setAutoCommit(false);
 
             try (PreparedStatement stmt = con.prepareStatement(QUERY_DELETE_COMPANY);) {
-
                 con.setReadOnly(false);
-
                 stmt.setLong(1, id);
 
                 if (stmt.executeUpdate() == 0) {
                     throw new CompanyNotFoundException("Company Not Found");
                 }
-
             } catch (SQLException e) {
                 con.rollback();
                 LOGGER.error("Error: company " + id + " not deleted -> " + e);
             }
-
         } catch (SQLException e) {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Exception: " + e);
             }
         }
     }
-
 }

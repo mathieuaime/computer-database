@@ -5,7 +5,6 @@ import java.util.List;
 
 public class Page<T> {
     private List<T> objects;
-
     private int pageNumero;
 
     /**

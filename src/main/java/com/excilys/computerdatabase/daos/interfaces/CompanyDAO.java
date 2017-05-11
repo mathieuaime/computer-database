@@ -7,7 +7,6 @@ import com.excilys.computerdatabase.models.Company;
 import com.excilys.computerdatabase.models.Computer;
 
 public interface CompanyDAO {
-
     /**
      * Returns the list of the companies.
      * @return List Company
@@ -52,5 +51,4 @@ public interface CompanyDAO {
      * @throws CompanyNotFoundException when the company does not exist
      */
     void delete(long id) throws CompanyNotFoundException;
-
 }

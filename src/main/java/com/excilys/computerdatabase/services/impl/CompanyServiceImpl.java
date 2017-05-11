@@ -17,7 +17,6 @@ import com.excilys.computerdatabase.services.interfaces.CompanyService;
 import com.excilys.computerdatabase.services.interfaces.PageService;
 
 public enum CompanyServiceImpl implements CompanyService, PageService<CompanyDTO> {
-
     INSTANCE;
 
     private CompanyDAOImpl companyDAO = CompanyDAOImpl.INSTANCE;

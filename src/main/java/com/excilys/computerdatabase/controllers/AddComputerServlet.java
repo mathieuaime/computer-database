@@ -23,11 +23,8 @@ import com.excilys.computerdatabase.services.impl.ComputerServiceImpl;
 import com.excilys.computerdatabase.validators.ComputerValidator;
 
 public class AddComputerServlet extends HttpServlet {
-
     private static final long serialVersionUID = -82009216108348436L;
-
     private ComputerServiceImpl computerService = ComputerServiceImpl.INSTANCE;
-
     private CompanyServiceImpl companyService = CompanyServiceImpl.INSTANCE;
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern(Config.getProperties().getProperty("date_format"));
@@ -41,13 +38,11 @@ public class AddComputerServlet extends HttpServlet {
      */
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
         RequestDispatcher view = request.getRequestDispatcher("WEB-INF/views/addComputer.jsp");
 
         request.setAttribute("companies", companyService.getPage().getObjects());
 
         view.forward(request, response);
-
     }
 
     /**
@@ -59,7 +54,6 @@ public class AddComputerServlet extends HttpServlet {
      */
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
         ComputerDTO computerDTO = new ComputerDTO();
         CompanyDTO companyDTO = new CompanyDTO();
 
@@ -89,5 +83,4 @@ public class AddComputerServlet extends HttpServlet {
             doGet(request, response);
         }
     }
-
 }

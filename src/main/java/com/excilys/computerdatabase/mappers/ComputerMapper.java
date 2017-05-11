@@ -20,12 +20,9 @@ import com.excilys.computerdatabase.services.impl.CompanyServiceImpl;
 public class ComputerMapper {
 
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(ComputerMapper.class);
-
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter
             .ofPattern(Config.getProperties().getProperty("date_format"));
-
     private static String url;
-
     private static CompanyServiceImpl companyService = CompanyServiceImpl.INSTANCE;
 
     /**
@@ -34,7 +31,6 @@ public class ComputerMapper {
      * @return Computer
      */
     public static Computer getComputer(ResultSet rset) {
-
         Computer computer = null;
 
         try {
@@ -50,7 +46,6 @@ public class ComputerMapper {
                     .introduced((introducedComputer != null ? introducedComputer.toLocalDate() : null))
                     .discontinued((discontinuedComputer != null ? discontinuedComputer.toLocalDate() : null))
                     .company(company).build();
-
         } catch (SQLException e) {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Exception: " + e);
@@ -66,7 +61,6 @@ public class ComputerMapper {
      * @return List Computer
      */
     public static List<Computer> getComputers(ResultSet rset) {
-
         List<Computer> computers = new ArrayList<>();
 
         try {
@@ -87,7 +81,6 @@ public class ComputerMapper {
      * @throws CompanyNotFoundException Company Not Found
      */
     public static Computer createBean(ComputerDTO computerDTO) throws CompanyNotFoundException {
-
         LocalDate introduced = (computerDTO.getIntroduced().equals("") ? null
                 : LocalDate.parse(computerDTO.getIntroduced(), DATE_FORMATTER));
         LocalDate discontinued = (computerDTO.getDiscontinued().equals("") ? null
@@ -107,7 +100,6 @@ public class ComputerMapper {
         ComputerDTO computerDTO = new ComputerDTO();
 
         if (computer != null) {
-
             LocalDate introduced = computer.getIntroduced();
             LocalDate discontinued = computer.getDiscontinued();
 
@@ -128,5 +120,4 @@ public class ComputerMapper {
     public static String getUrl() {
         return url;
     }
-
 }

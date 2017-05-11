@@ -7,7 +7,6 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
 public enum ConnectionMySQL {
-
     INSTANCE;
 
     private static ThreadLocal<Connection> connectionThread = new ThreadLocal<>();
@@ -21,7 +20,6 @@ public enum ConnectionMySQL {
         try {
             connectionThread.set(dataSource.getConnection());
         } catch (SQLException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
@@ -42,9 +40,7 @@ public enum ConnectionMySQL {
         try {
             connectionThread.get().close();
         } catch (SQLException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
-
 }

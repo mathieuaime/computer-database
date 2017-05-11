@@ -8,7 +8,6 @@ import com.excilys.computerdatabase.models.Company;
 import com.excilys.computerdatabase.models.Computer;
 
 public interface ComputerDAO {
-
     /**
      * Returns the list of the computers.
      * @return List Computer

@@ -15,13 +15,11 @@ import com.excilys.computerdatabase.exceptions.ComputerNotFoundException;
 import com.excilys.computerdatabase.services.impl.ComputerServiceImpl;
 
 public class DashboardServlet extends HttpServlet {
-
     private static final long serialVersionUID = 6465944299510271447L;
+    private ComputerServiceImpl computerService = ComputerServiceImpl.INSTANCE;
 
     private static final int PAGE_DEFAULT = Integer.parseInt(Config.getProperties().getProperty("page_default"));
     private static final int PAGE_SIZE_DEFAULT = Integer.parseInt(Config.getProperties().getProperty("page_size_default"));
-
-    private ComputerServiceImpl computerService = ComputerServiceImpl.INSTANCE;
 
     /**
      * GET Dashboard.

@@ -1,7 +1,6 @@
 package com.excilys.computerdatabase.models;
 
 public class Company {
-
     private long id;
     private String name;
 
@@ -30,7 +29,6 @@ public class Company {
     }
 
     public static class Builder {
-
         private Company company;
 
         /**

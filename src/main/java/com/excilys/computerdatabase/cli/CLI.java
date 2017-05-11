@@ -27,7 +27,6 @@ public class CLI {
      * Print the differents choices of the menu.
      */
     public static void printMenu() {
-        // prompt for the menu
         System.out.println("\nMenu :\n");
         System.out.println("1 : Liste des compagnies");
         System.out.println("2 : Liste des pcs");
@@ -75,7 +74,6 @@ public class CLI {
      * @param args no option
      */
     public static void main(String[] args) {
-
         scanner = new Scanner(System.in);
 
         loop: while (true) {
