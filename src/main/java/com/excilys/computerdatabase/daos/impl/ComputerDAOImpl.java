@@ -9,9 +9,15 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.sql.DataSource;
+
+import com.mysql.jdbc.Statement;
+
 import org.slf4j.Logger;
 
-import com.excilys.computerdatabase.daos.ConnectionMySQL;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
 import com.excilys.computerdatabase.daos.interfaces.ComputerDAO;
 import com.excilys.computerdatabase.exceptions.CompanyNotFoundException;
 import com.excilys.computerdatabase.exceptions.ComputerNotFoundException;
@@ -19,11 +25,9 @@ import com.excilys.computerdatabase.mappers.CompanyMapper;
 import com.excilys.computerdatabase.mappers.ComputerMapper;
 import com.excilys.computerdatabase.models.Company;
 import com.excilys.computerdatabase.models.Computer;
-import com.mysql.jdbc.Statement;
 
-public enum ComputerDAOImpl implements ComputerDAO {
-
-    INSTANCE;
+@Repository("computerDAO")
+public class ComputerDAOImpl implements ComputerDAO {
 
     private static final String QUERY_FIND_COMPUTER                     = "select computer.id AS computerid, computer.name AS computername, "
                                                                         + "computer.introduced AS computerintroduced, computer.discontinued AS computerdiscontinued, "
@@ -64,6 +68,9 @@ public enum ComputerDAOImpl implements ComputerDAO {
     private static int countTotal = -1;
 
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(ComputerDAOImpl.class);
+    
+    @Autowired
+    private DataSource dataSource;
 
     @Override
     public List<Computer> findAll() {
@@ -107,10 +114,8 @@ public enum ComputerDAOImpl implements ComputerDAO {
             }
         }
 
-        LOGGER.debug(query);
-
         try {
-            Connection con = ConnectionMySQL.getConnection();
+            Connection con = dataSource.getConnection();
             try (PreparedStatement stmt = con.prepareStatement(query);) {
                 con.setReadOnly(true);
                 computers = ComputerMapper.getComputers(stmt.executeQuery());
@@ -129,7 +134,7 @@ public enum ComputerDAOImpl implements ComputerDAO {
         Computer computer = null;
 
         try {
-            Connection con = ConnectionMySQL.getConnection();
+            Connection con = dataSource.getConnection();
 
             try (PreparedStatement stmt = con.prepareStatement(QUERY_FIND_COMPUTER_BY_ID);) {
                 con.setReadOnly(true);
@@ -158,7 +163,7 @@ public enum ComputerDAOImpl implements ComputerDAO {
         List<Computer> computers = new ArrayList<>();
 
         try {
-            Connection con = ConnectionMySQL.getConnection();
+            Connection con = dataSource.getConnection();
             try (PreparedStatement stmt = con.prepareStatement(QUERY_FIND_COMPUTER_BY_NAME);) {
                 con.setReadOnly(true);
                 stmt.setString(1, name);
@@ -176,7 +181,7 @@ public enum ComputerDAOImpl implements ComputerDAO {
     @Override
     public Computer add(Computer computer) {
         try {
-            Connection con = ConnectionMySQL.getConnection();
+            Connection con = dataSource.getConnection();
             con.setAutoCommit(false);
 
             try (PreparedStatement stmt = con.prepareStatement(QUERY_ADD_COMPUTER, Statement.RETURN_GENERATED_KEYS);) {
@@ -212,7 +217,7 @@ public enum ComputerDAOImpl implements ComputerDAO {
     @Override
     public Computer update(Computer computer) throws ComputerNotFoundException {
         try {
-            Connection con = ConnectionMySQL.getConnection();
+            Connection con = dataSource.getConnection();
             con.setAutoCommit(false);
             con.setReadOnly(false);
 
@@ -253,7 +258,7 @@ public enum ComputerDAOImpl implements ComputerDAO {
     @Override
     public void deleteFromCompany(long companyId) throws CompanyNotFoundException {
         try {
-            Connection con = ConnectionMySQL.getConnection();
+            Connection con = dataSource.getConnection();
             con.setAutoCommit(false);
 
             try (PreparedStatement stmt = con.prepareStatement(QUERY_DELETE_COMPUTER_OF_COMPANY);) {
@@ -290,7 +295,7 @@ public enum ComputerDAOImpl implements ComputerDAO {
         }
 
         try {
-            Connection con = ConnectionMySQL.getConnection();
+            Connection con = dataSource.getConnection();
             try (PreparedStatement stmt = con.prepareStatement(query);) {
                 con.setReadOnly(true);
                 boolean searchForTotalCount = search == null || search.equals("");
@@ -329,7 +334,7 @@ public enum ComputerDAOImpl implements ComputerDAO {
         Company company = null;
 
         try {
-            Connection con = ConnectionMySQL.getConnection();
+            Connection con = dataSource.getConnection();
             try (PreparedStatement stmt = con.prepareStatement(QUERY_FIND_COMPANY);) {
                 con.setReadOnly(true);
                 stmt.setLong(1, id);
@@ -359,7 +364,7 @@ public enum ComputerDAOImpl implements ComputerDAO {
         String ids = listId.stream().map(Object::toString).collect(Collectors.joining(", "));
 
         try {
-            Connection con = ConnectionMySQL.getConnection();
+            Connection con = dataSource.getConnection();
             con.setReadOnly(false);
             con.setAutoCommit(false);
 

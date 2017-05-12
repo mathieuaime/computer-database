@@ -2,6 +2,8 @@ package com.excilys.computerdatabase.cli;
 
 import java.util.Scanner;
 
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
 import com.excilys.computerdatabase.config.Config;
 import com.excilys.computerdatabase.dtos.CompanyDTO;
 import com.excilys.computerdatabase.dtos.ComputerDTO;
@@ -11,17 +13,28 @@ import com.excilys.computerdatabase.exceptions.IntroducedAfterDiscontinuedExcept
 import com.excilys.computerdatabase.exceptions.NameEmptyException;
 import com.excilys.computerdatabase.mappers.ComputerMapper;
 import com.excilys.computerdatabase.models.Computer;
-import com.excilys.computerdatabase.services.impl.CompanyServiceImpl;
-import com.excilys.computerdatabase.services.impl.ComputerServiceImpl;
+import com.excilys.computerdatabase.services.interfaces.CompanyService;
+import com.excilys.computerdatabase.services.interfaces.ComputerService;
 import com.excilys.computerdatabase.validators.ComputerValidator;
 
 public class CLI {
 
     private static Scanner scanner;
-    private static CompanyServiceImpl companyService = CompanyServiceImpl.INSTANCE;
-    private static ComputerServiceImpl computerService = ComputerServiceImpl.INSTANCE;
+    private static CompanyService companyService;
+    private static ComputerService computerService;
 
     private static final String DATE_FORMAT = Config.getProperties().getProperty("date_format");
+    
+    public CLI() {
+        AnnotationConfigApplicationContext  context = new AnnotationConfigApplicationContext();
+        context.scan("com.excilys.computerdatabase"); 
+        context.refresh();
+        
+        computerService = (ComputerService) context.getBean("computerService");
+        companyService = (CompanyService) context.getBean("companyService");
+        
+        context.close();
+    }
 
     /**
      * Print the differents choices of the menu.

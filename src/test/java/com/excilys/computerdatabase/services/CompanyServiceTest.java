@@ -13,20 +13,31 @@ import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
 import org.dbunit.ext.mysql.MySqlDataTypeFactory;
 import org.dbunit.operation.DatabaseOperation;
 import org.junit.Test;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import com.excilys.computerdatabase.config.Config;
 import com.excilys.computerdatabase.exceptions.CompanyNotFoundException;
-import com.excilys.computerdatabase.services.impl.CompanyServiceImpl;
+import com.excilys.computerdatabase.services.interfaces.CompanyService;
 
 public class CompanyServiceTest extends DatabaseTestCase {
 
-    private CompanyServiceImpl companyService = CompanyServiceImpl.INSTANCE;
+    private CompanyService companyService;
 
     private static final String SAMPLE_TEST_XML = "src/test/resources/db-sample.xml";
 
     private static final String URL = Config.getProperties().getProperty("urlTest");
     private static final String USER = Config.getProperties().getProperty("user");
     private static final String PASSWORD = Config.getProperties().getProperty("password");
+
+    public CompanyServiceTest() {
+        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
+        context.scan("com.excilys.computerdatabase");
+        context.refresh();
+
+        companyService = (CompanyService) context.getBean("companyService");
+
+        context.close();
+    }
 
     /**
      * Test get by id.

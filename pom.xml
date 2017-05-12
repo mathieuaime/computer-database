@@ -3,13 +3,12 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>computer-database</groupId>
 	<artifactId>computer-database</artifactId>
-	<version>0.6.0-SNAPSHOT</version>
+	<version>0.6.1-SNAPSHOT</version>
 
 	<packaging>war</packaging>
 
 	<properties>
 		<javaVersion>1.8</javaVersion>
-		
 		<slf4jAPIVersion>1.6.1</slf4jAPIVersion>
 		<mysqlConnectorJavaVersion>5.1.39</mysqlConnectorJavaVersion>
 		<junitVersion>4.12</junitVersion>
@@ -19,26 +18,22 @@
 		<jstlVersion>1.2</jstlVersion>
 		<logbackVersion>1.0.13</logbackVersion>
 		<dbUnitVersion>2.4.9</dbUnitVersion>
-
 		<seleniumVersion>3.4.0</seleniumVersion>
-
 		<mavenWarPlugin>2.1.1</mavenWarPlugin>
-
 		<seleniumPluginVersion>1.0.1</seleniumPluginVersion>
-
 		<checkstyleVersion>2.17</checkstyleVersion>
 		<reportPluginVersion>2.7</reportPluginVersion>
 		<mavenCleanPluginVersion>2.5</mavenCleanPluginVersion>
 		<mavenCompilerVersion>3.1</mavenCompilerVersion>
-
 		<hikariCPVersion>2.6.1</hikariCPVersion>
-
 		<gatling.version>2.1.7</gatling.version>
 		<gatling-plugin.version>2.1.7</gatling-plugin.version>
 		<scala-maven-plugin.version>3.2.2</scala-maven-plugin.version>
+		<spring.version>4.3.8.RELEASE</spring.version>
 	</properties>
 
 	<dependencies>
+		<!-- Log dependencies -->
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
@@ -51,12 +46,14 @@
 			<version>${logbackVersion}</version>
 		</dependency>
 
+		<!-- MySQL dependencies -->
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
 			<version>${mysqlConnectorJavaVersion}</version>
 		</dependency>
 
+		<!-- Unit test dependencies -->
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
@@ -77,6 +74,7 @@
 			<version>${mockitoVersion}</version>
 		</dependency>
 
+		<!-- JSP dependencies -->
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
@@ -98,6 +96,7 @@
 			<scope>compile</scope>
 		</dependency>
 
+		<!-- Selenium dependencies -->
 		<dependency>
 			<groupId>org.seleniumhq.selenium</groupId>
 			<artifactId>selenium-java</artifactId>
@@ -105,12 +104,14 @@
 			<scope>test</scope>
 		</dependency>
 
+		<!-- HikariCP dependencies -->
 		<dependency>
 			<groupId>com.zaxxer</groupId>
 			<artifactId>HikariCP</artifactId>
 			<version>${hikariCPVersion}</version>
 		</dependency>
 
+		<!-- Gatling dependencies -->
 		<dependency>
 			<groupId>io.gatling.highcharts</groupId>
 			<artifactId>gatling-charts-highcharts</artifactId>
@@ -118,6 +119,36 @@
 			<scope>test</scope>
 		</dependency>
 
+		<!-- Spring dependencies -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-core</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>${spring.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-jdbc</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-web</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -167,7 +198,6 @@
 						</execution>
 					</executions>
 				</plugin>
-
 			</plugins>
 		</pluginManagement>
 	</build>

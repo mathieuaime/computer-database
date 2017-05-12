@@ -5,6 +5,13 @@ public class Company {
     private String name;
 
     /**
+     * Company default constructor. 
+     */
+    public Company() {
+        super();
+    }
+
+    /**
      * Company private constructor.
      * @param name name
      */

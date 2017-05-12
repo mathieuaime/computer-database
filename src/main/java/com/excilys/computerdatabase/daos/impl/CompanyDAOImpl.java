@@ -8,9 +8,12 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.slf4j.Logger;
+import javax.sql.DataSource;
 
-import com.excilys.computerdatabase.daos.ConnectionMySQL;
+import org.slf4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
 import com.excilys.computerdatabase.daos.interfaces.CompanyDAO;
 import com.excilys.computerdatabase.exceptions.CompanyNotFoundException;
 import com.excilys.computerdatabase.mappers.CompanyMapper;
@@ -18,8 +21,8 @@ import com.excilys.computerdatabase.mappers.ComputerMapper;
 import com.excilys.computerdatabase.models.Company;
 import com.excilys.computerdatabase.models.Computer;
 
-public enum CompanyDAOImpl implements CompanyDAO {
-    INSTANCE;
+@Repository("companyDAO")
+public class CompanyDAOImpl implements CompanyDAO {
 
     private static final String QUERY_FIND_COMPANIES        = "SELECT * FROM company";
 
@@ -40,6 +43,9 @@ public enum CompanyDAOImpl implements CompanyDAO {
     private static final String QUERY_DELETE_COMPANY        = "DELETE FROM company WHERE id = ?";
 
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(CompanyDAOImpl.class);
+    
+    @Autowired
+    private DataSource dataSource;
 
     @Override
     public List<Company> findAll() {
@@ -51,7 +57,7 @@ public enum CompanyDAOImpl implements CompanyDAO {
         List<Company> companies = new ArrayList<>();
 
         try {
-            Connection con = ConnectionMySQL.getConnection();
+            Connection con = dataSource.getConnection();
 
             try (PreparedStatement stmt = con.prepareStatement(QUERY_FIND_COMPANIES + " ORDER BY " + order
                     + (length != -1 ? " LIMIT " + length + " OFFSET " + offset : ""));) {
@@ -72,7 +78,7 @@ public enum CompanyDAOImpl implements CompanyDAO {
         Company company = null;
 
         try {
-            Connection con = ConnectionMySQL.getConnection();
+            Connection con = dataSource.getConnection();
 
             try (PreparedStatement stmt = con.prepareStatement(QUERY_FIND_COMPANY_BY_ID);) {
                 con.setReadOnly(true);
@@ -99,7 +105,7 @@ public enum CompanyDAOImpl implements CompanyDAO {
         List<Company> companies = new ArrayList<>();
 
         try {
-            Connection con = ConnectionMySQL.getConnection();
+            Connection con = dataSource.getConnection();
 
             try (PreparedStatement stmt = con.prepareStatement(QUERY_FIND_COMPANY_BY_NAME);) {
                 con.setReadOnly(true);
@@ -121,7 +127,7 @@ public enum CompanyDAOImpl implements CompanyDAO {
         List<Computer> computers = new ArrayList<>();
 
         try {
-            Connection con = ConnectionMySQL.getConnection();
+            Connection con = dataSource.getConnection();
 
             try (PreparedStatement stmt = con.prepareStatement(QUERY_FIND_COMPUTERS);) {
                 con.setReadOnly(true);
@@ -142,7 +148,7 @@ public enum CompanyDAOImpl implements CompanyDAO {
     public void delete(long id) throws CompanyNotFoundException {
 
         try {
-            Connection con = ConnectionMySQL.getConnection();
+            Connection con = dataSource.getConnection();
             con.setAutoCommit(false);
 
             try (PreparedStatement stmt = con.prepareStatement(QUERY_DELETE_COMPANY);) {

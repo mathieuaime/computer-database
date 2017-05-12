@@ -9,13 +9,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import com.excilys.computerdatabase.config.Config;
 import com.excilys.computerdatabase.dtos.ComputerDTO;
 import com.excilys.computerdatabase.exceptions.CompanyNotFoundException;
 import com.excilys.computerdatabase.models.Company;
 import com.excilys.computerdatabase.models.Computer;
-import com.excilys.computerdatabase.services.impl.CompanyServiceImpl;
+import com.excilys.computerdatabase.services.interfaces.CompanyService;
 
 public class ComputerMapper {
 
@@ -23,7 +24,17 @@ public class ComputerMapper {
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter
             .ofPattern(Config.getProperties().getProperty("date_format"));
     private static String url;
-    private static CompanyServiceImpl companyService = CompanyServiceImpl.INSTANCE;
+    private static CompanyService companyService;
+    
+    static {
+        AnnotationConfigApplicationContext  context = new AnnotationConfigApplicationContext();
+        context.scan("com.excilys.computerdatabase"); 
+        context.refresh();
+        
+        companyService = (CompanyService) context.getBean("companyService");
+        
+        context.close();
+    }
 
     /**
      * Create a computer from a ResultSet.
