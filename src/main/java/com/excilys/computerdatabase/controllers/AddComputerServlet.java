@@ -10,6 +10,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
 import com.excilys.computerdatabase.config.Config;
 import com.excilys.computerdatabase.dtos.CompanyDTO;
 import com.excilys.computerdatabase.dtos.ComputerDTO;
@@ -18,19 +20,27 @@ import com.excilys.computerdatabase.exceptions.IntroducedAfterDiscontinuedExcept
 import com.excilys.computerdatabase.exceptions.NameEmptyException;
 import com.excilys.computerdatabase.mappers.ComputerMapper;
 import com.excilys.computerdatabase.models.Computer;
-import com.excilys.computerdatabase.services.impl.CompanyServiceImpl;
-import com.excilys.computerdatabase.services.impl.ComputerServiceImpl;
+import com.excilys.computerdatabase.services.interfaces.CompanyService;
+import com.excilys.computerdatabase.services.interfaces.ComputerService;
 import com.excilys.computerdatabase.validators.ComputerValidator;
 
 public class AddComputerServlet extends HttpServlet {
-
     private static final long serialVersionUID = -82009216108348436L;
-
-    private ComputerServiceImpl computerService = ComputerServiceImpl.INSTANCE;
-
-    private CompanyServiceImpl companyService = CompanyServiceImpl.INSTANCE;
+    private ComputerService computerService;
+    private CompanyService companyService;
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern(Config.getProperties().getProperty("date_format"));
+    
+    public AddComputerServlet() {
+        AnnotationConfigApplicationContext  context = new AnnotationConfigApplicationContext();
+        context.scan("com.excilys.computerdatabase"); 
+        context.refresh();
+        
+        computerService = (ComputerService) context.getBean("computerService");
+        companyService = (CompanyService) context.getBean("companyService");
+        
+        context.close();
+    }
 
     /**
      * GET addComputer.
@@ -41,13 +51,11 @@ public class AddComputerServlet extends HttpServlet {
      */
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
         RequestDispatcher view = request.getRequestDispatcher("WEB-INF/views/addComputer.jsp");
 
         request.setAttribute("companies", companyService.getPage().getObjects());
 
         view.forward(request, response);
-
     }
 
     /**
@@ -59,7 +67,6 @@ public class AddComputerServlet extends HttpServlet {
      */
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
         ComputerDTO computerDTO = new ComputerDTO();
         CompanyDTO companyDTO = new CompanyDTO();
 
@@ -89,5 +96,4 @@ public class AddComputerServlet extends HttpServlet {
             doGet(request, response);
         }
     }
-
 }

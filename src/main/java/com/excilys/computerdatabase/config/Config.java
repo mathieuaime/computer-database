@@ -18,13 +18,11 @@ public class Config {
         properties = new Properties();
 
         try (InputStream inputStream = Config.class.getClassLoader().getResourceAsStream(PROPERTIES_FILE);) {
-
             if (inputStream != null) {
                 properties.load(inputStream);
             } else {
                 throw new FileNotFoundException("property file '" + PROPERTIES_FILE + "' not found in the classpath");
             }
-
         } catch (Exception e) {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Exception: " + e);

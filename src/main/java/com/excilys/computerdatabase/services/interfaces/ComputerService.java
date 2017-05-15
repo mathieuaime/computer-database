@@ -8,7 +8,7 @@ import com.excilys.computerdatabase.exceptions.CompanyNotFoundException;
 import com.excilys.computerdatabase.exceptions.ComputerNotFoundException;
 import com.excilys.computerdatabase.models.Computer;
 
-public interface ComputerService {
+public interface ComputerService extends PageService<ComputerDTO> {
 
     /**
      * Returns the computer of id id.
@@ -22,9 +22,8 @@ public interface ComputerService {
      * Returns the list of computers of name name.
      * @param name the name of the computer
      * @return List ComputerDTO
-     * @throws ComputerNotFoundException exception when the computer is not found
      */
-    List<ComputerDTO> getByName(String name) throws ComputerNotFoundException;
+    List<ComputerDTO> getByName(String name);
 
     /**
      * Add a computer.
@@ -36,9 +35,10 @@ public interface ComputerService {
     /**
      * Update a computer.
      * @param computer the computer to update
+     * @return ComputerDTO
      * @throws ComputerNotFoundException exception when the computer is not found
      */
-    void update(Computer computer) throws ComputerNotFoundException;
+    ComputerDTO update(Computer computer) throws ComputerNotFoundException;
 
     /**
      * Delete a computer.

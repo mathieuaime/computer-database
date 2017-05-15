@@ -6,7 +6,7 @@ import com.excilys.computerdatabase.dtos.CompanyDTO;
 import com.excilys.computerdatabase.dtos.ComputerDTO;
 import com.excilys.computerdatabase.exceptions.CompanyNotFoundException;
 
-public interface CompanyService {
+public interface CompanyService extends PageService<CompanyDTO> {
 
     /**
      * Returns the company id.

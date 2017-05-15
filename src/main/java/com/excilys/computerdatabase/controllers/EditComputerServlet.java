@@ -10,6 +10,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
 import com.excilys.computerdatabase.config.Config;
 import com.excilys.computerdatabase.dtos.CompanyDTO;
 import com.excilys.computerdatabase.dtos.ComputerDTO;
@@ -19,19 +21,27 @@ import com.excilys.computerdatabase.exceptions.IntroducedAfterDiscontinuedExcept
 import com.excilys.computerdatabase.exceptions.NameEmptyException;
 import com.excilys.computerdatabase.mappers.ComputerMapper;
 import com.excilys.computerdatabase.models.Computer;
-import com.excilys.computerdatabase.services.impl.CompanyServiceImpl;
-import com.excilys.computerdatabase.services.impl.ComputerServiceImpl;
+import com.excilys.computerdatabase.services.interfaces.CompanyService;
+import com.excilys.computerdatabase.services.interfaces.ComputerService;
 import com.excilys.computerdatabase.validators.ComputerValidator;
 
 public class EditComputerServlet extends HttpServlet {
-
     private static final long serialVersionUID = -82009216108348436L;
+    private ComputerService computerService;
+    private CompanyService companyService;
+    
+    public EditComputerServlet() {
+        AnnotationConfigApplicationContext  context = new AnnotationConfigApplicationContext();
+        context.scan("com.excilys.computerdatabase"); 
+        context.refresh();
+        
+        computerService = (ComputerService) context.getBean("computerService");
+        companyService = (CompanyService) context.getBean("companyService");
+        
+        context.close();
+    }
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern(Config.getProperties().getProperty("date_format"));
-
-    private ComputerServiceImpl computerService = ComputerServiceImpl.INSTANCE;
-
-    private CompanyServiceImpl companyService = CompanyServiceImpl.INSTANCE;
 
     /**
      * GET editComputer.
@@ -42,11 +52,9 @@ public class EditComputerServlet extends HttpServlet {
      */
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
         request.setAttribute("dateFormat", Config.getProperties().getProperty("date_format"));
 
         int idComputer = (request.getParameter("id") != null ? Integer.parseInt(request.getParameter("id")) : 0);
-
         ComputerDTO computerDTO = null;
 
         try {
@@ -58,15 +66,9 @@ public class EditComputerServlet extends HttpServlet {
         RequestDispatcher view = request.getRequestDispatcher("WEB-INF/views/editComputer.jsp");
 
         request.setAttribute("computer", computerDTO);
-
-        //long startTime = System.currentTimeMillis();
         request.setAttribute("companies", companyService.getPage().getObjects());
-        //long stopTime = System.currentTimeMillis();
-
-        //LOGGER.debug((stopTime - startTime) + " ms");
 
         view.forward(request, response);
-
     }
 
     /**
@@ -78,7 +80,6 @@ public class EditComputerServlet extends HttpServlet {
      */
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
         ComputerDTO computerDTO = new ComputerDTO();
         CompanyDTO companyDTO = new CompanyDTO();
 
@@ -92,8 +93,6 @@ public class EditComputerServlet extends HttpServlet {
         computerDTO.setIntroduced(!introduced.equals("") ? LocalDate.parse(introduced, DateTimeFormatter.ofPattern("yyyy-MM-dd")).format(DATE_FORMATTER) : "");
         computerDTO.setDiscontinued(!discontinued.equals("") ? LocalDate.parse(discontinued, DateTimeFormatter.ofPattern("yyyy-MM-dd")).format(DATE_FORMATTER) : "");
         computerDTO.setCompany(companyDTO);
-
-        //LOGGER.debug(computerDTO.toString());
 
         try {
             Computer computer = ComputerMapper.createBean(computerDTO);
@@ -114,5 +113,4 @@ public class EditComputerServlet extends HttpServlet {
             doGet(request, response);
         }
     }
-
 }

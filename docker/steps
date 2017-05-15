@@ -1,6 +1,3 @@
-Docker with java8 & maven : docker pull jamesdbloom/docker-java8-maven
-Docker with MySQL : docker pull mysql
-
 Create docker network : docker network create -d bridge --subnet 172.25.0.0/16 test_nw
 
 Run mysql docker	: docker run -d --network=test_nw --name=mysqltest --env="MYSQL_ROOT_PASSWORD=password" mysqlcustom-test
@@ -8,3 +5,5 @@ Run maven docker 	: docker run -d --network=test_nw --name=maventest --volumes-f
 Run jenkins docker 	: docker run -d --network=test_nw --name=jenkins -v /var/run/docker.sock:/var/run/docker.sock -v $(which docker):/usr/bin/docker -p 8080:8080 jenkinscustom
 
 Ip Address of a docker : docker inspect mysqltest | grep IPAddress
+
+Docker mysql opti : docker run -d --network=prod_nw --name=mysqlprod_opti --env="MYSQL_ROOT_PASSWORD=root" mathieuaime/mysql --innodb_buffer_pool_size=8G --innodb_buffer_pool_instances=16

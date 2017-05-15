@@ -8,7 +8,6 @@ import com.excilys.computerdatabase.models.Company;
 import com.excilys.computerdatabase.models.Computer;
 
 public interface ComputerDAO {
-
     /**
      * Returns the list of the computers.
      * @return List Computer
@@ -51,9 +50,10 @@ public interface ComputerDAO {
     /**
      * Update a computer.
      * @param computer the computer to update
+     * @return Computer
      * @throws ComputerNotFoundException exception when the computer is not found
      */
-    void update(Computer computer) throws ComputerNotFoundException;
+    Computer update(Computer computer) throws ComputerNotFoundException;
 
     /**
      * Delete a computer.

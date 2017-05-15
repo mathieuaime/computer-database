@@ -4,9 +4,14 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+//import org.springframework.transaction.annotation.Transactional;
+
 import com.excilys.computerdatabase.daos.ConnectionMySQL;
-import com.excilys.computerdatabase.daos.impl.CompanyDAOImpl;
-import com.excilys.computerdatabase.daos.impl.ComputerDAOImpl;
+import com.excilys.computerdatabase.daos.interfaces.CompanyDAO;
+import com.excilys.computerdatabase.daos.interfaces.ComputerDAO;
 import com.excilys.computerdatabase.dtos.CompanyDTO;
 import com.excilys.computerdatabase.dtos.ComputerDTO;
 import com.excilys.computerdatabase.dtos.Page;
@@ -14,15 +19,17 @@ import com.excilys.computerdatabase.exceptions.CompanyNotFoundException;
 import com.excilys.computerdatabase.mappers.CompanyMapper;
 import com.excilys.computerdatabase.mappers.ComputerMapper;
 import com.excilys.computerdatabase.services.interfaces.CompanyService;
-import com.excilys.computerdatabase.services.interfaces.PageService;
 
-public enum CompanyServiceImpl implements CompanyService, PageService<CompanyDTO> {
+@Service("companyService")
+public class CompanyServiceImpl implements CompanyService {
 
-    INSTANCE;
+    @Autowired
+    private CompanyDAO companyDAO;
 
-    private CompanyDAOImpl companyDAO = CompanyDAOImpl.INSTANCE;
-    private ComputerDAOImpl computerDAO = ComputerDAOImpl.INSTANCE;
+    @Autowired
+    private ComputerDAO computerDAO;
 
+    //@Transactional
     @Override
     public CompanyDTO getById(long id) throws CompanyNotFoundException {
         ConnectionMySQL.open();

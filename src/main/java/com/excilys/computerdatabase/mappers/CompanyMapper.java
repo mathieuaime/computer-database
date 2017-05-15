@@ -11,7 +11,6 @@ import com.excilys.computerdatabase.dtos.CompanyDTO;
 import com.excilys.computerdatabase.models.Company;
 
 public class CompanyMapper {
-
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(CompanyMapper.class);
 
     /**
@@ -20,7 +19,6 @@ public class CompanyMapper {
      * @return Company
      */
     public static Company getCompany(ResultSet rset) {
-
         Company company = null;
 
         try {
@@ -40,7 +38,6 @@ public class CompanyMapper {
      * @return List Company
      */
     public static List<Company> getCompanies(ResultSet rset) {
-
         List<Company> companies = new ArrayList<>();
 
         try {

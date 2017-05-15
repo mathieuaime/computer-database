@@ -3,8 +3,11 @@ package com.excilys.computerdatabase.services.impl;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.excilys.computerdatabase.daos.ConnectionMySQL;
-import com.excilys.computerdatabase.daos.impl.ComputerDAOImpl;
+import com.excilys.computerdatabase.daos.interfaces.ComputerDAO;
 import com.excilys.computerdatabase.dtos.CompanyDTO;
 import com.excilys.computerdatabase.dtos.ComputerDTO;
 import com.excilys.computerdatabase.dtos.Page;
@@ -14,13 +17,12 @@ import com.excilys.computerdatabase.mappers.CompanyMapper;
 import com.excilys.computerdatabase.mappers.ComputerMapper;
 import com.excilys.computerdatabase.models.Computer;
 import com.excilys.computerdatabase.services.interfaces.ComputerService;
-import com.excilys.computerdatabase.services.interfaces.PageService;
 
-public enum ComputerServiceImpl implements ComputerService, PageService<ComputerDTO> {
+@Service("computerService")
+public class ComputerServiceImpl implements ComputerService {
 
-    INSTANCE;
-
-    private ComputerDAOImpl computerDAO = ComputerDAOImpl.INSTANCE;
+    @Autowired
+    private ComputerDAO computerDAO;
 
     @Override
     public Page<ComputerDTO> getPage() {
@@ -64,7 +66,6 @@ public enum ComputerServiceImpl implements ComputerService, PageService<Computer
         List<ComputerDTO> l = computerDAO.getByName(name).stream().map(it -> ComputerMapper.createDTO(it))
                 .collect(Collectors.toList());
         ConnectionMySQL.close();
-
         return l;
     }
 
@@ -73,15 +74,14 @@ public enum ComputerServiceImpl implements ComputerService, PageService<Computer
         ConnectionMySQL.open();
         ComputerDTO c = ComputerMapper.createDTO(computerDAO.add(computer));
         ConnectionMySQL.close();
-
         return c;
     }
 
     @Override
-    public void update(Computer computer) throws ComputerNotFoundException {
+    public ComputerDTO update(Computer computer) throws ComputerNotFoundException {
         ConnectionMySQL.open();
         try {
-            computerDAO.update(computer);
+            return ComputerMapper.createDTO(computerDAO.update(computer));
         } finally {
             ConnectionMySQL.close();
         }
@@ -112,7 +112,6 @@ public enum ComputerServiceImpl implements ComputerService, PageService<Computer
         ConnectionMySQL.open();
         int c = computerDAO.count(search);
         ConnectionMySQL.close();
-
         return c;
     }
 

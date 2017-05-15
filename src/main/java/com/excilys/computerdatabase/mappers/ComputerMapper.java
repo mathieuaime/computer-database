@@ -9,24 +9,32 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import com.excilys.computerdatabase.config.Config;
 import com.excilys.computerdatabase.dtos.ComputerDTO;
 import com.excilys.computerdatabase.exceptions.CompanyNotFoundException;
 import com.excilys.computerdatabase.models.Company;
 import com.excilys.computerdatabase.models.Computer;
-import com.excilys.computerdatabase.services.impl.CompanyServiceImpl;
+import com.excilys.computerdatabase.services.interfaces.CompanyService;
 
 public class ComputerMapper {
 
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(ComputerMapper.class);
-
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter
             .ofPattern(Config.getProperties().getProperty("date_format"));
-
     private static String url;
-
-    private static CompanyServiceImpl companyService = CompanyServiceImpl.INSTANCE;
+    private static CompanyService companyService;
+    
+    static {
+        AnnotationConfigApplicationContext  context = new AnnotationConfigApplicationContext();
+        context.scan("com.excilys.computerdatabase"); 
+        context.refresh();
+        
+        companyService = (CompanyService) context.getBean("companyService");
+        
+        context.close();
+    }
 
     /**
      * Create a computer from a ResultSet.
@@ -34,7 +42,6 @@ public class ComputerMapper {
      * @return Computer
      */
     public static Computer getComputer(ResultSet rset) {
-
         Computer computer = null;
 
         try {
@@ -50,7 +57,6 @@ public class ComputerMapper {
                     .introduced((introducedComputer != null ? introducedComputer.toLocalDate() : null))
                     .discontinued((discontinuedComputer != null ? discontinuedComputer.toLocalDate() : null))
                     .company(company).build();
-
         } catch (SQLException e) {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Exception: " + e);
@@ -66,7 +72,6 @@ public class ComputerMapper {
      * @return List Computer
      */
     public static List<Computer> getComputers(ResultSet rset) {
-
         List<Computer> computers = new ArrayList<>();
 
         try {
@@ -87,7 +92,6 @@ public class ComputerMapper {
      * @throws CompanyNotFoundException Company Not Found
      */
     public static Computer createBean(ComputerDTO computerDTO) throws CompanyNotFoundException {
-
         LocalDate introduced = (computerDTO.getIntroduced().equals("") ? null
                 : LocalDate.parse(computerDTO.getIntroduced(), DATE_FORMATTER));
         LocalDate discontinued = (computerDTO.getDiscontinued().equals("") ? null
@@ -107,7 +111,6 @@ public class ComputerMapper {
         ComputerDTO computerDTO = new ComputerDTO();
 
         if (computer != null) {
-
             LocalDate introduced = computer.getIntroduced();
             LocalDate discontinued = computer.getDiscontinued();
 
@@ -128,5 +131,4 @@ public class ComputerMapper {
     public static String getUrl() {
         return url;
     }
-
 }

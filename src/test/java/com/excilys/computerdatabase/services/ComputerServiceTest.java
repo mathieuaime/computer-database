@@ -15,6 +15,7 @@ import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
 import org.dbunit.ext.mysql.MySqlDataTypeFactory;
 import org.dbunit.operation.DatabaseOperation;
 import org.junit.Test;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import com.excilys.computerdatabase.config.Config;
 import com.excilys.computerdatabase.dtos.ComputerDTO;
@@ -23,11 +24,11 @@ import com.excilys.computerdatabase.exceptions.ComputerNotFoundException;
 import com.excilys.computerdatabase.mappers.ComputerMapper;
 import com.excilys.computerdatabase.models.Company;
 import com.excilys.computerdatabase.models.Computer;
-import com.excilys.computerdatabase.services.impl.ComputerServiceImpl;
+import com.excilys.computerdatabase.services.interfaces.ComputerService;
 
 public class ComputerServiceTest extends DatabaseTestCase {
 
-    private ComputerServiceImpl computerService = ComputerServiceImpl.INSTANCE;
+    private ComputerService computerService;
     private Company comp1;
     private Computer c1;
     private Computer c2;
@@ -42,6 +43,14 @@ public class ComputerServiceTest extends DatabaseTestCase {
      * ComputerTest constructor.
      */
     public ComputerServiceTest() {
+
+        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
+        context.scan("com.excilys.computerdatabase");
+        context.refresh();
+
+        computerService = (ComputerService) context.getBean("computerService");
+
+        context.close();
 
         comp1 = new Company.Builder("Company2").id(2L).build();
 
@@ -139,7 +148,7 @@ public class ComputerServiceTest extends DatabaseTestCase {
      */
     @Test
     public void testAdd() {
-        
+
         computerService.add(c1);
 
         try {
@@ -157,7 +166,7 @@ public class ComputerServiceTest extends DatabaseTestCase {
      */
     @Test
     public void testAddNonPresentCompany() {
-        
+
         computerService.add(c1);
 
         try {
@@ -176,7 +185,7 @@ public class ComputerServiceTest extends DatabaseTestCase {
      */
     @Test
     public void testUpdate() {
-        
+
         c1.setId(1L);
         try {
             computerService.update(c1);
@@ -193,7 +202,7 @@ public class ComputerServiceTest extends DatabaseTestCase {
             fail("Company Not Found");
         }
     }
-    
+
     /**
      * Test update.
      */
@@ -218,7 +227,7 @@ public class ComputerServiceTest extends DatabaseTestCase {
         } catch (ComputerNotFoundException e) {
             fail("Computer Not Found");
         }
-        
+
         try {
             computerService.getById(1L);
             fail("Computer Not Deleted");
@@ -267,7 +276,7 @@ public class ComputerServiceTest extends DatabaseTestCase {
             } catch (ComputerNotFoundException e1) {
                 fail("Computer Deleted");
             }
-            
+
         }
     }
 

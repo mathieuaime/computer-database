@@ -24,6 +24,20 @@
 		<param-value>Development</param-value>
 	</context-param>
 
+	<context-param>
+		<param-name>contextClass</param-name>
+		<param-value>org.springframework.web.context.support.AnnotationConfigWebApplicationContext</param-value>
+	</context-param>
+
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>com.excilys.computerdatabase.config.MainConfig</param-value>
+	</context-param>
+
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+
 	<welcome-file-list>
 		<welcome-file>dashboard</welcome-file>
 	</welcome-file-list>
@@ -47,7 +61,7 @@
 		<servlet-name>AddComputer</servlet-name>
 		<url-pattern>/addComputer</url-pattern>
 	</servlet-mapping>
-	
+
 	<servlet>
 		<servlet-name>EditComputer</servlet-name>
 		<servlet-class>com.excilys.computerdatabase.controllers.EditComputerServlet</servlet-class>

@@ -4,15 +4,21 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 import com.excilys.computerdatabase.config.Config;
+
 public class Computer {
-
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern(Config.getProperties().getProperty("date_format"));
-
     private long id;
     private String name;
     private LocalDate introduced;
     private LocalDate discontinued;
     private Company company;
+
+    /**
+     * Computer default constructor.
+     */
+    public Computer() {
+        super();
+    }
 
     /**
      * Computer private constructor.
@@ -63,7 +69,6 @@ public class Computer {
     }
 
     public static class Builder {
-
         private Computer computer;
 
         /**

@@ -10,18 +10,29 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
 import com.excilys.computerdatabase.config.Config;
 import com.excilys.computerdatabase.exceptions.ComputerNotFoundException;
-import com.excilys.computerdatabase.services.impl.ComputerServiceImpl;
+import com.excilys.computerdatabase.services.interfaces.ComputerService;
 
 public class DashboardServlet extends HttpServlet {
-
     private static final long serialVersionUID = 6465944299510271447L;
+
+    private ComputerService computerService;
 
     private static final int PAGE_DEFAULT = Integer.parseInt(Config.getProperties().getProperty("page_default"));
     private static final int PAGE_SIZE_DEFAULT = Integer.parseInt(Config.getProperties().getProperty("page_size_default"));
-
-    private ComputerServiceImpl computerService = ComputerServiceImpl.INSTANCE;
+    
+    public DashboardServlet() {
+        AnnotationConfigApplicationContext  context = new AnnotationConfigApplicationContext();
+        context.scan("com.excilys.computerdatabase"); 
+        context.refresh();
+        
+        computerService = (ComputerService) context.getBean("computerService");
+        
+        context.close();
+    }
 
     /**
      * GET Dashboard.
