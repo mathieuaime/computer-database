@@ -25,14 +25,14 @@ public class ComputerMapper {
             .ofPattern(Config.getProperties().getProperty("date_format"));
     private static String url;
     private static CompanyService companyService;
-    
+
     static {
-        AnnotationConfigApplicationContext  context = new AnnotationConfigApplicationContext();
-        context.scan("com.excilys.computerdatabase"); 
+        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
+        context.scan("com.excilys.computerdatabase");
         context.refresh();
-        
+
         companyService = (CompanyService) context.getBean("companyService");
-        
+
         context.close();
     }
 

@@ -9,32 +9,51 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.transaction.annotation.TransactionManagementConfigurer;
 
 /**
- * Depending active spring profile, lookup RDBMS DataSource from JNDI or from an embbeded H2 database.
+ * Depending active spring profile, lookup RDBMS DataSource from JNDI or from an
+ * embbeded H2 database.
  */
 @Configuration
+@EnableTransactionManagement
 @PropertySource({ "classpath:spring/datasource.properties" })
-public class DataSourceConfig {
+public class DataSourceConfig implements TransactionManagementConfigurer {
 
     private static final Logger LOG = LoggerFactory.getLogger(DataSourceConfig.class);
-    
-    @Autowired
-    private Environment env;
 
+    @Autowired
+    private Environment environment;
+
+    /**
+     * Datasource.
+     * @return Datasource
+     */
     @Bean
     public DriverManagerDataSource dataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
         LOG.debug("Create datasource");
-        dataSource.setDriverClassName(env.getProperty("spring.datasource.driver-class-name"));
-        dataSource.setUrl(env.getProperty("spring.datasource.url"));
-        dataSource.setUsername(env.getProperty("spring.datasource.username"));
-        dataSource.setPassword(env.getProperty("spring.datasource.password"));
-        
+        dataSource.setDriverClassName(environment.getProperty("spring.datasource.driver-class-name"));
+        dataSource.setUrl(environment.getProperty("spring.datasource.url"));
+        dataSource.setUsername(environment.getProperty("spring.datasource.username"));
+        dataSource.setPassword(environment.getProperty("spring.datasource.password"));
+
         return dataSource;
     }
-    
+
+    /**
+     * Transaction Manager.
+     * @return Transaction Manager
+     */
+    @Bean
+    public DataSourceTransactionManager txManager() {
+        return new DataSourceTransactionManager(dataSource());
+    }
+
     /**
      * Application custom initialization code.
      * <p/>
@@ -45,5 +64,11 @@ public class DataSourceConfig {
     @PostConstruct
     public void initApp() {
         LOG.debug("Spring DataSource configuring...");
+        LOG.debug("URL : " + environment.getProperty("spring.datasource.url"));
+    }
+
+    @Override
+    public PlatformTransactionManager annotationDrivenTransactionManager() {
+        return txManager();
     }
 }

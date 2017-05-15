@@ -12,16 +12,16 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @Configuration
 @EnableTransactionManagement
 public class InfrastructureConfig {
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(InfrastructureConfig.class);
 
     @Autowired
     private DataSource dataSource;
-    
+
     public DataSource getDataSource() {
         return dataSource;
     }
-    
+
     /**
      * Application custom initialization code.
      * <p/>
@@ -34,5 +34,4 @@ public class InfrastructureConfig {
         LOG.debug("Spring Infrastructure configuring...");
         LOG.debug(dataSource.toString());
     }
-    
 }

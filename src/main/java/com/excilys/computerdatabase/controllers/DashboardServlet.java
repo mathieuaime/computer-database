@@ -22,15 +22,19 @@ public class DashboardServlet extends HttpServlet {
     private ComputerService computerService;
 
     private static final int PAGE_DEFAULT = Integer.parseInt(Config.getProperties().getProperty("page_default"));
-    private static final int PAGE_SIZE_DEFAULT = Integer.parseInt(Config.getProperties().getProperty("page_size_default"));
-    
+    private static final int PAGE_SIZE_DEFAULT = Integer
+            .parseInt(Config.getProperties().getProperty("page_size_default"));
+
+    /**
+     * Constructor.
+     */
     public DashboardServlet() {
         AnnotationConfigApplicationContext  context = new AnnotationConfigApplicationContext();
-        context.scan("com.excilys.computerdatabase"); 
+        context.scan("com.excilys.computerdatabase");
         context.refresh();
-        
+
         computerService = (ComputerService) context.getBean("computerService");
-        
+
         context.close();
     }
 

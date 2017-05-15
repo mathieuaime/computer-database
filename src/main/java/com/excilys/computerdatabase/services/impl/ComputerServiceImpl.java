@@ -5,8 +5,8 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import com.excilys.computerdatabase.daos.ConnectionMySQL;
 import com.excilys.computerdatabase.daos.interfaces.ComputerDAO;
 import com.excilys.computerdatabase.dtos.CompanyDTO;
 import com.excilys.computerdatabase.dtos.ComputerDTO;
@@ -19,6 +19,7 @@ import com.excilys.computerdatabase.models.Computer;
 import com.excilys.computerdatabase.services.interfaces.ComputerService;
 
 @Service("computerService")
+@Transactional(readOnly = true)
 public class ComputerServiceImpl implements ComputerService {
 
     @Autowired
@@ -36,95 +37,55 @@ public class ComputerServiceImpl implements ComputerService {
 
     @Override
     public Page<ComputerDTO> getPage(int pageNumero, int length, String search, String column, String order) {
-        ConnectionMySQL.open();
-        Page<ComputerDTO> p = new Page<ComputerDTO>(
+        return new Page<ComputerDTO>(
                 computerDAO.findAll((pageNumero - 1) * length, length, search, column, order).stream()
                         .map(it -> ComputerMapper.createDTO(it)).collect(Collectors.toList()),
                 pageNumero);
-        ConnectionMySQL.close();
-
-        return p;
     }
 
     @Override
     public ComputerDTO getById(long id) throws ComputerNotFoundException {
-        ConnectionMySQL.open();
-        Computer computer = null;
-
-        try {
-            computer = computerDAO.getById(id);
-        } finally {
-            ConnectionMySQL.close();
-        }
-
-        return ComputerMapper.createDTO(computer);
+        return ComputerMapper.createDTO(computerDAO.getById(id));
     }
 
     @Override
     public List<ComputerDTO> getByName(String name) {
-        ConnectionMySQL.open();
-        List<ComputerDTO> l = computerDAO.getByName(name).stream().map(it -> ComputerMapper.createDTO(it))
+        return computerDAO.getByName(name).stream().map(it -> ComputerMapper.createDTO(it))
                 .collect(Collectors.toList());
-        ConnectionMySQL.close();
-        return l;
     }
 
     @Override
+    @Transactional(readOnly = false, rollbackFor = Exception.class)
     public ComputerDTO add(Computer computer) {
-        ConnectionMySQL.open();
-        ComputerDTO c = ComputerMapper.createDTO(computerDAO.add(computer));
-        ConnectionMySQL.close();
-        return c;
+        return ComputerMapper.createDTO(computerDAO.add(computer));
     }
 
     @Override
+    @Transactional(readOnly = false, rollbackFor = Exception.class)
     public ComputerDTO update(Computer computer) throws ComputerNotFoundException {
-        ConnectionMySQL.open();
-        try {
-            return ComputerMapper.createDTO(computerDAO.update(computer));
-        } finally {
-            ConnectionMySQL.close();
-        }
+
+        return ComputerMapper.createDTO(computerDAO.update(computer));
     }
 
     @Override
+    @Transactional(readOnly = false, rollbackFor = Exception.class)
     public void delete(long id) throws ComputerNotFoundException {
-        ConnectionMySQL.open();
-        try {
-            computerDAO.delete(id);
-        } finally {
-            ConnectionMySQL.close();
-        }
+        computerDAO.delete(id);
     }
 
     @Override
+    @Transactional(readOnly = false, rollbackFor = ComputerNotFoundException.class)
     public void delete(List<Long> ids) throws ComputerNotFoundException {
-        ConnectionMySQL.open();
-        try {
-            computerDAO.delete(ids);
-        } finally {
-            ConnectionMySQL.close();
-        }
+        computerDAO.delete(ids);
     }
 
     @Override
     public int count(String search) {
-        ConnectionMySQL.open();
-        int c = computerDAO.count(search);
-        ConnectionMySQL.close();
-        return c;
+        return computerDAO.count(search);
     }
 
     @Override
     public CompanyDTO getCompany(long id) throws CompanyNotFoundException, ComputerNotFoundException {
-        ConnectionMySQL.open();
-        CompanyDTO c;
-        try {
-            c = CompanyMapper.createDTO(computerDAO.getCompany(id));
-        } finally {
-            ConnectionMySQL.close();
-        }
-
-        return c;
+        return CompanyMapper.createDTO(computerDAO.getCompany(id));
     }
 }

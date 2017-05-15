@@ -43,7 +43,7 @@ public class CompanyDAOImpl implements CompanyDAO {
     private static final String QUERY_DELETE_COMPANY        = "DELETE FROM company WHERE id = ?";
 
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(CompanyDAOImpl.class);
-    
+
     @Autowired
     private DataSource dataSource;
 
@@ -56,14 +56,10 @@ public class CompanyDAOImpl implements CompanyDAO {
     public List<Company> findAll(int offset, int length, String order) {
         List<Company> companies = new ArrayList<>();
 
-        try {
-            Connection con = dataSource.getConnection();
-
-            try (PreparedStatement stmt = con.prepareStatement(QUERY_FIND_COMPANIES + " ORDER BY " + order
-                    + (length != -1 ? " LIMIT " + length + " OFFSET " + offset : ""));) {
-                con.setReadOnly(true);
-                companies = CompanyMapper.getCompanies(stmt.executeQuery());
-            }
+        try (Connection con = dataSource.getConnection();
+                PreparedStatement stmt = con.prepareStatement(QUERY_FIND_COMPANIES + " ORDER BY " + order
+                        + (length != -1 ? " LIMIT " + length + " OFFSET " + offset : ""));) {
+            companies = CompanyMapper.getCompanies(stmt.executeQuery());
         } catch (SQLException e) {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Exception: " + e);
@@ -77,19 +73,15 @@ public class CompanyDAOImpl implements CompanyDAO {
     public Company getById(long id) throws CompanyNotFoundException {
         Company company = null;
 
-        try {
-            Connection con = dataSource.getConnection();
+        try (Connection con = dataSource.getConnection();
+                PreparedStatement stmt = con.prepareStatement(QUERY_FIND_COMPANY_BY_ID);) {
+            stmt.setLong(1, id);
+            final ResultSet rset = stmt.executeQuery();
 
-            try (PreparedStatement stmt = con.prepareStatement(QUERY_FIND_COMPANY_BY_ID);) {
-                con.setReadOnly(true);
-                stmt.setLong(1, id);
-                final ResultSet rset = stmt.executeQuery();
-
-                if (rset.first()) {
-                    company = CompanyMapper.getCompany(rset);
-                } else {
-                    throw new CompanyNotFoundException("Company Not Found");
-                }
+            if (rset.first()) {
+                company = CompanyMapper.getCompany(rset);
+            } else {
+                throw new CompanyNotFoundException("Company Not Found");
             }
         } catch (SQLException e) {
             if (LOGGER.isDebugEnabled()) {
@@ -104,15 +96,11 @@ public class CompanyDAOImpl implements CompanyDAO {
     public List<Company> getByName(String name) {
         List<Company> companies = new ArrayList<>();
 
-        try {
-            Connection con = dataSource.getConnection();
+        try (Connection con = dataSource.getConnection();
+                PreparedStatement stmt = con.prepareStatement(QUERY_FIND_COMPANY_BY_NAME);) {
+            stmt.setString(1, name);
 
-            try (PreparedStatement stmt = con.prepareStatement(QUERY_FIND_COMPANY_BY_NAME);) {
-                con.setReadOnly(true);
-                stmt.setString(1, name);
-
-                companies = CompanyMapper.getCompanies(stmt.executeQuery());
-            }
+            companies = CompanyMapper.getCompanies(stmt.executeQuery());
         } catch (SQLException e) {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Exception: " + e);
@@ -126,15 +114,10 @@ public class CompanyDAOImpl implements CompanyDAO {
     public List<Computer> getComputers(long id) throws CompanyNotFoundException {
         List<Computer> computers = new ArrayList<>();
 
-        try {
-            Connection con = dataSource.getConnection();
-
-            try (PreparedStatement stmt = con.prepareStatement(QUERY_FIND_COMPUTERS);) {
-                con.setReadOnly(true);
-                stmt.setLong(1, id);
-                final ResultSet rset = stmt.executeQuery();
-                computers = ComputerMapper.getComputers(rset);
-            }
+        try (Connection con = dataSource.getConnection();
+                PreparedStatement stmt = con.prepareStatement(QUERY_FIND_COMPUTERS);) {
+            stmt.setLong(1, id);
+            computers = ComputerMapper.getComputers(stmt.executeQuery());
         } catch (SQLException e) {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Exception: " + e);
@@ -146,26 +129,15 @@ public class CompanyDAOImpl implements CompanyDAO {
 
     @Override
     public void delete(long id) throws CompanyNotFoundException {
+        try (Connection con = dataSource.getConnection();
+                PreparedStatement stmt = con.prepareStatement(QUERY_DELETE_COMPANY);) {
+            stmt.setLong(1, id);
 
-        try {
-            Connection con = dataSource.getConnection();
-            con.setAutoCommit(false);
-
-            try (PreparedStatement stmt = con.prepareStatement(QUERY_DELETE_COMPANY);) {
-                con.setReadOnly(false);
-                stmt.setLong(1, id);
-
-                if (stmt.executeUpdate() == 0) {
-                    throw new CompanyNotFoundException("Company Not Found");
-                }
-            } catch (SQLException e) {
-                con.rollback();
-                LOGGER.error("Error: company " + id + " not deleted -> " + e);
+            if (stmt.executeUpdate() == 0) {
+                throw new CompanyNotFoundException("Company Not Found");
             }
         } catch (SQLException e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Exception: " + e);
-            }
+            LOGGER.error("Error: company " + id + " not deleted -> " + e);
         }
     }
 }
