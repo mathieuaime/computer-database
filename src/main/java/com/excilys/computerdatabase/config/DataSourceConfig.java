@@ -54,7 +54,11 @@ public class DataSourceConfig implements TransactionManagementConfigurer {
     public DataSourceTransactionManager txManager() {
         return new DataSourceTransactionManager(dataSource());
     }
-    
+
+    /**
+     * JDBCTemplate.
+     * @return JDBC Template
+     */
     @Bean
     public JdbcTemplate jdbcTemplate() {
         JdbcTemplate jdbcTemplate = new JdbcTemplate();

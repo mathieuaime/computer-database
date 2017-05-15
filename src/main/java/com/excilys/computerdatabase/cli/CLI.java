@@ -211,12 +211,12 @@ public class CLI {
 
                 } catch (NumberFormatException e) {
                     System.out.println("L'id doit être un nombre");
-                } catch (ComputerNotFoundException e) {
-                    System.out.println("Le computer n'existe pas");
                 } catch (IntroducedAfterDiscontinuedException e) {
                     System.out.println("La date d'ajout doit être antérieure à la date de retrait");
                 } catch (NameEmptyException e) {
                     System.out.println("Le nom doit être non nul");
+                } catch (ComputerNotFoundException e) {
+                    System.out.println("Le computer n'existe pas");
                 } catch (CompanyNotFoundException e) {
                     System.out.println("La company n'existe pas");
                 }

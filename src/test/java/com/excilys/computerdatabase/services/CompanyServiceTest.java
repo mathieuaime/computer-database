@@ -169,24 +169,6 @@ public class CompanyServiceTest extends DatabaseTestCase {
             fail("Company Not Found");
         }
     }
-    
-
-    /**
-     * Test delete.
-     */
-    @Test
-    public void testDeleteNonPresent() {
-        try {
-            companyService.delete(100L);
-            fail("Exception Not Thrown");
-        } catch (CompanyNotFoundException e) {
-            try {
-                companyService.getById(1L);
-            } catch (CompanyNotFoundException e1) {
-                fail("Company Deleted");
-            }
-        }
-    }
 
     @Override
     protected IDatabaseConnection getConnection() throws Exception {

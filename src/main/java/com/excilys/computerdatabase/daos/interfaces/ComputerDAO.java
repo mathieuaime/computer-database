@@ -51,7 +51,7 @@ public interface ComputerDAO {
      * Update a computer.
      * @param computer the computer to update
      * @return Computer
-     * @throws ComputerNotFoundException exception when the computer is not found
+     * @throws ComputerNotFoundException Compûter Not Found Exception
      */
     Computer update(Computer computer) throws ComputerNotFoundException;
 

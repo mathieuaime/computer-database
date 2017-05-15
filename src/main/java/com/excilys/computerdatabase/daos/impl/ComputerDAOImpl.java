@@ -2,22 +2,23 @@ package com.excilys.computerdatabase.daos.impl;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.sql.DataSource;
-
 import com.mysql.jdbc.Statement;
 
 import org.slf4j.Logger;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementCreator;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import com.excilys.computerdatabase.daos.interfaces.ComputerDAO;
@@ -51,7 +52,7 @@ public class ComputerDAOImpl implements ComputerDAO {
 
     private static final String QUERY_ADD_COMPUTER                      = "INSERT INTO computer (name, introduced, discontinued, company_id) VALUES(?, ?, ?, ?)";
 
-    private static final String QUERY_LOCK_FOR_UPDATE                   = "SELECT * FROM computer WHERE id = ? FOR UPDATE";
+    private static final String QUEREY_UPDATE                           = "UPDATE computer SET name = ?, introduced = ?, discontinued = ?, company_id = ? WHERE id = ?";
 
     private static final String QUERY_DELETE_COMPUTER                   = "DELETE FROM computer WHERE id IN (";
 
@@ -71,9 +72,6 @@ public class ComputerDAOImpl implements ComputerDAO {
 
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(ComputerDAOImpl.class);
 
-    @Autowired
-    private DataSource dataSource;
-    
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
@@ -124,7 +122,7 @@ public class ComputerDAOImpl implements ComputerDAO {
     @Override
     public Computer getById(long id) throws ComputerNotFoundException {
         try {
-            return jdbcTemplate.queryForObject(QUERY_FIND_COMPUTER_BY_ID, new Object[] { id },
+            return jdbcTemplate.queryForObject(QUERY_FIND_COMPUTER_BY_ID, new Object[] {id},
                     (rs, rowNum) -> ComputerMapper.getComputer(rs));
         } catch (EmptyResultDataAccessException e) {
             throw new ComputerNotFoundException("Computer " + id + " Not Found");
@@ -133,57 +131,42 @@ public class ComputerDAOImpl implements ComputerDAO {
 
     @Override
     public List<Computer> getByName(String name) {
-        return jdbcTemplate.query(QUERY_FIND_COMPUTER_BY_NAME, new Object[] { name }, (rs, rowNum) -> {
+        return jdbcTemplate.query(QUERY_FIND_COMPUTER_BY_NAME, new Object[] {name}, (rs, rowNum) -> {
             return ComputerMapper.getComputer(rs);
         });
     }
 
     @Override
     public Computer add(Computer computer) {
-        try (Connection con = dataSource.getConnection();
-                PreparedStatement stmt = con.prepareStatement(QUERY_ADD_COMPUTER, Statement.RETURN_GENERATED_KEYS);) {
+        KeyHolder holder = new GeneratedKeyHolder();
 
-            stmt.setString(1, computer.getName());
-            stmt.setObject(2, computer.getIntroduced());
-            stmt.setObject(3, computer.getDiscontinued());
-            stmt.setLong(4, computer.getCompany().getId());
-            stmt.executeUpdate();
+        jdbcTemplate.update(new PreparedStatementCreator() {
 
-            ResultSet resultSet = stmt.getGeneratedKeys();
-
-            if (resultSet.first()) {
-                computer.setId(resultSet.getLong(1));
+            @Override
+            public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
+                PreparedStatement ps = connection.prepareStatement(QUERY_ADD_COMPUTER, Statement.RETURN_GENERATED_KEYS);
+                ps.setString(1, computer.getName());
+                ps.setObject(2, computer.getIntroduced());
+                ps.setObject(3, computer.getDiscontinued());
+                ps.setLong(4, computer.getCompany().getId());
+                ps.executeUpdate();
+                return ps;
             }
+        }, holder);
 
-            ++countTotal;
-        } catch (SQLException e) {
-            LOGGER.error("Error: " + computer + " not added -> " + e);
-        }
-
+        ++countTotal;
+        computer.setId(holder.getKey().longValue());
         return computer;
     }
 
     @Override
     public Computer update(Computer computer) throws ComputerNotFoundException {
-        try (Connection con = dataSource.getConnection();
-                PreparedStatement stmt = con.prepareStatement(QUERY_LOCK_FOR_UPDATE, ResultSet.TYPE_FORWARD_ONLY,
-                        ResultSet.CONCUR_UPDATABLE);) {
-            stmt.setLong(1, computer.getId());
-            ResultSet rset = stmt.executeQuery();
+        int res = jdbcTemplate.update(QUEREY_UPDATE, new Object[] {computer.getName(), computer.getIntroduced(),
+                computer.getDiscontinued(), computer.getCompany().getId(), computer.getId()});
 
-            if (rset.first()) {
-                rset.updateString("name", computer.getName());
-                rset.updateObject("introduced", computer.getIntroduced());
-                rset.updateObject("discontinued", computer.getDiscontinued());
-                rset.updateLong("company_id", computer.getCompany().getId());
-                rset.updateRow();
-            } else {
-                throw new ComputerNotFoundException("Computer not Found");
-            }
-        } catch (SQLException e) {
-            LOGGER.error("Error: " + computer + " not updated -> " + e);
+        if (res == 0) {
+            throw new ComputerNotFoundException("Computer " + computer.getId() + " Not Found");
         }
-
         return computer;
     }
 
@@ -194,20 +177,10 @@ public class ComputerDAOImpl implements ComputerDAO {
 
     @Override
     public void deleteFromCompany(long companyId) throws CompanyNotFoundException {
-        try (Connection con = dataSource.getConnection();
-                PreparedStatement stmt = con.prepareStatement(QUERY_DELETE_COMPUTER_OF_COMPANY);) {
-            stmt.setLong(1, companyId);
-
-            int res = stmt.executeUpdate();
-
-            if (res == 0) {
-                throw new CompanyNotFoundException("Company Not Found");
-            }
-
-            countTotal -= res;
-
-        } catch (SQLException e) {
-            LOGGER.error("Error: computers from company " + companyId + " not deleted -> " + e);
+        try {
+            countTotal -= jdbcTemplate.update(QUERY_DELETE_COMPUTER_OF_COMPANY, new Object[] {companyId});
+        } catch (DataAccessException e) {
+            throw new CompanyNotFoundException("Company " + companyId + " Not Found");
         }
     }
 
@@ -227,7 +200,7 @@ public class ComputerDAOImpl implements ComputerDAO {
             }
 
             count = jdbcTemplate.queryForObject(query,
-                    (!searchForTotalCount ? new Object[] { search, search, search, search } : new Object[] {}),
+                    (!searchForTotalCount ? new Object[] {search, search, search, search} : new Object[] {}),
                     (rs, rowNum) -> rs.getInt("count"));
 
             if (searchForTotalCount) {
@@ -241,13 +214,13 @@ public class ComputerDAOImpl implements ComputerDAO {
     @Override
     public Company getCompany(long id) throws CompanyNotFoundException, ComputerNotFoundException {
         try {
-            Company company = jdbcTemplate.queryForObject(QUERY_FIND_COMPANY, new Object[] { id },
+            Company company = jdbcTemplate.queryForObject(QUERY_FIND_COMPANY, new Object[] {id},
                     (rs, rowNum) -> CompanyMapper.getCompany(rs));
-            
+
             if (company == null || company.getName() == null) {
                 throw new CompanyNotFoundException("Company Not Found");
             }
-            
+
             return company;
         } catch (EmptyResultDataAccessException e) {
             throw new ComputerNotFoundException("Computer " + id + " Not Found");
@@ -257,14 +230,6 @@ public class ComputerDAOImpl implements ComputerDAO {
     @Override
     public void delete(List<Long> listId) {
         String ids = listId.stream().map(Object::toString).collect(Collectors.joining(", "));
-
-        String query = QUERY_DELETE_COMPUTER + ids + ")";
-
-        try (Connection con = dataSource.getConnection(); PreparedStatement stmt = con.prepareStatement(query);) {
-
-            countTotal -= stmt.executeUpdate();
-        } catch (SQLException e) {
-            LOGGER.error("Error: Computer " + ids + " not deleted");
-        }
+        countTotal -= jdbcTemplate.update(QUERY_DELETE_COMPUTER + ids + ")");
     }
 }
