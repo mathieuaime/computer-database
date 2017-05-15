@@ -5,7 +5,7 @@ public class Company {
     private String name;
 
     /**
-     * Company default constructor. 
+     * Company default constructor.
      */
     public Company() {
         super();

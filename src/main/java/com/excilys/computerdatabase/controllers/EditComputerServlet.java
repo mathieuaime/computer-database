@@ -29,19 +29,23 @@ public class EditComputerServlet extends HttpServlet {
     private static final long serialVersionUID = -82009216108348436L;
     private ComputerService computerService;
     private CompanyService companyService;
-    
+
+    /**
+     * Constructor.
+     */
     public EditComputerServlet() {
         AnnotationConfigApplicationContext  context = new AnnotationConfigApplicationContext();
-        context.scan("com.excilys.computerdatabase"); 
+        context.scan("com.excilys.computerdatabase");
         context.refresh();
-        
+
         computerService = (ComputerService) context.getBean("computerService");
         companyService = (CompanyService) context.getBean("companyService");
-        
+
         context.close();
     }
 
-    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern(Config.getProperties().getProperty("date_format"));
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter
+            .ofPattern(Config.getProperties().getProperty("date_format"));
 
     /**
      * GET editComputer.

@@ -58,16 +58,14 @@ public interface ComputerDAO {
     /**
      * Delete a computer.
      * @param id the id of the computer
-     * @throws ComputerNotFoundException exception when the computer is not found
      */
-    void delete(long id) throws ComputerNotFoundException;
+    void delete(long id);
 
     /**
      * Delete a list of computer.
      * @param listId the list of ids of the computers
-     * @throws ComputerNotFoundException exception when the computer is not found
      */
-    void delete(List<Long> listId) throws ComputerNotFoundException;
+    void delete(List<Long> listId);
 
     /**
      * Return the number of computers.

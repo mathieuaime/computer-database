@@ -144,6 +144,48 @@ public class ComputerServiceTest extends DatabaseTestCase {
     }
 
     /**
+     * Test getCompany.
+     */
+    @Test
+    public void testGetCompany() {
+        try {
+            assertEquals(1L, computerService.getCompany(1L).getId());
+        } catch (ComputerNotFoundException e) {
+            fail("Computer Not Found");
+        } catch (CompanyNotFoundException e) {
+            fail("Company Not Found");
+        }
+    }
+
+    /**
+     * Test getCompany when the computer does not exist.
+     */
+    @Test
+    public void testGetCompanyComputerNonPresent() {
+        try {
+            computerService.getCompany(1500L);
+            fail("Exception Not Thrown");
+        } catch (ComputerNotFoundException e) {
+        } catch (CompanyNotFoundException e) {
+            fail("Bad Exception Thrown");
+        }
+    }
+
+    /**
+     * Test getCompany when the company does not exist.
+     */
+    @Test
+    public void testGetCompanyCompanyNonPresent() {
+        try {
+            computerService.getCompany(3L);
+            fail("Exception Not Thrown");
+        } catch (ComputerNotFoundException e) {
+            fail("Bad Exception Thrown");
+        } catch (CompanyNotFoundException e) {
+        }
+    }
+
+    /**
      * Test add.
      */
     @Test
@@ -236,18 +278,6 @@ public class ComputerServiceTest extends DatabaseTestCase {
     }
 
     /**
-     * Test delete non present computer.
-     */
-    @Test
-    public void testDeleteNonPresent() {
-        try {
-            computerService.delete(1500L);
-            fail("Exception Not Thrown");
-        } catch (Exception e) {
-        }
-    }
-
-    /**
      * Test delete.
      */
     @Test
@@ -258,67 +288,6 @@ public class ComputerServiceTest extends DatabaseTestCase {
             computerService.getById(2L);
             fail("Computer Not Deleted");
         } catch (Exception e) {
-        }
-    }
-
-    /**
-     * Test delete.
-     */
-    @Test
-    public void testDeleteListNotFound() {
-        try {
-            computerService.delete(new ArrayList<Long>(Arrays.asList(1L, 1500L)));
-            fail("Exception Not Thrown");
-        } catch (ComputerNotFoundException e) {
-            try {
-                computerService.getById(1L);
-                computerService.getById(2L);
-            } catch (ComputerNotFoundException e1) {
-                fail("Computer Deleted");
-            }
-
-        }
-    }
-
-    /**
-     * Test getCompany.
-     */
-    @Test
-    public void testGetCompany() {
-        try {
-            assertEquals(1L, computerService.getCompany(1L).getId());
-        } catch (ComputerNotFoundException e) {
-            fail("Computer Not Found");
-        } catch (CompanyNotFoundException e) {
-            fail("Company Not Found");
-        }
-    }
-
-    /**
-     * Test getCompany when the computer does not exist.
-     */
-    @Test
-    public void testGetCompanyComputerNonPresent() {
-        try {
-            computerService.getCompany(1500L);
-            fail("Exception Not Thrown");
-        } catch (ComputerNotFoundException e) {
-        } catch (CompanyNotFoundException e) {
-            fail("Bad Exception Thrown");
-        }
-    }
-
-    /**
-     * Test getCompany when the company does not exist.
-     */
-    @Test
-    public void testGetCompanyCompanyNonPresent() {
-        try {
-            computerService.getCompany(3L);
-            fail("Exception Not Thrown");
-        } catch (ComputerNotFoundException e) {
-            fail("Bad Exception Thrown");
-        } catch (CompanyNotFoundException e) {
         }
     }
 

@@ -24,15 +24,18 @@ public class CLI {
     private static ComputerService computerService;
 
     private static final String DATE_FORMAT = Config.getProperties().getProperty("date_format");
-    
+
+    /**
+     * Constructor.
+     */
     public CLI() {
         AnnotationConfigApplicationContext  context = new AnnotationConfigApplicationContext();
-        context.scan("com.excilys.computerdatabase"); 
+        context.scan("com.excilys.computerdatabase");
         context.refresh();
-        
+
         computerService = (ComputerService) context.getBean("computerService");
         companyService = (CompanyService) context.getBean("companyService");
-        
+
         context.close();
     }
 

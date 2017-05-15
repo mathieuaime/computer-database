@@ -29,16 +29,20 @@ public class AddComputerServlet extends HttpServlet {
     private ComputerService computerService;
     private CompanyService companyService;
 
-    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern(Config.getProperties().getProperty("date_format"));
-    
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter
+            .ofPattern(Config.getProperties().getProperty("date_format"));
+
+    /**
+     * Constructor.
+     */
     public AddComputerServlet() {
         AnnotationConfigApplicationContext  context = new AnnotationConfigApplicationContext();
-        context.scan("com.excilys.computerdatabase"); 
+        context.scan("com.excilys.computerdatabase");
         context.refresh();
-        
+
         computerService = (ComputerService) context.getBean("computerService");
         companyService = (CompanyService) context.getBean("companyService");
-        
+
         context.close();
     }
 
