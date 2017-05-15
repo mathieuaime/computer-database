@@ -16,8 +16,7 @@ import org.slf4j.LoggerFactory;
  */
 @Configuration
 @ComponentScan(basePackages = "com.excilys.computerdatabase")
-@Import(value = { DataSourceConfig.class, InfrastructureConfig.class, RepositoryConfig.class, ServiceConfig.class,
-        SecurityConfig.class })
+@Import(value = { DataSourceConfig.class })
 public class MainConfig {
 
     private static final Logger LOG = LoggerFactory.getLogger(MainConfig.class);

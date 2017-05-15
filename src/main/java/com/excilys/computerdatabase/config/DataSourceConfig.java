@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -52,6 +53,13 @@ public class DataSourceConfig implements TransactionManagementConfigurer {
     @Bean
     public DataSourceTransactionManager txManager() {
         return new DataSourceTransactionManager(dataSource());
+    }
+    
+    @Bean
+    public JdbcTemplate jdbcTemplate() {
+        JdbcTemplate jdbcTemplate = new JdbcTemplate();
+        jdbcTemplate.setDataSource(dataSource());
+        return jdbcTemplate;
     }
 
     /**

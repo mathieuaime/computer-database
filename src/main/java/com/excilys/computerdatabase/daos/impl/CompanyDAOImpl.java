@@ -12,9 +12,13 @@ import javax.sql.DataSource;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 import com.excilys.computerdatabase.daos.interfaces.CompanyDAO;
+import com.excilys.computerdatabase.dtos.CompanyDTO;
 import com.excilys.computerdatabase.exceptions.CompanyNotFoundException;
 import com.excilys.computerdatabase.mappers.CompanyMapper;
 import com.excilys.computerdatabase.mappers.ComputerMapper;
@@ -46,6 +50,9 @@ public class CompanyDAOImpl implements CompanyDAO {
 
     @Autowired
     private DataSource dataSource;
+    
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
     @Override
     public List<Company> findAll() {
@@ -54,77 +61,36 @@ public class CompanyDAOImpl implements CompanyDAO {
 
     @Override
     public List<Company> findAll(int offset, int length, String order) {
-        List<Company> companies = new ArrayList<>();
+        String query = QUERY_FIND_COMPANIES + " ORDER BY " + order
+                + (length != -1 ? " LIMIT " + length + " OFFSET " + offset : "");
 
-        try (Connection con = dataSource.getConnection();
-                PreparedStatement stmt = con.prepareStatement(QUERY_FIND_COMPANIES + " ORDER BY " + order
-                        + (length != -1 ? " LIMIT " + length + " OFFSET " + offset : ""));) {
-            companies = CompanyMapper.getCompanies(stmt.executeQuery());
-        } catch (SQLException e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Exception: " + e);
-            }
-        }
-
-        return companies;
+        return jdbcTemplate.query(query, (rs, rowNum) -> {
+            return CompanyMapper.getCompany(rs);
+        });
     }
 
     @Override
     public Company getById(long id) throws CompanyNotFoundException {
-        Company company = null;
-
-        try (Connection con = dataSource.getConnection();
-                PreparedStatement stmt = con.prepareStatement(QUERY_FIND_COMPANY_BY_ID);) {
-            stmt.setLong(1, id);
-            final ResultSet rset = stmt.executeQuery();
-
-            if (rset.first()) {
-                company = CompanyMapper.getCompany(rset);
-            } else {
-                throw new CompanyNotFoundException("Company Not Found");
-            }
-        } catch (SQLException e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Exception: " + e);
-            }
+        try {
+            return jdbcTemplate.queryForObject(QUERY_FIND_COMPANY_BY_ID, new Object[] { id },
+                    (rs, rowNum) -> CompanyMapper.getCompany(rs));
+        } catch (EmptyResultDataAccessException e) {
+            throw new CompanyNotFoundException("Company " + id + " Not Found");
         }
-
-        return company;
     }
 
     @Override
     public List<Company> getByName(String name) {
-        List<Company> companies = new ArrayList<>();
-
-        try (Connection con = dataSource.getConnection();
-                PreparedStatement stmt = con.prepareStatement(QUERY_FIND_COMPANY_BY_NAME);) {
-            stmt.setString(1, name);
-
-            companies = CompanyMapper.getCompanies(stmt.executeQuery());
-        } catch (SQLException e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Exception: " + e);
-            }
-        }
-
-        return companies;
+        return jdbcTemplate.query(QUERY_FIND_COMPANY_BY_NAME, new Object[] { name }, (rs, rowNum) -> {
+            return CompanyMapper.getCompany(rs);
+        });
     }
 
     @Override
     public List<Computer> getComputers(long id) throws CompanyNotFoundException {
-        List<Computer> computers = new ArrayList<>();
-
-        try (Connection con = dataSource.getConnection();
-                PreparedStatement stmt = con.prepareStatement(QUERY_FIND_COMPUTERS);) {
-            stmt.setLong(1, id);
-            computers = ComputerMapper.getComputers(stmt.executeQuery());
-        } catch (SQLException e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Exception: " + e);
-            }
-        }
-
-        return computers;
+        return jdbcTemplate.query(QUERY_FIND_COMPUTERS, new Object[] { id }, (rs, rowNum) -> {
+            return ComputerMapper.getComputer(rs);
+        });
     }
 
     @Override
