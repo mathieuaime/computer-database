@@ -9,14 +9,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import com.excilys.computerdatabase.config.Config;
+import com.excilys.computerdatabase.dtos.CompanyDTO;
 import com.excilys.computerdatabase.dtos.ComputerDTO;
 import com.excilys.computerdatabase.exceptions.CompanyNotFoundException;
 import com.excilys.computerdatabase.models.Company;
 import com.excilys.computerdatabase.models.Computer;
-import com.excilys.computerdatabase.services.interfaces.CompanyService;
 
 public class ComputerMapper {
 
@@ -24,17 +23,6 @@ public class ComputerMapper {
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter
             .ofPattern(Config.getProperties().getProperty("date_format"));
     private static String url;
-    private static CompanyService companyService;
-
-    static {
-        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
-        context.scan("com.excilys.computerdatabase");
-        context.refresh();
-
-        companyService = (CompanyService) context.getBean("companyService");
-
-        context.close();
-    }
 
     /**
      * Create a computer from a ResultSet.
@@ -42,7 +30,7 @@ public class ComputerMapper {
      * @return Computer
      */
     public static Computer getComputer(ResultSet rset) {
-        Computer computer = null;
+        Computer computer = new Computer("test");
 
         try {
             Date introducedComputer = rset.getDate("computerintroduced");
@@ -96,10 +84,14 @@ public class ComputerMapper {
                 : LocalDate.parse(computerDTO.getIntroduced(), DATE_FORMATTER));
         LocalDate discontinued = (computerDTO.getDiscontinued().equals("") ? null
                 : LocalDate.parse(computerDTO.getDiscontinued(), DATE_FORMATTER));
+        
+        CompanyDTO companyDTO = new CompanyDTO();
+        companyDTO.setId(computerDTO.getCompany().getId());
+        companyDTO.setName(computerDTO.getCompany().getName());
 
         return new Computer.Builder(computerDTO.getName()).id(computerDTO.getId()).introduced(introduced)
                 .discontinued(discontinued)
-                .company(CompanyMapper.createBean(companyService.getById(computerDTO.getCompany().getId()))).build();
+                .company(CompanyMapper.createBean(companyDTO)).build();
     }
 
     /**

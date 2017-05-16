@@ -1,16 +1,14 @@
 package com.excilys.computerdatabase.controllers;
 
-import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.excilys.computerdatabase.config.Config;
 import com.excilys.computerdatabase.dtos.CompanyDTO;
@@ -25,24 +23,14 @@ import com.excilys.computerdatabase.services.interfaces.CompanyService;
 import com.excilys.computerdatabase.services.interfaces.ComputerService;
 import com.excilys.computerdatabase.validators.ComputerValidator;
 
-public class EditComputerServlet extends HttpServlet {
-    private static final long serialVersionUID = -82009216108348436L;
+@Controller("editComputer")
+@RequestMapping("/editComputer")
+public class EditComputerServlet {
+    @Autowired
     private ComputerService computerService;
+
+    @Autowired
     private CompanyService companyService;
-
-    /**
-     * Constructor.
-     */
-    public EditComputerServlet() {
-        AnnotationConfigApplicationContext  context = new AnnotationConfigApplicationContext();
-        context.scan("com.excilys.computerdatabase");
-        context.refresh();
-
-        computerService = (ComputerService) context.getBean("computerService");
-        companyService = (CompanyService) context.getBean("companyService");
-
-        context.close();
-    }
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter
             .ofPattern(Config.getProperties().getProperty("date_format"));
@@ -51,70 +39,66 @@ public class EditComputerServlet extends HttpServlet {
      * GET editComputer.
      * @param request request
      * @param response response
-     * @throws ServletException servelt exception
-     * @throws IOException io exception
      */
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        request.setAttribute("dateFormat", Config.getProperties().getProperty("date_format"));
+    @RequestMapping(method = RequestMethod.GET)
+    public String get(ModelMap model, @RequestParam(value = "id", defaultValue = "0") long id) {
+        model.addAttribute("companies", companyService.getPage().getObjects());
+        model.addAttribute("dateFormat", Config.getProperties().getProperty("date_format"));
 
-        int idComputer = (request.getParameter("id") != null ? Integer.parseInt(request.getParameter("id")) : 0);
         ComputerDTO computerDTO = null;
 
         try {
-            computerDTO = computerService.getById(idComputer);
+            computerDTO = computerService.getById(id);
         } catch (ComputerNotFoundException e) {
-            request.setAttribute("error", "Computer inconnu");
+            model.addAttribute("error", "Computer inconnu");
         }
 
-        RequestDispatcher view = request.getRequestDispatcher("WEB-INF/views/editComputer.jsp");
-
-        request.setAttribute("computer", computerDTO);
-        request.setAttribute("companies", companyService.getPage().getObjects());
-
-        view.forward(request, response);
+        model.addAttribute("computer", computerDTO);
+        model.addAttribute("companies", companyService.getPage().getObjects());
+        
+        return "editComputer";
     }
 
     /**
      * POST editComputer.
      * @param request request
      * @param response response
-     * @throws ServletException servelt exception
-     * @throws IOException io exception
      */
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    @RequestMapping(method = RequestMethod.POST)
+    public String post(ModelMap model,
+            @RequestParam("id") long id,
+            @RequestParam("name") String name,
+            @RequestParam("introduced") String introduced,
+            @RequestParam("discontinued") String discontinued,
+            @RequestParam("companyId") long companyId) {
         ComputerDTO computerDTO = new ComputerDTO();
-        CompanyDTO companyDTO = new CompanyDTO();
 
-        String introduced = request.getParameter("introduced");
-        String discontinued = request.getParameter("discontinued");
-
-        companyDTO.setId(Long.parseLong(request.getParameter("companyId")));
-
-        computerDTO.setId(Long.parseLong(request.getParameter("id")));
-        computerDTO.setName(request.getParameter("name"));
+        computerDTO.setId(id);
+        computerDTO.setName(name);
         computerDTO.setIntroduced(!introduced.equals("") ? LocalDate.parse(introduced, DateTimeFormatter.ofPattern("yyyy-MM-dd")).format(DATE_FORMATTER) : "");
         computerDTO.setDiscontinued(!discontinued.equals("") ? LocalDate.parse(discontinued, DateTimeFormatter.ofPattern("yyyy-MM-dd")).format(DATE_FORMATTER) : "");
-        computerDTO.setCompany(companyDTO);
 
         try {
+            CompanyDTO companyDTO = companyService.getById(companyId);
+            computerDTO.setCompany(companyDTO);
+
             Computer computer = ComputerMapper.createBean(computerDTO);
             ComputerValidator.validate(computer);
             computerService.update(computer);
-            response.sendRedirect("dashboard");
+            
+            return "redirect:dashboard";
         } catch (IntroducedAfterDiscontinuedException e) {
-            request.setAttribute("error", "La date d'ajout doit être antérieure à la date de retrait");
-            doGet(request, response);
+            model.addAttribute("error", "La date d'ajout doit être antérieure à la date de retrait");
+            return get(model, id);
         } catch (NameEmptyException e) {
-            request.setAttribute("error", "Le nom doit être spécifié");
-            doGet(request, response);
+            model.addAttribute("error", "Le nom doit être spécifié");
+            return get(model, id);
         } catch (ComputerNotFoundException e) {
-            request.setAttribute("error", "Le computer n'existe pas");
-            doGet(request, response);
+            model.addAttribute("error", "Le computer n'existe pas");
+            return get(model, id);
         } catch (CompanyNotFoundException e) {
-            request.setAttribute("error", "La company n'existe pas");
-            doGet(request, response);
+            model.addAttribute("error", "La company n'existe pas");
+            return get(model, id);
         }
     }
 }

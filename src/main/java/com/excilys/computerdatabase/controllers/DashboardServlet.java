@@ -1,73 +1,58 @@
 package com.excilys.computerdatabase.controllers;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-
-import com.excilys.computerdatabase.config.Config;
 import com.excilys.computerdatabase.exceptions.ComputerNotFoundException;
 import com.excilys.computerdatabase.services.interfaces.ComputerService;
 
-public class DashboardServlet extends HttpServlet {
-    private static final long serialVersionUID = 6465944299510271447L;
+@Controller("dashboard")
+@RequestMapping("/dashboard")
+public class DashboardServlet  {
 
+    @Autowired
     private ComputerService computerService;
 
-    private static final int PAGE_DEFAULT = Integer.parseInt(Config.getProperties().getProperty("page_default"));
-    private static final int PAGE_SIZE_DEFAULT = Integer
-            .parseInt(Config.getProperties().getProperty("page_size_default"));
+    private static final String PAGE_DEFAULT = "1";
+    private static final String PAGE_SIZE_DEFAULT = "10";
 
-    /**
-     * Constructor.
-     */
-    public DashboardServlet() {
-        AnnotationConfigApplicationContext  context = new AnnotationConfigApplicationContext();
-        context.scan("com.excilys.computerdatabase");
-        context.refresh();
-
-        computerService = (ComputerService) context.getBean("computerService");
-
-        context.close();
-    }
+    private static final Logger LOGGER = LoggerFactory.getLogger(DashboardServlet.class);
 
     /**
      * GET Dashboard.
      * @param request request
      * @param response response
-     * @throws ServletException servelt exception
-     * @throws IOException io exception
      */
-    public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        RequestDispatcher view = request.getRequestDispatcher("WEB-INF/views/dashboard.jsp");
-
-        int page = (request.getParameter("page") != null ? Integer.parseInt(request.getParameter("page")) : PAGE_DEFAULT);
-        int pageSize = (request.getParameter("pageSize") != null ? Integer.parseInt(request.getParameter("pageSize")) : PAGE_SIZE_DEFAULT);
-
-        String search = request.getParameter("search");
-        String order = request.getParameter("order");
-        String column = request.getParameter("column");
+    @RequestMapping(method = RequestMethod.GET)
+    public String get(ModelMap model,
+            @RequestParam(value = "page", required = false, defaultValue = PAGE_DEFAULT) int page,
+            @RequestParam(value = "pageSize", required = false, defaultValue = PAGE_SIZE_DEFAULT) int pageSize,
+            @RequestParam(value = "search", required = false) String search,
+            @RequestParam(value = "order", required = false) String order,
+            @RequestParam(value = "column", required = false) String column) {
 
         int computerCount = computerService.count(search);
 
-        request.setAttribute("computerPage", computerService.getPage(page, pageSize, search, column, order));
-        request.setAttribute("computerCount", computerCount);
-        request.setAttribute("page", page);
-        request.setAttribute("search", search);
-        request.setAttribute("order", order);
-        request.setAttribute("column", column);
-        request.setAttribute("pageSize", pageSize);
-        request.setAttribute("nbPage", Math.ceil((float) computerCount / pageSize));
-        request.setAttribute("pageSizes", new int[]{10, 50, 100});
+        model.addAttribute("computerPage", computerService.getPage(page, pageSize, search, column, order));
+        model.addAttribute("computerCount", computerCount);
+        model.addAttribute("page", page);
+        model.addAttribute("search", search);
+        model.addAttribute("order", order);
+        model.addAttribute("column", column);
+        model.addAttribute("pageSize", pageSize);
+        model.addAttribute("nbPage", Math.ceil((float) computerCount / pageSize));
+        model.addAttribute("pageSizes", new int[] { 10, 50, 100 });
 
-        view.forward(request, response);
+        return "dashboard";
 
     }
 
@@ -75,11 +60,10 @@ public class DashboardServlet extends HttpServlet {
      * POST Dashboard.
      * @param request request
      * @param response response
-     * @throws ServletException servelt exception
-     * @throws IOException io exception
      */
-    public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String[] listComputersToDelete = request.getParameter("selection").split(",");
+    @RequestMapping(method = RequestMethod.POST)
+    public String post(ModelMap model, @RequestParam(value = "selection") String selection) {
+        String[] listComputersToDelete = selection.split(",");
 
         List<Long> ids = new ArrayList<Long>(listComputersToDelete.length);
 
@@ -90,10 +74,9 @@ public class DashboardServlet extends HttpServlet {
         try {
             computerService.delete(ids);
         } catch (ComputerNotFoundException e) {
-            request.setAttribute("error", "Computer inconnu");
+            model.addAttribute("error", "Computer inconnu");
         }
 
-        doGet(request, response);
+        return get(model, Integer.parseInt(PAGE_DEFAULT), Integer.parseInt(PAGE_SIZE_DEFAULT), null, null, null);
     }
-
 }

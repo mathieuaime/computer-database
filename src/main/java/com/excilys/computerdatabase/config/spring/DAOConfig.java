@@ -1,4 +1,4 @@
-package com.excilys.computerdatabase.config;
+package com.excilys.computerdatabase.config.spring;
 
 import javax.annotation.PostConstruct;
 
@@ -6,26 +6,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
-import org.springframework.transaction.annotation.TransactionManagementConfigurer;
 
 /**
- * Depending active spring profile, lookup RDBMS DataSource from JNDI or from an
- * embbeded H2 database.
+ * Depending active spring profile.
  */
 @Configuration
-@EnableTransactionManagement
+@ComponentScan(basePackages = "com.excilys.computerdatabase.daos")
 @PropertySource({ "classpath:spring/datasource.properties" })
-public class DataSourceConfig implements TransactionManagementConfigurer {
+public class DAOConfig {
 
-    private static final Logger LOG = LoggerFactory.getLogger(DataSourceConfig.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DAOConfig.class);
 
     @Autowired
     private Environment environment;
@@ -44,15 +40,6 @@ public class DataSourceConfig implements TransactionManagementConfigurer {
         dataSource.setPassword(environment.getProperty("spring.datasource.password"));
 
         return dataSource;
-    }
-
-    /**
-     * Transaction Manager.
-     * @return Transaction Manager
-     */
-    @Bean
-    public DataSourceTransactionManager txManager() {
-        return new DataSourceTransactionManager(dataSource());
     }
 
     /**
@@ -79,8 +66,4 @@ public class DataSourceConfig implements TransactionManagementConfigurer {
         LOG.debug("URL : " + environment.getProperty("spring.datasource.url"));
     }
 
-    @Override
-    public PlatformTransactionManager annotationDrivenTransactionManager() {
-        return txManager();
-    }
 }

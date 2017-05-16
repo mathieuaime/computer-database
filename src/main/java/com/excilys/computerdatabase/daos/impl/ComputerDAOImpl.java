@@ -82,8 +82,8 @@ public class ComputerDAOImpl implements ComputerDAO {
 
     @Override
     public List<Computer> findAll(int offset, int length, String search, String column, String order) {
-        column = column == null ? "name" : column;
-        order = order == null ? "ASC" : order;
+        column = column == null || column.equals("") ? "name" : column;
+        order = order == null || order.equals("")? "ASC" : order;
         length = length == 0 ? count(null) : length;
 
         String query = "";
@@ -149,7 +149,6 @@ public class ComputerDAOImpl implements ComputerDAO {
                 ps.setObject(2, computer.getIntroduced());
                 ps.setObject(3, computer.getDiscontinued());
                 ps.setLong(4, computer.getCompany().getId());
-                ps.executeUpdate();
                 return ps;
             }
         }, holder);
