@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>computer-database</groupId>
 	<artifactId>computer-database</artifactId>
-	<version>0.6.2-RELEASE</version>
+	<version>0.7.2-SNAPSHOT</version>
 
 	<packaging>war</packaging>
 
@@ -104,13 +104,6 @@
 			<scope>test</scope>
 		</dependency>
 
-		<!-- HikariCP dependencies -->
-		<dependency>
-			<groupId>com.zaxxer</groupId>
-			<artifactId>HikariCP</artifactId>
-			<version>${hikariCPVersion}</version>
-		</dependency>
-
 		<!-- Gatling dependencies -->
 		<dependency>
 			<groupId>io.gatling.highcharts</groupId>
@@ -148,6 +141,31 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-web</artifactId>
 			<version>${spring.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webmvc</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+
+		<!-- Form Validation using Annotations -->
+		<dependency>
+			<groupId>javax.validation</groupId>
+			<artifactId>validation-api</artifactId>
+			<version>1.1.0.Final</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-validator</artifactId>
+			<version>5.4.1.Final</version>
 		</dependency>
 	</dependencies>
 

@@ -1,18 +1,15 @@
 package com.excilys.computerdatabase.controllers;
 
-import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-
-import com.excilys.computerdatabase.config.Config;
 import com.excilys.computerdatabase.dtos.CompanyDTO;
 import com.excilys.computerdatabase.dtos.ComputerDTO;
 import com.excilys.computerdatabase.exceptions.CompanyNotFoundException;
@@ -24,80 +21,63 @@ import com.excilys.computerdatabase.services.interfaces.CompanyService;
 import com.excilys.computerdatabase.services.interfaces.ComputerService;
 import com.excilys.computerdatabase.validators.ComputerValidator;
 
-public class AddComputerServlet extends HttpServlet {
-    private static final long serialVersionUID = -82009216108348436L;
+@Controller("addComputer")
+@RequestMapping("/addComputer")
+public class AddComputerServlet {
+    @Autowired
     private ComputerService computerService;
+
+    @Autowired
     private CompanyService companyService;
-
-    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter
-            .ofPattern(Config.getProperties().getProperty("date_format"));
-
-    /**
-     * Constructor.
-     */
-    public AddComputerServlet() {
-        AnnotationConfigApplicationContext  context = new AnnotationConfigApplicationContext();
-        context.scan("com.excilys.computerdatabase");
-        context.refresh();
-
-        computerService = (ComputerService) context.getBean("computerService");
-        companyService = (CompanyService) context.getBean("companyService");
-
-        context.close();
-    }
 
     /**
      * GET addComputer.
      * @param request request
-     * @param response response
-     * @throws ServletException servelt exception
-     * @throws IOException io exception
      */
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        RequestDispatcher view = request.getRequestDispatcher("WEB-INF/views/addComputer.jsp");
+    @RequestMapping(method = RequestMethod.GET)
+    public String get(ModelMap model) {
+        model.addAttribute("companies", companyService.getPage().getObjects());
 
-        request.setAttribute("companies", companyService.getPage().getObjects());
-
-        view.forward(request, response);
+        return "addComputer";
     }
-
+    
     /**
      * POST addComputer.
      * @param request request
      * @param response response
-     * @throws ServletException servelt exception
-     * @throws IOException io exception
      */
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    @RequestMapping(method = RequestMethod.POST)
+    public String post(ModelMap model,
+            @RequestParam("name") String name,
+            @RequestParam("introduced") String introduced,
+            @RequestParam("discontinued") String discontinued,
+            @RequestParam("companyId") long companyId) {
+
         ComputerDTO computerDTO = new ComputerDTO();
-        CompanyDTO companyDTO = new CompanyDTO();
 
-        String introduced = request.getParameter("introduced");
-        String discontinued = request.getParameter("discontinued");
+        computerDTO.setName(name);        
+        computerDTO.setIntroduced(!introduced.equals("") ? LocalDate.parse(introduced, DateTimeFormatter.ofPattern("yyyy-MM-dd")) : null);
+        computerDTO.setDiscontinued(!discontinued.equals("") ? LocalDate.parse(discontinued, DateTimeFormatter.ofPattern("yyyy-MM-dd")) : null);
 
-        companyDTO.setId(Long.parseLong(request.getParameter("companyId")));
-
-        computerDTO.setName(request.getParameter("name"));
-        computerDTO.setIntroduced(!introduced.equals("") ? LocalDate.parse(introduced, DateTimeFormatter.ofPattern("yyyy-MM-dd")).format(DATE_FORMATTER) : "");
-        computerDTO.setDiscontinued(!discontinued.equals("") ? LocalDate.parse(discontinued, DateTimeFormatter.ofPattern("yyyy-MM-dd")).format(DATE_FORMATTER) : "");
-        computerDTO.setCompany(companyDTO);
 
         try {
+            CompanyDTO companyDTO = companyService.getById(companyId);
+            computerDTO.setCompany(companyDTO);
+
             Computer computer =  ComputerMapper.createBean(computerDTO);
             ComputerValidator.validate(computer);
-            response.sendRedirect("dashboard");
             computerService.add(computer);
+
+            return "redirect:dashboard";
         } catch (IntroducedAfterDiscontinuedException e) {
-            request.setAttribute("error", "La date d'ajout doit être antérieure à la date de retrait");
-            doGet(request, response);
+            model.addAttribute("error", "La date d'ajout doit être antérieure à la date de retrait");
+            return get(model);
         } catch (NameEmptyException e) {
-            request.setAttribute("error", "Le nom doit être spécifié");
-            doGet(request, response);
+            model.addAttribute("error", "Le nom doit être spécifié");
+            return get(model);
         } catch (CompanyNotFoundException e) {
-            request.setAttribute("error", "La company n'existe pas");
-            doGet(request, response);
+            model.addAttribute("error", "La company n'existe pas");
+            return get(model);
         }
     }
 }

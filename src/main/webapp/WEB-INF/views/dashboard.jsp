@@ -2,11 +2,11 @@
 	pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="utils"%>
-
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <!DOCTYPE html>
 <html>
 <head>
-<title>Computer Database</title>
+<title><spring:message code="label.title" /></title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta charset="utf-8">
 <!-- Bootstrap -->
@@ -37,27 +37,26 @@
 				</div>
 			</c:if>
 
-			<h1 id="homeTitle">${computerCount} Computer${computerCount > 1 ? 's' : ''}
-				found</h1>
+			<h1 id="homeTitle">${computerCount} Computer${computerCount > 1 ? 's' : ''}</h1>
 
 			<div id="actions" class="form-horizontal">
 				<div class="pull-left">
-					<form id="searchForm"
-						action="" method="GET"
-						class="form-inline">
-							 
-						<input type="hidden" id="pageSize" name="pageSize" value="${pageSize}" />
-							 
-						<input type="search" id="searchbox"
-							name="search" class="form-control" placeholder="Search name" value="${search}"/>
-						<input type="submit" id="searchsubmit" value="Filter by name"
-							class="btn btn-primary" />
+					<form id="searchForm" action="" method="GET" class="form-inline">
+						<spring:message code="label.dashboard.search" var="searchMessage" />
+						<spring:message code="label.dashboard.filter" var="filterMessage" />
+
+						<input type="hidden" id="pageSize" name="pageSize"
+							value="${pageSize}" /> <input type="search" id="searchbox"
+							name="search" class="form-control" placeholder="${searchMessage}"
+							value="${search}" /> <input type="submit" id="searchsubmit"
+							value="${filterMessage}" class="btn btn-primary" />
 					</form>
 				</div>
 				<div class="pull-right">
-					<a class="btn btn-success" id="addComputer" href="addComputer">Add
-						Computer</a> <a class="btn btn-default" id="editComputer" href="#"
-						onclick="$.fn.toggleEditMode();">Edit</a>
+					<a class="btn btn-success" id="addComputer" href="addComputer"><spring:message
+							code="label.addComputer.title" /></a> <a class="btn btn-default"
+						id="editComputer" href="#" onclick="$.fn.toggleEditMode();"><spring:message
+							code="label.edit" /></a>
 				</div>
 			</div>
 		</div>
@@ -81,56 +80,56 @@
 						</span></th>
 
 						<!-- Table header for Computer Name -->
+						<spring:message code="label.computer.name"
+							var="computerNameMessage" />
 						<th><utils:link href="dashboard" pageSize="${pageSize}"
 								search="${search}" column="name"
 								order="${column != null && column == 'name' && order != 'DESC' ? 'DESC' : 'ASC'}"
-								text="Computer name"/> 
-							<c:if test="${column == 'name' && order == 'ASC'}">
+								text="${computerNameMessage}" /> <c:if
+								test="${column == 'name' && order == 'ASC'}">
 								<span class="glyphicon glyphicon-chevron-up"></span>
-							</c:if> 
-							<c:if test="${column == 'name' && order == 'DESC'}">
+							</c:if> <c:if test="${column == 'name' && order == 'DESC'}">
 								<span class="glyphicon glyphicon-chevron-down"></span>
-							</c:if>
-						</th>
+							</c:if></th>
 
 						<!-- Table header for Introduced Date -->
+						<spring:message code="label.computer.introduced"
+							var="computerIntroducedMessage" />
 						<th><utils:link href="dashboard" pageSize="${pageSize}"
 								search="${search}" column="introduced"
 								order="${column != null && column == 'introduced' && order != 'DESC' ? 'DESC' : 'ASC'}"
-								text="Introduced date" />
-							<c:if test="${column == 'introduced' && order == 'ASC'}">
+								text="${computerIntroducedMessage}" /> <c:if
+								test="${column == 'introduced' && order == 'ASC'}">
 								<span class="glyphicon glyphicon-chevron-up"></span>
-							</c:if> 
-							<c:if test="${column == 'introduced' && order == 'DESC'}">
+							</c:if> <c:if test="${column == 'introduced' && order == 'DESC'}">
 								<span class="glyphicon glyphicon-chevron-down"></span>
-							</c:if>
-						</th>
+							</c:if></th>
 
 						<!-- Table header for Discontinued Date -->
+						<spring:message code="label.computer.discontinued"
+							var="computerDiscontinuedMessage" />
 						<th><utils:link href="dashboard" pageSize="${pageSize}"
 								search="${search}" column="discontinued"
 								order="${column != null && column == 'discontinued' && order != 'DESC' ? 'DESC' : 'ASC'}"
-								text="Discontinued date" />
-							<c:if test="${column == 'discontinued' && order == 'ASC'}">
+								text="${computerDiscontinuedMessage}" /> <c:if
+								test="${column == 'discontinued' && order == 'ASC'}">
 								<span class="glyphicon glyphicon-chevron-up"></span>
-							</c:if> 
-							<c:if test="${column == 'discontinued' && order == 'DESC'}">
+							</c:if> <c:if test="${column == 'discontinued' && order == 'DESC'}">
 								<span class="glyphicon glyphicon-chevron-down"></span>
-							</c:if>
-						</th>
+							</c:if></th>
 
 						<!-- Table header for Company -->
+						<spring:message code="label.computer.company"
+							var="computerCompanyMessage" />
 						<th><utils:link href="dashboard" pageSize="${pageSize}"
 								search="${search}" column="companyname"
 								order="${column != null && column == 'companyname' && order != 'DESC' ? 'DESC' : 'ASC'}"
-								text="Company" />
-							<c:if test="${column == 'companyname' && order == 'ASC'}">
+								text="${computerCompanyMessage}" /> <c:if
+								test="${column == 'companyname' && order == 'ASC'}">
 								<span class="glyphicon glyphicon-chevron-up"></span>
-							</c:if> 
-							<c:if test="${column == 'companyname' && order == 'DESC'}">
+							</c:if> <c:if test="${column == 'companyname' && order == 'DESC'}">
 								<span class="glyphicon glyphicon-chevron-down"></span>
-							</c:if>
-						</th>
+							</c:if></th>
 
 					</tr>
 				</thead>
@@ -153,8 +152,8 @@
 
 	<footer class="navbar-fixed-bottom">
 		<div class="container text-center">
-			<utils:pagination nbPage="${nbPage}" pageSize="${pageSize}" search="${search}"
-				page="${page}" />
+			<utils:pagination nbPage="${nbPage}" pageSize="${pageSize}"
+				search="${search}" page="${page}" />
 		</div>
 
 	</footer>

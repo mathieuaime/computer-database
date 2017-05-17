@@ -3,10 +3,11 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="utils"%>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <!DOCTYPE html>
 <html>
 <head>
-<title>Computer Database</title>
+<title><spring:message code="label.title" /></title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <!-- Bootstrap -->
 <link href="resources/css/bootstrap.min.css" rel="stylesheet"
@@ -27,43 +28,35 @@
 				<div class="col-xs-8 col-xs-offset-2 box">
 					<div class="label label-default pull-right">id:
 						${computer.id}</div>
-					<h1>Edit Computer</h1>
+					<h1>
+						<spring:message code="label.editComputer.title" />
+					</h1>
 
 					<form action="editComputer" method="POST">
 						<input type="hidden" value="${computer.id}" id="id" name="id" />
 						<fieldset>
 							<div class="form-group">
-								<label for="computerName">Computer name</label> <input
-									type="text" class="form-control" id="computerName"
-									placeholder="Computer name" value="${computer.name}"
+								<label for="computerName"><spring:message
+										code="label.computer.name" /></label> <input type="text"
+									class="form-control" id="computerName" value="${computer.name}"
 									name="name">
 							</div>
 							<div class="form-group">
-								<fmt:parseDate value="${computer.introduced}"
-									pattern="${dateFormat}" var="introducedParsed" />
-								<fmt:formatDate value="${introducedParsed}" pattern="yyyy-MM-dd"
-									var="formatedIntroduced" />
-
-								<label for="introduced">Introduced date</label> <input
-									type="date" class="form-control" id="introduced"
-									placeholder="Introduced date" value="${formatedIntroduced}"
-									name="introduced">
+								<label for="introduced"><spring:message
+										code="label.computer.introduced" /></label> <input type="date"
+									class="form-control" id="introduced"
+									value="${computer.introduced}" name="introduced">
 							</div>
 							<div class="form-group">
-								<fmt:parseDate value="${computer.discontinued}"
-									pattern="${dateFormat}" var="discontinuedParsed" />
-								<fmt:formatDate value="${discontinuedParsed}" pattern="yyyy-MM-dd"
-									var="formatedDiscontinued" />
-									
-								<label for="discontinued">Discontinued date</label> <input
-									type="date" class="form-control" id="discontinued"
-									placeholder="Discontinued date"
-									value="${formatedDiscontinued}"
-									name="discontinued">
+								<label for="discontinued"><spring:message
+										code="label.computer.discontinued" /></label> <input type="date"
+									class="form-control" id="discontinued"
+									value="${computer.discontinued}" name="discontinued">
 							</div>
 							<div class="form-group">
-								<label for="companyId">Company</label> <select
-									class="form-control" id="companyId" name="companyId">
+								<label for="companyId"><spring:message
+										code="label.computer.company" /></label> <select class="form-control"
+									id="companyId" name="companyId">
 									<c:forEach items="${companies}" var="company">
 										<c:choose>
 											<c:when test="${company.id == computer.company.id}">
@@ -78,10 +71,13 @@
 							</div>
 						</fieldset>
 						<div class="actions pull-right">
-							<input type="submit" value="Edit" class="btn btn-primary">
-							or
+							<spring:message code="label.edit" var="editMessage" />
+							<spring:message code="label.cancel" var="cancelMessage" />
+							<input type="submit" value="${editMessage}"
+								class="btn btn-primary">
+							<spring:message code="label.or" />
 							<utils:link href="dashboard" classe="btn btn-default"
-								text="Cancel" />
+								text="${cancelMessage}" />
 						</div>
 					</form>
 				</div>
@@ -91,7 +87,7 @@
 					<div class="col-xs-8 col-xs-offset-2 box">
 						<br />
 						<div class="alert alert-danger">
-							<strong>Erreur </strong>${error}
+							<strong><spring:message code="label.error" /> </strong>${error}
 						</div>
 					</div>
 				</div>

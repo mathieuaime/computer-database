@@ -55,20 +55,20 @@ public class ComputerServiceImpl implements ComputerService {
     }
 
     @Override
-    @Transactional(readOnly = false, rollbackFor = Exception.class)
-    public ComputerDTO add(Computer computer) {
+    @Transactional(readOnly = false, rollbackFor = CompanyNotFoundException.class)
+    public ComputerDTO add(Computer computer) throws CompanyNotFoundException {
         return ComputerMapper.createDTO(computerDAO.add(computer));
     }
 
     @Override
-    @Transactional(readOnly = false, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, rollbackFor = CompanyNotFoundException.class)
     public ComputerDTO update(Computer computer) throws ComputerNotFoundException {
 
         return ComputerMapper.createDTO(computerDAO.update(computer));
     }
 
     @Override
-    @Transactional(readOnly = false, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, rollbackFor = CompanyNotFoundException.class)
     public void delete(long id) throws ComputerNotFoundException {
         computerDAO.delete(id);
     }

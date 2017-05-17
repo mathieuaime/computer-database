@@ -48,7 +48,6 @@ public interface CompanyDAO {
     /**
      * Delete a company and all its computers.
      * @param id the id of the company
-     * @throws CompanyNotFoundException when the company does not exist
      */
-    void delete(long id) throws CompanyNotFoundException;
+    void delete(long id);
 }

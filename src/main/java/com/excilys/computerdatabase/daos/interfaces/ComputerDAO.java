@@ -44,14 +44,15 @@ public interface ComputerDAO {
      * Add a computer.
      * @param computer the computer to add
      * @return Computer
+     * @throws CompanyNotFoundException 
      */
-    Computer add(Computer computer);
+    Computer add(Computer computer) throws CompanyNotFoundException;
 
     /**
      * Update a computer.
      * @param computer the computer to update
      * @return Computer
-     * @throws ComputerNotFoundException exception when the computer is not found
+     * @throws ComputerNotFoundException Compûter Not Found Exception
      */
     Computer update(Computer computer) throws ComputerNotFoundException;
 

@@ -60,7 +60,7 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
-    @Transactional(readOnly = false, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, rollbackFor = CompanyNotFoundException.class)
     public void delete(long id) throws CompanyNotFoundException {
         computerDAO.deleteFromCompany(id);
         companyDAO.delete(id);

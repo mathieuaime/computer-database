@@ -1,5 +1,7 @@
 package com.excilys.computerdatabase.cli;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -152,8 +154,8 @@ public class CLI {
 
                     computerDTO.setName(nameComputer);
                     computerDTO.setId(Long.parseLong(idComputer));
-                    computerDTO.setIntroduced(introducedComputer);
-                    computerDTO.setDiscontinued(discontinuedComputer);
+                    computerDTO.setIntroduced(!introducedComputer.equals("") ? LocalDate.parse(introducedComputer, DateTimeFormatter.ofPattern("yyyy-MM-dd")) : null);
+                    computerDTO.setDiscontinued(!discontinuedComputer.equals("") ? LocalDate.parse(discontinuedComputer, DateTimeFormatter.ofPattern("yyyy-MM-dd")) : null);
                     computerDTO.setCompany(companyDTO);
 
                     Computer computer = ComputerMapper.createBean(computerDTO);
@@ -200,8 +202,8 @@ public class CLI {
 
                     computerDTO.setName(nameComputer);
                     computerDTO.setId(Long.parseLong(idComputer));
-                    computerDTO.setIntroduced(introducedComputer);
-                    computerDTO.setDiscontinued(discontinuedComputer);
+                    computerDTO.setIntroduced(!introducedComputer.equals("") ? LocalDate.parse(introducedComputer, DateTimeFormatter.ofPattern("yyyy-MM-dd")) : null);
+                    computerDTO.setDiscontinued(!discontinuedComputer.equals("") ? LocalDate.parse(discontinuedComputer, DateTimeFormatter.ofPattern("yyyy-MM-dd")) : null);
                     computerDTO.setCompany(companyDTO);
 
                     Computer computer = ComputerMapper.createBean(computerDTO);
@@ -211,12 +213,12 @@ public class CLI {
 
                 } catch (NumberFormatException e) {
                     System.out.println("L'id doit être un nombre");
-                } catch (ComputerNotFoundException e) {
-                    System.out.println("Le computer n'existe pas");
                 } catch (IntroducedAfterDiscontinuedException e) {
                     System.out.println("La date d'ajout doit être antérieure à la date de retrait");
                 } catch (NameEmptyException e) {
                     System.out.println("Le nom doit être non nul");
+                } catch (ComputerNotFoundException e) {
+                    System.out.println("Le computer n'existe pas");
                 } catch (CompanyNotFoundException e) {
                     System.out.println("La company n'existe pas");
                 }
