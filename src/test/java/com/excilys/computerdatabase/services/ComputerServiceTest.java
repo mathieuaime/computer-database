@@ -6,7 +6,11 @@ import java.sql.DriverManager;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import javax.sql.DataSource;
+
+import org.dbunit.DataSourceDatabaseTester;
 import org.dbunit.DatabaseTestCase;
+import org.dbunit.IDatabaseTester;
 import org.dbunit.database.DatabaseConfig;
 import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
@@ -14,11 +18,17 @@ import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
 import org.dbunit.ext.mysql.MySqlDataTypeFactory;
 import org.dbunit.operation.DatabaseOperation;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.excilys.computerdatabase.config.Config;
-import com.excilys.computerdatabase.dtos.ComputerDTO;
+import com.excilys.computerdatabase.config.spring.DAOConfig;
+import com.excilys.computerdatabase.config.spring.ServiceConfig;
 import com.excilys.computerdatabase.exceptions.CompanyNotFoundException;
 import com.excilys.computerdatabase.exceptions.ComputerNotFoundException;
 import com.excilys.computerdatabase.mappers.ComputerMapper;
@@ -26,33 +36,36 @@ import com.excilys.computerdatabase.models.Company;
 import com.excilys.computerdatabase.models.Computer;
 import com.excilys.computerdatabase.services.interfaces.ComputerService;
 
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = { DAOConfig.class, ServiceConfig.class} )
 public class ComputerServiceTest extends DatabaseTestCase {
 
+    @Autowired
     private ComputerService computerService;
-    private Company comp1;
-    private Computer c1;
-    private Computer c2;
 
-    private static final String SAMPLE_TEST_XML = "src/test/resources/db-sample.xml";
+    @Autowired
+    private DataSource dataSource;
 
+    private IDatabaseTester databaseTester;
+    
     private static final String URL = Config.getProperties().getProperty("urlTest");
     private static final String USER = Config.getProperties().getProperty("user");
     private static final String PASSWORD = Config.getProperties().getProperty("password");
+
+    private Company comp1;
+    private Company comp2;
+    private Computer c1;
+    private Computer c2;
+    private Computer c3;
+
+    private static final String SAMPLE_TEST_XML = "src/test/resources/db-sample.xml";
 
     /**
      * ComputerTest constructor.
      */
     public ComputerServiceTest() {
-
-        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
-        context.scan("com.excilys.computerdatabase");
-        context.refresh();
-
-        computerService = (ComputerService) context.getBean("computerService");
-
-        context.close();
-
         comp1 = new Company.Builder("Company2").id(2L).build();
+        comp2 = new Company.Builder("Company2").id(1500L).build();
 
         c1 = new Computer("Computer1");
         c1.setId(1000L);
@@ -61,6 +74,10 @@ public class ComputerServiceTest extends DatabaseTestCase {
         c2 = new Computer("Computer2");
         c2.setId(1001L);
         c2.setCompany(comp1);
+        
+        c3 = new Computer("Computer3");
+        c3.setId(1002L);
+        c3.setCompany(comp2);
     }
 
     /**
@@ -191,9 +208,8 @@ public class ComputerServiceTest extends DatabaseTestCase {
     @Test
     public void testAdd() {
 
-        computerService.add(c1);
-
         try {
+            computerService.add(c1);
             Computer c = ComputerMapper.createBean(computerService.getById(c1.getId()));
             assertEquals(c1, c);
         } catch (ComputerNotFoundException e) {
@@ -209,15 +225,9 @@ public class ComputerServiceTest extends DatabaseTestCase {
     @Test
     public void testAddNonPresentCompany() {
 
-        computerService.add(c1);
-
         try {
-            ComputerDTO c = computerService.getById(c1.getId());
-            c.getCompany().setId(1000L);
-            ComputerMapper.createBean(c);
+            computerService.add(c3);
             fail("Exception Not Thrown");
-        } catch (ComputerNotFoundException e) {
-            fail("Computer Not Added");
         } catch (CompanyNotFoundException e) {
         }
     }
@@ -291,34 +301,72 @@ public class ComputerServiceTest extends DatabaseTestCase {
         }
     }
 
-    @Override
-    protected IDatabaseConnection getConnection() throws Exception {
-        Connection jdbcConnection = DriverManager.getConnection(URL, USER, PASSWORD);
 
-        return new DatabaseConnection(jdbcConnection);
+    /**
+     * Prepare the test instance by handling the Spring annotations and updating
+     * the database to the stale state.
+     * 
+     * @throws java.lang.Exception
+     */
+    @Before
+    public void setUp() throws Exception {
+        databaseTester = new DataSourceDatabaseTester(dataSource);
+        databaseTester.setDataSet(this.getDataSet());
+        databaseTester.setSetUpOperation(this.getSetUpOperation());
+        databaseTester.onSetup();
     }
 
+    /**
+     * Perform any required database clean up after the test runs to ensure the
+     * stale state has not been dirtied for the next test.
+     * 
+     * @throws java.lang.Exception
+     */
+    @After
+    public void tearDown() throws Exception {
+        databaseTester.setTearDownOperation(this.getTearDownOperation());
+        databaseTester.onTearDown();
+    }
+
+    /**
+     * Retrieve the DataSet to be used from Xml file. This Xml file should be
+     * located on the classpath.
+     */
     @Override
     protected IDataSet getDataSet() throws Exception {
         FlatXmlDataSetBuilder builder = new FlatXmlDataSetBuilder();
         IDataSet dataSet = builder.build(new File(SAMPLE_TEST_XML));
-
         return dataSet;
     }
-
+    
     @Override
     protected void setUpDatabaseConfig(DatabaseConfig config) {
         config.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new MySqlDataTypeFactory());
     }
 
+    /**
+     * On setUp() refresh the database updating the data to the data in the
+     * stale state. Cannot currently use CLEAN_INSERT due to foreign key
+     * constraints.
+     */
     @Override
-    protected DatabaseOperation getSetUpOperation() throws Exception {
-        return DatabaseOperation.CLEAN_INSERT; // by default (will do DELETE_ALL
-                                               // + INSERT)
+    protected DatabaseOperation getSetUpOperation() {
+        return DatabaseOperation.CLEAN_INSERT;
+    }
+
+    /**
+     * On tearDown() bring back to the state it was in
+     * before the tests started.
+     */
+    @Override
+    protected DatabaseOperation getTearDownOperation() {
+        return DatabaseOperation.NONE;
     }
 
     @Override
-    protected DatabaseOperation getTearDownOperation() throws Exception {
-        return DatabaseOperation.NONE; // by default
+    protected IDatabaseConnection getConnection() throws Exception {
+        Connection jdbcConnection = DriverManager.getConnection(URL, USER, PASSWORD);
+
+        return new DatabaseConnection(jdbcConnection); 
     }
 }

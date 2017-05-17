@@ -14,8 +14,4 @@
 		company_id='2' />
 
 	<computer id='1' name='Computer1' company_id='1' />
-
-
-
-
 </dataset>

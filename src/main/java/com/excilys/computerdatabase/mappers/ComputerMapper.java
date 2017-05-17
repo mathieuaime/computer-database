@@ -87,7 +87,7 @@ public class ComputerMapper {
         
         CompanyDTO companyDTO = new CompanyDTO();
         companyDTO.setId(computerDTO.getCompany().getId());
-        companyDTO.setName(computerDTO.getCompany().getName());
+        companyDTO.setName(computerDTO.getCompany().getName()); 
 
         return new Computer.Builder(computerDTO.getName()).id(computerDTO.getId()).introduced(introduced)
                 .discontinued(discontinued)

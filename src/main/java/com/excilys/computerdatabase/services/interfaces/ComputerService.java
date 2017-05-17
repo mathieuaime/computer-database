@@ -29,8 +29,9 @@ public interface ComputerService extends PageService<ComputerDTO> {
      * Add a computer.
      * @param computer the computer to add
      * @return ComputerDTO
+     * @throws CompanyNotFoundException 
      */
-    ComputerDTO add(Computer computer);
+    ComputerDTO add(Computer computer) throws CompanyNotFoundException;
 
     /**
      * Update a computer.

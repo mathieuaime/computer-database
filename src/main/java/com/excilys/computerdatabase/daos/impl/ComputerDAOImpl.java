@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
@@ -137,24 +138,32 @@ public class ComputerDAOImpl implements ComputerDAO {
     }
 
     @Override
-    public Computer add(Computer computer) {
+    public Computer add(Computer computer) throws CompanyNotFoundException {
         KeyHolder holder = new GeneratedKeyHolder();
 
-        jdbcTemplate.update(new PreparedStatementCreator() {
+        try {
+            jdbcTemplate.update(new PreparedStatementCreator() {
 
-            @Override
-            public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
-                PreparedStatement ps = connection.prepareStatement(QUERY_ADD_COMPUTER, Statement.RETURN_GENERATED_KEYS);
-                ps.setString(1, computer.getName());
-                ps.setObject(2, computer.getIntroduced());
-                ps.setObject(3, computer.getDiscontinued());
-                ps.setLong(4, computer.getCompany().getId());
-                return ps;
-            }
-        }, holder);
+                @Override
+                public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
+                    PreparedStatement ps = connection.prepareStatement(QUERY_ADD_COMPUTER,
+                            Statement.RETURN_GENERATED_KEYS);
+                    ps.setString(1, computer.getName());
+                    ps.setObject(2, computer.getIntroduced());
+                    ps.setObject(3, computer.getDiscontinued());
+                    ps.setLong(4, computer.getCompany().getId());
+                    return ps;
+                }
+            }, holder);
 
-        ++countTotal;
-        computer.setId(holder.getKey().longValue());
+            ++countTotal;
+            computer.setId(holder.getKey().longValue());
+        } catch (DataIntegrityViolationException e) {
+            throw new CompanyNotFoundException("Company " + computer.getCompany().getId() + " not found");
+        } catch (DataAccessException e) {
+            LOGGER.debug("error");
+        }
+
         return computer;
     }
 
