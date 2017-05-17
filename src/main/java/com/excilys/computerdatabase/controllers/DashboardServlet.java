@@ -3,8 +3,6 @@ package com.excilys.computerdatabase.controllers;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -24,8 +22,6 @@ public class DashboardServlet  {
 
     private static final String PAGE_DEFAULT = "1";
     private static final String PAGE_SIZE_DEFAULT = "10";
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(DashboardServlet.class);
 
     /**
      * GET Dashboard.

@@ -32,9 +32,6 @@ public class EditComputerServlet {
     @Autowired
     private CompanyService companyService;
 
-    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter
-            .ofPattern(Config.getProperties().getProperty("date_format"));
-
     /**
      * GET editComputer.
      * @param request request
@@ -75,8 +72,8 @@ public class EditComputerServlet {
 
         computerDTO.setId(id);
         computerDTO.setName(name);
-        computerDTO.setIntroduced(!introduced.equals("") ? LocalDate.parse(introduced, DateTimeFormatter.ofPattern("yyyy-MM-dd")).format(DATE_FORMATTER) : "");
-        computerDTO.setDiscontinued(!discontinued.equals("") ? LocalDate.parse(discontinued, DateTimeFormatter.ofPattern("yyyy-MM-dd")).format(DATE_FORMATTER) : "");
+        computerDTO.setIntroduced(!introduced.equals("") ? LocalDate.parse(introduced, DateTimeFormatter.ofPattern("yyyy-MM-dd")) : null);
+        computerDTO.setDiscontinued(!discontinued.equals("") ? LocalDate.parse(discontinued, DateTimeFormatter.ofPattern("yyyy-MM-dd")) : null);
 
         try {
             CompanyDTO companyDTO = companyService.getById(companyId);
@@ -91,7 +88,7 @@ public class EditComputerServlet {
             model.addAttribute("error", "La date d'ajout doit être antérieure à la date de retrait");
             return get(model, id);
         } catch (NameEmptyException e) {
-            model.addAttribute("error", "Le nom doit être spécifié");
+            model.addAttribute("error", "{label.error.nameEmpty}");
             return get(model, id);
         } catch (ComputerNotFoundException e) {
             model.addAttribute("error", "Le computer n'existe pas");

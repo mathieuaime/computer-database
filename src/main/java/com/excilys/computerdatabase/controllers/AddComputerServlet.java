@@ -3,8 +3,6 @@ package com.excilys.computerdatabase.controllers;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -12,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.excilys.computerdatabase.config.Config;
 import com.excilys.computerdatabase.dtos.CompanyDTO;
 import com.excilys.computerdatabase.dtos.ComputerDTO;
 import com.excilys.computerdatabase.exceptions.CompanyNotFoundException;
@@ -32,11 +29,6 @@ public class AddComputerServlet {
 
     @Autowired
     private CompanyService companyService;
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(AddComputerServlet.class);
-
-    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter
-            .ofPattern(Config.getProperties().getProperty("date_format"));
 
     /**
      * GET addComputer.
@@ -64,8 +56,8 @@ public class AddComputerServlet {
         ComputerDTO computerDTO = new ComputerDTO();
 
         computerDTO.setName(name);        
-        computerDTO.setIntroduced(!introduced.equals("") ? LocalDate.parse(introduced, DateTimeFormatter.ofPattern("yyyy-MM-dd")).format(DATE_FORMATTER) : "");
-        computerDTO.setDiscontinued(!discontinued.equals("") ? LocalDate.parse(discontinued, DateTimeFormatter.ofPattern("yyyy-MM-dd")).format(DATE_FORMATTER) : "");
+        computerDTO.setIntroduced(!introduced.equals("") ? LocalDate.parse(introduced, DateTimeFormatter.ofPattern("yyyy-MM-dd")) : null);
+        computerDTO.setDiscontinued(!discontinued.equals("") ? LocalDate.parse(discontinued, DateTimeFormatter.ofPattern("yyyy-MM-dd")) : null);
 
 
         try {
