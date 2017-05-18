@@ -1,9 +1,11 @@
 package com.excilys.computerdatabase.dtos;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 public class CompanyDTO {
 
+    @Min(0)
     private long id;
 
     @NotNull
