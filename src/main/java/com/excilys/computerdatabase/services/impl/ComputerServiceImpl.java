@@ -3,6 +3,7 @@ package com.excilys.computerdatabase.services.impl;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,18 +26,23 @@ public class ComputerServiceImpl implements ComputerService {
     @Autowired
     private ComputerDAO computerDAO;
 
+    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(ComputerServiceImpl.class);
+
     @Override
     public Page<ComputerDTO> getPage() {
+        LOGGER.info("getPage()");
         return getPage(1, count(null), null, null, null);
     }
 
     @Override
     public Page<ComputerDTO> getPage(int pageNumero, int length) {
+        LOGGER.info("getPage(pageNumero : " + pageNumero + ", length : " + length + ")");
         return getPage(pageNumero, length, null, "name", "ASC");
     }
 
     @Override
     public Page<ComputerDTO> getPage(int pageNumero, int length, String search, String column, String order) {
+        LOGGER.info("getPage(pageNumero : " + pageNumero + ", length : " + length + ", search : " + search + ", column : " + column + ", order : " + order + ")");
         return new Page<ComputerDTO>(
                 computerDAO.findAll((pageNumero - 1) * length, length, search, column, order).stream()
                         .map(it -> ComputerMapper.createDTO(it)).collect(Collectors.toList()),
@@ -45,11 +51,13 @@ public class ComputerServiceImpl implements ComputerService {
 
     @Override
     public ComputerDTO getById(long id) throws ComputerNotFoundException {
+        LOGGER.info("getById(id : " + id + ")");
         return ComputerMapper.createDTO(computerDAO.getById(id));
     }
 
     @Override
     public List<ComputerDTO> getByName(String name) {
+        LOGGER.info("getByName(name : " + name + ")");
         return computerDAO.getByName(name).stream().map(it -> ComputerMapper.createDTO(it))
                 .collect(Collectors.toList());
     }
@@ -57,35 +65,40 @@ public class ComputerServiceImpl implements ComputerService {
     @Override
     @Transactional(readOnly = false, rollbackFor = CompanyNotFoundException.class)
     public ComputerDTO add(Computer computer) throws CompanyNotFoundException {
+        LOGGER.info("add(computer : " + computer + ")");
         return ComputerMapper.createDTO(computerDAO.add(computer));
     }
 
     @Override
     @Transactional(readOnly = false, rollbackFor = CompanyNotFoundException.class)
     public ComputerDTO update(Computer computer) throws ComputerNotFoundException {
-
+        LOGGER.info("update(computer : " + computer + ")");
         return ComputerMapper.createDTO(computerDAO.update(computer));
     }
 
     @Override
     @Transactional(readOnly = false, rollbackFor = CompanyNotFoundException.class)
     public void delete(long id) throws ComputerNotFoundException {
+        LOGGER.info("delete(id : " + id + ")");
         computerDAO.delete(id);
     }
 
     @Override
     @Transactional(readOnly = false, rollbackFor = ComputerNotFoundException.class)
     public void delete(List<Long> ids) throws ComputerNotFoundException {
+        LOGGER.info("delete(ids : " + ids + ")");
         computerDAO.delete(ids);
     }
 
     @Override
     public int count(String search) {
+        LOGGER.info("count(search : " + search + ")");
         return computerDAO.count(search);
     }
 
     @Override
     public CompanyDTO getCompany(long id) throws CompanyNotFoundException, ComputerNotFoundException {
+        LOGGER.info("getCompany(id : " + id + ")");
         return CompanyMapper.createDTO(computerDAO.getCompany(id));
     }
 }

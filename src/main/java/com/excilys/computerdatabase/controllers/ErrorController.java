@@ -56,6 +56,6 @@ public class ErrorController {
     
     @PostConstruct
     public void initApp() {
-        LOGGER.debug("Error binding configuration ...");
+        LOGGER.debug("Binding error configuration ...");
     }
 }

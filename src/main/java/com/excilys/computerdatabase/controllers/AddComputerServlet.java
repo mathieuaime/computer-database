@@ -1,14 +1,16 @@
 package com.excilys.computerdatabase.controllers;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
+import javax.validation.Valid;
 
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import com.excilys.computerdatabase.dtos.CompanyDTO;
 import com.excilys.computerdatabase.dtos.ComputerDTO;
@@ -30,14 +32,17 @@ public class AddComputerServlet {
     @Autowired
     private CompanyService companyService;
 
+    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(AddComputerServlet.class);
+
     /**
      * GET addComputer.
      * @param request request
      */
-    @RequestMapping(method = RequestMethod.GET)
+    @GetMapping
     public String get(ModelMap model) {
+        LOGGER.info("get()");
         model.addAttribute("companies", companyService.getPage().getObjects());
-
+        model.addAttribute("computerDTO", new ComputerDTO());
         return "addComputer";
     }
     
@@ -46,22 +51,17 @@ public class AddComputerServlet {
      * @param request request
      * @param response response
      */
-    @RequestMapping(method = RequestMethod.POST)
-    public String post(ModelMap model,
-            @RequestParam("name") String name,
-            @RequestParam("introduced") String introduced,
-            @RequestParam("discontinued") String discontinued,
-            @RequestParam("companyId") long companyId) {
+    @PostMapping
+    public String post(@Valid @ModelAttribute("computerDTO") ComputerDTO computerDTO, 
+            BindingResult result, ModelMap model) {
+        LOGGER.info("post(computerDTO : " + computerDTO + ")");
 
-        ComputerDTO computerDTO = new ComputerDTO();
-
-        computerDTO.setName(name);        
-        computerDTO.setIntroduced(!introduced.equals("") ? LocalDate.parse(introduced, DateTimeFormatter.ofPattern("yyyy-MM-dd")) : null);
-        computerDTO.setDiscontinued(!discontinued.equals("") ? LocalDate.parse(discontinued, DateTimeFormatter.ofPattern("yyyy-MM-dd")) : null);
-
+        if (result.hasErrors()) {
+            return "500";
+        }
 
         try {
-            CompanyDTO companyDTO = companyService.getById(companyId);
+            CompanyDTO companyDTO = companyService.getById(computerDTO.getCompany().getId());
             computerDTO.setCompany(companyDTO);
 
             Computer computer =  ComputerMapper.createBean(computerDTO);

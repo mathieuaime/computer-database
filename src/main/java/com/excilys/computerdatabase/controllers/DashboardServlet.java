@@ -3,11 +3,13 @@ package com.excilys.computerdatabase.controllers;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.excilys.computerdatabase.exceptions.ComputerNotFoundException;
@@ -20,6 +22,8 @@ public class DashboardServlet  {
     @Autowired
     private ComputerService computerService;
 
+    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(DashboardServlet.class);
+
     private static final String PAGE_DEFAULT = "1";
     private static final String PAGE_SIZE_DEFAULT = "10";
 
@@ -28,14 +32,14 @@ public class DashboardServlet  {
      * @param request request
      * @param response response
      */
-    @RequestMapping(method = RequestMethod.GET)
+    @GetMapping
     public String get(ModelMap model,
             @RequestParam(value = "page", required = false, defaultValue = PAGE_DEFAULT) int page,
             @RequestParam(value = "pageSize", required = false, defaultValue = PAGE_SIZE_DEFAULT) int pageSize,
             @RequestParam(value = "search", required = false) String search,
             @RequestParam(value = "order", required = false) String order,
             @RequestParam(value = "column", required = false) String column) {
-
+        LOGGER.info("get");
         int computerCount = computerService.count(search);
 
         model.addAttribute("computerPage", computerService.getPage(page, pageSize, search, column, order));
@@ -49,7 +53,6 @@ public class DashboardServlet  {
         model.addAttribute("pageSizes", new int[] { 10, 50, 100 });
 
         return "dashboard";
-
     }
 
     /**
@@ -57,8 +60,9 @@ public class DashboardServlet  {
      * @param request request
      * @param response response
      */
-    @RequestMapping(method = RequestMethod.POST)
+    @PostMapping
     public String post(ModelMap model, @RequestParam(value = "selection") String selection) {
+        LOGGER.info("post(selection : " + selection + ")");
         String[] listComputersToDelete = selection.split(",");
 
         List<Long> ids = new ArrayList<Long>(listComputersToDelete.length);

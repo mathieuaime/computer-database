@@ -1,13 +1,16 @@
 package com.excilys.computerdatabase.controllers;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
+import javax.validation.Valid;
 
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.excilys.computerdatabase.config.Config;
@@ -32,13 +35,19 @@ public class EditComputerServlet {
     @Autowired
     private CompanyService companyService;
 
+    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(EditComputerServlet.class);
+
     /**
      * GET editComputer.
-     * @param request request
-     * @param response response
+     * 
+     * @param request
+     *            request
+     * @param response
+     *            response
      */
-    @RequestMapping(method = RequestMethod.GET)
+    @GetMapping
     public String get(ModelMap model, @RequestParam(value = "id", defaultValue = "0") long id) {
+        LOGGER.info("get(id : " + id + ")");
         model.addAttribute("companies", companyService.getPage().getObjects());
         model.addAttribute("dateFormat", Config.getProperties().getProperty("date_format"));
 
@@ -47,55 +56,59 @@ public class EditComputerServlet {
         try {
             computerDTO = computerService.getById(id);
         } catch (ComputerNotFoundException e) {
+            LOGGER.error("ComputerNotFound");
             model.addAttribute("error", "Computer inconnu");
         }
 
-        model.addAttribute("computer", computerDTO);
+        model.addAttribute("computerDTO", computerDTO);
         model.addAttribute("companies", companyService.getPage().getObjects());
-        
+
         return "editComputer";
     }
 
     /**
      * POST editComputer.
-     * @param request request
-     * @param response response
+     * 
+     * @param request
+     *            request
+     * @param response
+     *            response
      */
-    @RequestMapping(method = RequestMethod.POST)
-    public String post(ModelMap model,
-            @RequestParam("id") long id,
-            @RequestParam("name") String name,
-            @RequestParam("introduced") String introduced,
-            @RequestParam("discontinued") String discontinued,
-            @RequestParam("companyId") long companyId) {
-        ComputerDTO computerDTO = new ComputerDTO();
+    @PostMapping
+    public String post(@Valid @ModelAttribute("computerDTO") ComputerDTO computerDTO, BindingResult result,
+            ModelMap model) {
+        LOGGER.info("post(computerDTO : " + computerDTO + ")");
 
-        computerDTO.setId(id);
-        computerDTO.setName(name);
-        computerDTO.setIntroduced(!introduced.equals("") ? LocalDate.parse(introduced, DateTimeFormatter.ofPattern("yyyy-MM-dd")) : null);
-        computerDTO.setDiscontinued(!discontinued.equals("") ? LocalDate.parse(discontinued, DateTimeFormatter.ofPattern("yyyy-MM-dd")) : null);
+        if (result.hasErrors()) {
+            return "500";
+        }
 
         try {
-            CompanyDTO companyDTO = companyService.getById(companyId);
+            CompanyDTO companyDTO = companyService.getById(computerDTO.getCompany().getId());
             computerDTO.setCompany(companyDTO);
 
             Computer computer = ComputerMapper.createBean(computerDTO);
             ComputerValidator.validate(computer);
             computerService.update(computer);
-            
+
+            LOGGER.debug("update");
             return "redirect:dashboard";
         } catch (IntroducedAfterDiscontinuedException e) {
+            LOGGER.error("IntroducedAfterDiscontinued");
             model.addAttribute("error", "La date d'ajout doit être antérieure à la date de retrait");
-            return get(model, id);
+            return get(model, computerDTO.getId());
         } catch (NameEmptyException e) {
+            LOGGER.error("NameEmpty");
             model.addAttribute("error", "{label.error.nameEmpty}");
-            return get(model, id);
+            return get(model, computerDTO.getId());
         } catch (ComputerNotFoundException e) {
+            LOGGER.error("ComputerNotFound");
             model.addAttribute("error", "Le computer n'existe pas");
-            return get(model, id);
+            return get(model, computerDTO.getId());
         } catch (CompanyNotFoundException e) {
+            LOGGER.error("CompanyNotFound");
             model.addAttribute("error", "La company n'existe pas");
-            return get(model, id);
+            return get(model, computerDTO.getId());
         }
     }
 }
