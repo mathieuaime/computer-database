@@ -5,13 +5,17 @@ import java.util.List;
 
 public class Page<T> {
     private List<T> objects;
-    private int pageNumero;
+    private int page;
+    private int pageSize;
+    private String search;
+    private String order;
+    private String column;
 
     /**
      * Default Page constructor.
      */
     public Page() {
-        this(new ArrayList<T>(), 0);
+        this(new ArrayList<T>(), 1, 10, null, "ASC", "name");
     }
 
     /**
@@ -19,9 +23,33 @@ public class Page<T> {
      * @param objects list of T objects
      * @param pageNumero numero of the page
      */
-    public Page(List<T> objects, int pageNumero) {
+    public Page(List<T> objects, int page, int pageSize) {
         this.objects = objects;
-        this.pageNumero = pageNumero;
+        this.page = page;
+        this.pageSize = pageSize;
+    }
+    
+    /**
+     * Page constructor.
+     * @param objects list of T objects
+     * @param pageNumero numero of the page
+     */
+    public Page(int page, int pageSize) {
+        this(new ArrayList<T>(), page, pageSize);
+    }
+    
+    public Page(int page, int pageSize, String search, String order, String column) {
+        this(new ArrayList<T>(), page, pageSize, search, order, column);
+    }
+
+    public Page(List<T> objects, int page, int pageSize, String search, String order, String column) {
+        super();
+        this.objects = objects;
+        this.page = page;
+        this.pageSize = pageSize;
+        this.search = search;
+        this.order = order;
+        this.column = column;
     }
 
     public List<T> getObjects() {
@@ -32,12 +60,44 @@ public class Page<T> {
         this.objects = objects;
     }
 
-    public int getPageNumero() {
-        return pageNumero;
+    public int getPage() {
+        return page;
     }
 
-    public void setPageNumero(int pageNumero) {
-        this.pageNumero = pageNumero;
+    public void setPage(int page) {
+        this.page = page;
+    }
+
+    public int getPageSize() {
+        return pageSize;
+    }
+
+    public void setPageSize(int pageSize) {
+        this.pageSize = pageSize;
+    }
+
+    public String getSearch() {
+        return search;
+    }
+
+    public void setSearch(String search) {
+        this.search = search;
+    }
+
+    public String getOrder() {
+        return order;
+    }
+
+    public void setOrder(String order) {
+        this.order = order;
+    }
+
+    public String getColumn() {
+        return column;
+    }
+
+    public void setColumn(String column) {
+        this.column = column;
     }
 
     public int getObjectNumber() {

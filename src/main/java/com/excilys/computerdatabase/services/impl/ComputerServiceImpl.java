@@ -41,12 +41,17 @@ public class ComputerServiceImpl implements ComputerService {
     }
 
     @Override
+    public Page<ComputerDTO> getPage(Page<ComputerDTO> page) {
+        LOGGER.info("getPage(page: " + page + ")");
+        return getPage(page.getPage(), page.getPageSize(), page.getSearch(), page.getColumn(), page.getOrder());
+    }
+
+    @Override
     public Page<ComputerDTO> getPage(int pageNumero, int length, String search, String column, String order) {
-        LOGGER.info("getPage(pageNumero : " + pageNumero + ", length : " + length + ", search : " + search + ", column : " + column + ", order : " + order + ")");
-        return new Page<ComputerDTO>(
-                computerDAO.findAll((pageNumero - 1) * length, length, search, column, order).stream()
-                        .map(it -> ComputerMapper.createDTO(it)).collect(Collectors.toList()),
-                pageNumero);
+        LOGGER.info("getPage(pageNumero : " + pageNumero + ", length : " + length + ", search : " + search
+                + ", column : " + column + ", order : " + order + ")");
+        return new Page<ComputerDTO>(computerDAO.findAll((pageNumero - 1) * length, length, search, column, order)
+                .stream().map(it -> ComputerMapper.createDTO(it)).collect(Collectors.toList()), pageNumero, length);
     }
 
     @Override

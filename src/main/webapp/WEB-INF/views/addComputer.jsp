@@ -3,6 +3,7 @@
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="utils"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -29,33 +30,39 @@
 					<h1>
 						<spring:message code="label.addComputer.title" />
 					</h1>
-					<form action="addComputer" method="POST">
+					<form:form action="addComputer" method="POST" commandName="computerAddForm"
+						modelAttribute="computerDTO">
 						<fieldset>
 							<div class="form-group">
-								<label for="computerName"><spring:message
-										code="label.computer.name" /></label> <input type="text"
-									class="form-control" id="computerName" name="name" required>
+								<form:label path="name">
+									<spring:message code="label.computer.name" />
+								</form:label>
+								<form:input class="form-control" path="name" />
+								<form:errors path="name" cssClass="error" />
 							</div>
 							<div class="form-group">
-								<label for="introduced"><spring:message
-										code="label.computer.introduced" /></label> <input type="date"
-									class="form-control" id="introduced"
-									placeholder="Introduced date" name="introduced">
+								<form:label path="introduced">
+									<spring:message code="label.computer.introduced" />
+								</form:label>
+								<form:input type="date" class="form-control" path="introduced" />
+								<form:errors path="introduced" cssClass="error" />
 							</div>
 							<div class="form-group">
-								<label for="discontinued"><spring:message
-										code="label.computer.discontinued" /></label> <input type="date"
-									class="form-control" id="discontinued" name="discontinued"
-									min="<%=request.getParameter("introduced")%>">
+								<form:label path="discontinued">
+									<spring:message code="label.computer.discontinued" />
+								</form:label>
+								<form:input type="date" class="form-control" path="discontinued" />
+								<form:errors path="discontinued" cssClass="error" />
 							</div>
 							<div class="form-group">
-								<label for="companyId"><spring:message
-										code="label.computer.company" /></label> <select class="form-control"
-									id="companyId" name="companyId">
-									<c:forEach items="${companies}" var="company">
-										<option value="${company.id}">${company.name}</option>
-									</c:forEach>
-								</select>
+								<form:label path="company">
+									<spring:message code="label.computer.company" />
+								</form:label>
+								<form:select class="form-control" path="company.id">
+									<form:options items="${companies}" itemValue="id"
+										itemLabel="name" />
+								</form:select>
+								<form:errors path="company.id" />
 							</div>
 						</fieldset>
 						<div class="actions pull-right">
@@ -67,7 +74,7 @@
 							<utils:link href="dashboard" classe="btn btn-default"
 								text="${cancelMessage}" />
 						</div>
-					</form>
+					</form:form>
 				</div>
 			</div>
 			<c:if test="${error != null}">

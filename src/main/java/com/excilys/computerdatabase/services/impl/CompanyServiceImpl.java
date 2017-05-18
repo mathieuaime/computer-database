@@ -41,12 +41,19 @@ public class CompanyServiceImpl implements CompanyService {
         LOGGER.info("getPage(pageNumero : " + pageNumero + ", length : " + length + ")");
         return getPage(pageNumero, length, null, "ASC", "name");
     }
+    
+    @Override
+    public Page<CompanyDTO> getPage(Page<CompanyDTO> page) {
+        LOGGER.info("getPage(page: " + page + ")");
+        return getPage(page.getPage(), page.getPageSize(), page.getSearch(), page.getOrder(), page.getColumn());
+    }
 
     @Override
-    public Page<CompanyDTO> getPage(int pageNumero, int length, String search, String sort, String order) {
-        LOGGER.info("getPage(pageNumero : " + pageNumero + ", length : " + length + ", search : " + search + ", sort : " + sort + ", order : " + order + ")");
-        return new Page<CompanyDTO>(companyDAO.findAll((pageNumero - 1) * length, length, order).stream()
-                .map(it -> CompanyMapper.createDTO(it)).collect(Collectors.toList()), pageNumero);
+    public Page<CompanyDTO> getPage(int pageNumero, int length, String search, String order, String column) {
+        LOGGER.info("getPage(pageNumero : " + pageNumero + ", length : " + length + ", search : " + search + ", order : "
+                + order + ", column : " + column + ")");
+        return new Page<CompanyDTO>(companyDAO.findAll((pageNumero - 1) * length, length, column).stream()
+                .map(it -> CompanyMapper.createDTO(it)).collect(Collectors.toList()), pageNumero, length);
     }
 
     @Override

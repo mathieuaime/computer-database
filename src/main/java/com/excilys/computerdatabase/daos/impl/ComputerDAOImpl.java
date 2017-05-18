@@ -38,7 +38,7 @@ public class ComputerDAOImpl implements ComputerDAO {
                                                                         + " c.discontinued AS computerdiscontinued,"
                                                                         + " co.id AS computercompanyid,"
                                                                         + " co.name AS computercompanyname"
-                                                                        + " FROM company co LEFT JOIN computer c ON c.company_id = co.id";
+                                                                        + " FROM (select * from company where id in (select distinct company_id from computer)) co LEFT JOIN computer c ON c.company_id = co.id";
 
     private static final String QUERY_FIND_COMPUTER_BY_ID               = QUERY_FIND_COMPUTER + " WHERE c.id = ?";
 
@@ -60,7 +60,7 @@ public class ComputerDAOImpl implements ComputerDAO {
 
     private static final String QUERY_COUNT_COMPUTERS_SEARCH            = "SELECT (select count(id) from computer where name like ?) +" +
                                                                         "(select count(c.id) from computer c inner join (select distinct(id) from company where name like ?) co on c.company_id = co.id) -" +
-                                                                        "(select count(c.id) from computer c inner join company co on c.company_id = co.id where c.name like ? and c.name like ?) as count";
+                                                                        "(select count(c.id) from computer c inner join company co on c.company_id = co.id where c.name like ? and co.name like ?) as count";
 
     private static int countTotal = -1;
 
@@ -196,6 +196,7 @@ public class ComputerDAOImpl implements ComputerDAO {
         } else {
 
             if (!searchForTotalCount) {
+                LOGGER.debug("count with search");
                 query = QUERY_COUNT_COMPUTERS_SEARCH;
                 search += "%";
             }
