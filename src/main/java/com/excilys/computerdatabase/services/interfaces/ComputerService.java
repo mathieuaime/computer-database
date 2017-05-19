@@ -38,8 +38,9 @@ public interface ComputerService extends PageService<ComputerDTO> {
      * @param computer the computer to update
      * @return ComputerDTO
      * @throws ComputerNotFoundException exception when the computer is not found
+     * @throws CompanyNotFoundException 
      */
-    ComputerDTO update(Computer computer) throws ComputerNotFoundException;
+    ComputerDTO update(Computer computer) throws ComputerNotFoundException, CompanyNotFoundException;
 
     /**
      * Delete a computer.

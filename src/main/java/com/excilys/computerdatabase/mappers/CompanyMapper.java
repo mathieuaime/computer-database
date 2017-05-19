@@ -59,8 +59,10 @@ public class CompanyMapper {
     public static CompanyDTO createDTO(Company company) {
         CompanyDTO companyDTO = new CompanyDTO();
 
-        companyDTO.setId(company.getId());
-        companyDTO.setName(company.getName());
+        if (company != null) {
+            companyDTO.setId(company.getId());
+            companyDTO.setName(company.getName());
+        }
 
         return companyDTO;
     }

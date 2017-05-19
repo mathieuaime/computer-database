@@ -23,7 +23,7 @@ import com.excilys.computerdatabase.services.interfaces.CompanyService;
 import com.excilys.computerdatabase.services.interfaces.ComputerService;
 import com.excilys.computerdatabase.validators.ComputerValidator;
 
-@Controller("addComputer")
+@Controller
 @RequestMapping("/addComputer")
 public class AddComputerServlet {
     @Autowired

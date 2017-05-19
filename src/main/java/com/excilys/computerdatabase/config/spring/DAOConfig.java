@@ -10,7 +10,6 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 /**
@@ -40,17 +39,6 @@ public class DAOConfig {
         dataSource.setPassword(environment.getProperty("spring.datasource.password"));
 
         return dataSource;
-    }
-
-    /**
-     * JDBCTemplate.
-     * @return JDBC Template
-     */
-    @Bean
-    public JdbcTemplate jdbcTemplate() {
-        JdbcTemplate jdbcTemplate = new JdbcTemplate();
-        jdbcTemplate.setDataSource(dataSource());
-        return jdbcTemplate;
     }
 
     /**

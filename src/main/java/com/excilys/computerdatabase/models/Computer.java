@@ -1,16 +1,42 @@
 package com.excilys.computerdatabase.models;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+
 import com.excilys.computerdatabase.config.Config;
 
-public class Computer {
-    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern(Config.getProperties().getProperty("date_format"));
+@Entity
+@Table(name = "computer")
+public class Computer implements Serializable {
+
+    private static final long serialVersionUID = -2089516842549594133L;
+
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter
+            .ofPattern(Config.getProperties().getProperty("date_format"));
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+
+    @Column(nullable = false)
     private String name;
+
+    @Column
     private LocalDate introduced;
+
+    @Column
     private LocalDate discontinued;
+
+    @ManyToOne
     private Company company;
 
     /**
@@ -189,10 +215,7 @@ public class Computer {
     @Override
     public String toString() {
 
-        return id + "/"
-                + name + "/"
-                + (introduced != null ? introduced.format(DATE_FORMATTER) : "") + "/"
-                + (discontinued != null ? discontinued.format(DATE_FORMATTER) : "") + "/"
-                + company;
+        return id + "/" + name + "/" + (introduced != null ? introduced.format(DATE_FORMATTER) : "") + "/"
+                + (discontinued != null ? discontinued.format(DATE_FORMATTER) : "") + "/" + company;
     }
 }

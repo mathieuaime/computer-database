@@ -189,20 +189,6 @@ public class ComputerServiceTest extends DatabaseTestCase {
     }
 
     /**
-     * Test getCompany when the company does not exist.
-     */
-    @Test
-    public void testGetCompanyCompanyNonPresent() {
-        try {
-            computerService.getCompany(3L);
-            fail("Exception Not Thrown");
-        } catch (ComputerNotFoundException e) {
-            fail("Bad Exception Thrown");
-        } catch (CompanyNotFoundException e) {
-        }
-    }
-
-    /**
      * Test add.
      */
     @Test
@@ -243,6 +229,8 @@ public class ComputerServiceTest extends DatabaseTestCase {
             computerService.update(c1);
         } catch (ComputerNotFoundException e1) {
             fail("Computer Not Found");
+        } catch (CompanyNotFoundException e1) {
+            fail("Company Not Found");
         }
 
         try {
@@ -266,6 +254,8 @@ public class ComputerServiceTest extends DatabaseTestCase {
             computerService.update(c1);
             fail("Exception Not Thrown");
         } catch (ComputerNotFoundException e) {
+        } catch (CompanyNotFoundException e1) {
+            fail("Bad Exception thrown");
         }
     }
 

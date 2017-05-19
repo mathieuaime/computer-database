@@ -19,7 +19,7 @@ import com.excilys.computerdatabase.mappers.ComputerMapper;
 import com.excilys.computerdatabase.models.Computer;
 import com.excilys.computerdatabase.services.interfaces.ComputerService;
 
-@Service("computerService")
+@Service
 @Transactional(readOnly = true)
 public class ComputerServiceImpl implements ComputerService {
 
@@ -76,7 +76,7 @@ public class ComputerServiceImpl implements ComputerService {
 
     @Override
     @Transactional(readOnly = false, rollbackFor = CompanyNotFoundException.class)
-    public ComputerDTO update(Computer computer) throws ComputerNotFoundException {
+    public ComputerDTO update(Computer computer) throws ComputerNotFoundException, CompanyNotFoundException {
         LOGGER.info("update(computer : " + computer + ")");
         return ComputerMapper.createDTO(computerDAO.update(computer));
     }

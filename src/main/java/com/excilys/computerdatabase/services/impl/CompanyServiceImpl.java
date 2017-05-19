@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,7 +19,7 @@ import com.excilys.computerdatabase.mappers.CompanyMapper;
 import com.excilys.computerdatabase.mappers.ComputerMapper;
 import com.excilys.computerdatabase.services.interfaces.CompanyService;
 
-@Service("companyService")
+@Service
 @Transactional(readOnly = true)
 public class CompanyServiceImpl implements CompanyService {
 
@@ -41,7 +42,7 @@ public class CompanyServiceImpl implements CompanyService {
         LOGGER.info("getPage(pageNumero : " + pageNumero + ", length : " + length + ")");
         return getPage(pageNumero, length, null, "ASC", "name");
     }
-    
+
     @Override
     public Page<CompanyDTO> getPage(Page<CompanyDTO> page) {
         LOGGER.info("getPage(page: " + page + ")");
@@ -50,8 +51,8 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Override
     public Page<CompanyDTO> getPage(int pageNumero, int length, String search, String order, String column) {
-        LOGGER.info("getPage(pageNumero : " + pageNumero + ", length : " + length + ", search : " + search + ", order : "
-                + order + ", column : " + column + ")");
+        LOGGER.info("getPage(pageNumero : " + pageNumero + ", length : " + length + ", search : " + search
+                + ", order : " + order + ", column : " + column + ")");
         return new Page<CompanyDTO>(companyDAO.findAll((pageNumero - 1) * length, length, column).stream()
                 .map(it -> CompanyMapper.createDTO(it)).collect(Collectors.toList()), pageNumero, length);
     }
@@ -76,7 +77,8 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
-    @Transactional(readOnly = false, rollbackFor = CompanyNotFoundException.class)
+    @Transactional(readOnly = false, rollbackFor = { CompanyNotFoundException.class,
+            DataIntegrityViolationException.class })
     public void delete(long id) throws CompanyNotFoundException {
         LOGGER.info("delete(id : " + id + ")");
         computerDAO.deleteFromCompany(id);

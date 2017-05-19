@@ -26,7 +26,7 @@ import com.excilys.computerdatabase.services.interfaces.CompanyService;
 import com.excilys.computerdatabase.services.interfaces.ComputerService;
 import com.excilys.computerdatabase.validators.ComputerValidator;
 
-@Controller("editComputer")
+@Controller
 @RequestMapping("/editComputer")
 public class EditComputerServlet {
     @Autowired

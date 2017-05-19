@@ -2,6 +2,8 @@ package com.excilys.computerdatabase.daos.interfaces;
 
 import java.util.List;
 
+import org.springframework.dao.DataIntegrityViolationException;
+
 import com.excilys.computerdatabase.exceptions.CompanyNotFoundException;
 import com.excilys.computerdatabase.models.Company;
 import com.excilys.computerdatabase.models.Computer;
@@ -48,6 +50,7 @@ public interface CompanyDAO {
     /**
      * Delete a company and all its computers.
      * @param id the id of the company
+     * @throws DataIntegrityViolationException DataIntegrityViolationException
      */
-    void delete(long id);
+    void delete(long id) throws DataIntegrityViolationException;
 }

@@ -37,7 +37,7 @@
 				</div>
 			</c:if>
 
-			<h1 id="homeTitle">${computerCount} Computer${computerCount > 1 ? 's' : ''}</h1>
+			<h1 id="homeTitle">${computerCount}Computer${computerCount > 1 ? 's' : ''}</h1>
 
 			<div id="actions" class="form-horizontal">
 				<div class="pull-left">
@@ -122,12 +122,12 @@
 						<spring:message code="label.computer.company"
 							var="computerCompanyMessage" />
 						<th><utils:link href="dashboard" pageSize="${pageSize}"
-								search="${search}" column="companyname"
-								order="${column != null && column == 'companyname' && order != 'DESC' ? 'DESC' : 'ASC'}"
+								search="${search}" column="company.name"
+								order="${column != null && column == 'company.name' && order != 'DESC' ? 'DESC' : 'ASC'}"
 								text="${computerCompanyMessage}" /> <c:if
-								test="${column == 'companyname' && order == 'ASC'}">
+								test="${column == 'company.name' && order == 'ASC'}">
 								<span class="glyphicon glyphicon-chevron-up"></span>
-							</c:if> <c:if test="${column == 'companyname' && order == 'DESC'}">
+							</c:if> <c:if test="${column == 'company.name' && order == 'DESC'}">
 								<span class="glyphicon glyphicon-chevron-down"></span>
 							</c:if></th>
 

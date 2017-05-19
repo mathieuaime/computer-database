@@ -20,7 +20,7 @@ import com.excilys.computerdatabase.dtos.Page;
 import com.excilys.computerdatabase.exceptions.ComputerNotFoundException;
 import com.excilys.computerdatabase.services.interfaces.ComputerService;
 
-@Controller("dashboard")
+@Controller
 @RequestMapping("/dashboard")
 public class DashboardServlet  {
 

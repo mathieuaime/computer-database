@@ -52,9 +52,10 @@ public interface ComputerDAO {
      * Update a computer.
      * @param computer the computer to update
      * @return Computer
-     * @throws ComputerNotFoundException Compûter Not Found Exception
+     * @throws ComputerNotFoundException Computer Not Found Exception
+     * @throws CompanyNotFoundException Company Not Found Exception
      */
-    Computer update(Computer computer) throws ComputerNotFoundException;
+    Computer update(Computer computer) throws ComputerNotFoundException, CompanyNotFoundException;
 
     /**
      * Delete a computer.

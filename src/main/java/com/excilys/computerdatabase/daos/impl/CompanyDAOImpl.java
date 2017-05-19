@@ -2,42 +2,32 @@ package com.excilys.computerdatabase.daos.impl;
 
 import java.util.List;
 
+import javax.validation.ConstraintViolationException;
+
+import org.hibernate.Hibernate;
+import org.hibernate.ObjectNotFoundException;
+import org.hibernate.Session;
+import org.hibernate.query.Query;
 import org.slf4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Repository;
 
+import com.excilys.computerdatabase.config.hibernate.HibernateConfig;
 import com.excilys.computerdatabase.daos.interfaces.CompanyDAO;
 import com.excilys.computerdatabase.exceptions.CompanyNotFoundException;
-import com.excilys.computerdatabase.mappers.CompanyMapper;
-import com.excilys.computerdatabase.mappers.ComputerMapper;
 import com.excilys.computerdatabase.models.Company;
 import com.excilys.computerdatabase.models.Computer;
 
-@Repository("companyDAO")
+@Repository
 public class CompanyDAOImpl implements CompanyDAO {
 
-    private static final String QUERY_FIND_COMPANIES        = "SELECT * FROM company";
+    private static final String QUERY_FIND_COMPANY_BY_NAME  = "SELECT c FROM Company c WHERE c.name LIKE :name";
 
-    private static final String QUERY_FIND_COMPANY_BY_ID    = QUERY_FIND_COMPANIES + " WHERE id = ? ";
+    private static final String QUERY_DELETE_COMPANY        = "DELETE FROM Company WHERE id = :id";
 
-    private static final String QUERY_FIND_COMPANY_BY_NAME  = QUERY_FIND_COMPANIES + " WHERE name = ? ";
+    private static final String QUERY_FIND_COMPANIES        = "SELECT c FROM Company c ORDER BY ";
 
-    private static final String QUERY_FIND_COMPUTERS        = "SELECT c.id AS computerid,"
-                                                            + " c.name AS computername,"
-                                                            + " c.introduced AS computerintroduced,"
-                                                            + " c.discontinued AS computerdiscontinued,"
-                                                            + " co.id AS computercompanyid,"
-                                                            + " co.name AS computercompanyname"
-                                                            + " FROM computer c"
-                                                            + " LEFT JOIN company co ON c.company_id = co.id"
-                                                            + " WHERE co.id =  ?";
-
-    private static final String QUERY_DELETE_COMPANY        = "DELETE FROM company WHERE id = ?";
-
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
+    private static final String QUERY_FIND_COMPUTERS        = "SELECT c FROM Computer c WHERE c.company.id = :id";
 
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(CompanyDAOImpl.class);
 
@@ -50,44 +40,63 @@ public class CompanyDAOImpl implements CompanyDAO {
     @Override
     public List<Company> findAll(int offset, int length, String order) {
         LOGGER.info("findAll(offset: " + offset + ", length : " + length + ", order : " + order + ")");
-        String query = QUERY_FIND_COMPANIES + " ORDER BY " + order
-                + (length != -1 ? " LIMIT " + length + " OFFSET " + offset : "");
+        String query = QUERY_FIND_COMPANIES + order;
 
-        return jdbcTemplate.query(query, (rs, rowNum) -> {
-            return CompanyMapper.getCompany(rs);
-        });
+        try (Session session = HibernateConfig.getSessionFactory().openSession();) {
+            Query<Company> q1 = session.createQuery(query, Company.class);
+
+            if (length != -1) {
+                q1.setMaxResults(length);
+                q1.setFirstResult(offset);
+            }
+
+            return q1.list();
+        }
     }
 
     @Override
     public Company getById(long id) throws CompanyNotFoundException {
         LOGGER.info("getById(id : " + id + ")");
-        try {
-            return jdbcTemplate.queryForObject(QUERY_FIND_COMPANY_BY_ID, new Object[] {id},
-                    (rs, rowNum) -> CompanyMapper.getCompany(rs));
-        } catch (EmptyResultDataAccessException e) {
-            throw new CompanyNotFoundException("Company " + id + " Not Found");
+        try (Session session = HibernateConfig.getSessionFactory().openSession();) {
+            Company company = session.load(Company.class, id);
+            Hibernate.initialize(company);
+            return company;
+        } catch (ObjectNotFoundException e) {
+            throw new CompanyNotFoundException("Company Not Found");
         }
     }
 
     @Override
     public List<Company> getByName(String name) {
         LOGGER.info("getByName(name : " + name + ")");
-        return jdbcTemplate.query(QUERY_FIND_COMPANY_BY_NAME, new Object[] {name}, (rs, rowNum) -> {
-            return CompanyMapper.getCompany(rs);
-        });
+        try (Session session = HibernateConfig.getSessionFactory().openSession();) {
+            Query<Company> query = session.createQuery(QUERY_FIND_COMPANY_BY_NAME, Company.class);
+            query.setParameter("name", name);
+            return query.list();
+        }
     }
 
     @Override
     public List<Computer> getComputers(long id) throws CompanyNotFoundException {
         LOGGER.info("getComputers(id : " + id + ")");
-        return jdbcTemplate.query(QUERY_FIND_COMPUTERS, new Object[] {id}, (rs, rowNum) -> {
-            return ComputerMapper.getComputer(rs);
-        });
+        try (Session session = HibernateConfig.getSessionFactory().openSession();) {
+            Query<Computer> query = session.createQuery(QUERY_FIND_COMPUTERS, Computer.class);
+            query.setParameter("id", id);
+            return query.list();
+        }
     }
 
     @Override
-    public void delete(long id) {
+    public void delete(long id) throws DataIntegrityViolationException {
         LOGGER.info("delete(id : " + id + ")");
-        jdbcTemplate.update(QUERY_DELETE_COMPANY, new Object[] {id});
+        try (Session session = HibernateConfig.getSessionFactory().openSession();) {
+            Query<?> q = session.createQuery(QUERY_DELETE_COMPANY);
+            q.setParameter("id", id);
+            session.beginTransaction();
+            q.executeUpdate();
+            session.getTransaction().commit();
+        } catch (ConstraintViolationException e) {
+            throw new DataIntegrityViolationException(e.getMessage());
+        }
     }
 }

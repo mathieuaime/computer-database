@@ -1,7 +1,26 @@
 package com.excilys.computerdatabase.models;
 
-public class Company {
+import java.io.Serializable;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "company")
+public class Company implements Serializable {
+
+    private static final long serialVersionUID = 5768660150688625556L;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column
     private long id;
+
+    @Column(nullable = false)
     private String name;
 
     /**
@@ -13,7 +32,9 @@ public class Company {
 
     /**
      * Company private constructor.
-     * @param name name
+     * 
+     * @param name
+     *            name
      */
     private Company(String name) {
         this.name = name;
@@ -40,7 +61,9 @@ public class Company {
 
         /**
          * Builder constructor.
-         * @param name name
+         * 
+         * @param name
+         *            name
          */
         public Builder(String name) {
             this.company = new Company(name);
