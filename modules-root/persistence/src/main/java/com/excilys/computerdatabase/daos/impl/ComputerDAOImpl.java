@@ -97,7 +97,7 @@ public class ComputerDAOImpl implements ComputerDAO {
     }
 
     @Override
-    public Computer getById(long id) throws ComputerNotFoundException {
+    public Computer getById(long id) throws ComputerNotFoundException, CompanyNotFoundException {
         LOGGER.info("getById(id : " + id + ")");        
         try (Session session = HibernateConfig.getSessionFactory().openSession();) {
             Computer computer = session.load(Computer.class, id);
@@ -105,6 +105,8 @@ public class ComputerDAOImpl implements ComputerDAO {
             return computer;
         } catch (ObjectNotFoundException e) {
             throw new ComputerNotFoundException("Computer Not Found");
+        } catch (ConstraintViolationException e) {
+            throw new CompanyNotFoundException("Company not Found");
         }
     }
 

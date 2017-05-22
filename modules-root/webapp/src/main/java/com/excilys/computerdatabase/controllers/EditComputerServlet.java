@@ -39,11 +39,8 @@ public class EditComputerServlet {
 
     /**
      * GET editComputer.
-     * 
-     * @param request
-     *            request
-     * @param response
-     *            response
+     * @param request request
+     * @param response response
      */
     @GetMapping
     public String get(ModelMap model, @RequestParam(value = "id", defaultValue = "0") long id) {
@@ -58,6 +55,9 @@ public class EditComputerServlet {
         } catch (ComputerNotFoundException e) {
             LOGGER.error("ComputerNotFound");
             model.addAttribute("error", "Computer inconnu");
+        } catch (CompanyNotFoundException e) {
+            LOGGER.error("ComputerNotFound");
+            model.addAttribute("error", "Company inconnu");
         }
 
         model.addAttribute("computerDTO", computerDTO);
@@ -69,10 +69,8 @@ public class EditComputerServlet {
     /**
      * POST editComputer.
      * 
-     * @param request
-     *            request
-     * @param response
-     *            response
+     * @param request request
+     * @param response response
      */
     @PostMapping
     public String post(@Valid @ModelAttribute("computerDTO") ComputerDTO computerDTO, BindingResult result,

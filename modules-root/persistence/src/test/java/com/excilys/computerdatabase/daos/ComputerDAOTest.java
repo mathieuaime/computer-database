@@ -1,4 +1,4 @@
-package com.excilys.computerdatabase.services;
+package com.excilys.computerdatabase.daos;
 
 import java.io.File;
 import java.sql.Connection;
@@ -35,7 +35,7 @@ import com.excilys.computerdatabase.models.Computer;
 import com.excilys.computerdatabase.daos.interfaces.ComputerDAO;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { DAOConfig.class } )
+@ContextConfiguration(classes = { DAOConfig.class })
 public class ComputerDAOTest extends DatabaseTestCase {
 
     @Autowired
@@ -45,7 +45,7 @@ public class ComputerDAOTest extends DatabaseTestCase {
     private DataSource dataSource;
 
     private IDatabaseTester databaseTester;
-    
+
     private static final String URL = Config.getProperties().getProperty("urlTest");
     private static final String USER = Config.getProperties().getProperty("user");
     private static final String PASSWORD = Config.getProperties().getProperty("password");
@@ -72,7 +72,7 @@ public class ComputerDAOTest extends DatabaseTestCase {
         c2 = new Computer("Computer2");
         c2.setId(1001L);
         c2.setCompany(comp1);
-        
+
         c3 = new Computer("Computer3");
         c3.setId(1002L);
         c3.setCompany(comp2);
@@ -87,144 +87,114 @@ public class ComputerDAOTest extends DatabaseTestCase {
             assertEquals(1, computerDAO.getById(1L).getId());
         } catch (ComputerNotFoundException e) {
             fail("Computer Not Found");
+        } catch (CompanyNotFoundException e) {
+            fail("Company Not Found");
         }
     }
 
     /**
      * Test get by id.
      */
-    /*@Test
+    @Test
     public void testGetByIdNonPresent() {
         try {
-            computerService.getById(1000L);
+            computerDAO.getById(1000L);
             fail("Exception Not Thrown");
         } catch (ComputerNotFoundException e) {
+        } catch (CompanyNotFoundException e) {
+            fail("Company Not Found");
         }
-    }*/
+    }
 
     /**
      * Test get by name with zero value.
      */
-    /*@Test
+    @Test
     public void testGetByNameZeroValue() {
-        assertEquals(0, computerService.getByName("Computer1000").size());
-    }*/
+        assertEquals(0, computerDAO.getByName("Computer1000").size());
+    }
 
     /**
      * Test get by name with one value.
      */
-    /*@Test
+    @Test
     public void testGetByNameOneValue() {
-        assertEquals(1, computerService.getByName("Computer1").size());
-    }*/
+        assertEquals(1, computerDAO.getByName("Computer1").size());
+    }
 
     /**
      * Test get by name with many value.
      */
-    /*@Test
+    @Test
     public void testGetByNameManyValue() {
-        assertEquals(2, computerService.getByName("Computer2").size());
-    }*/
-
-    /**
-     * Test getPage.
-     */
-    /*@Test
-    public void testGetPage() {
-        assertEquals(4, computerService.getPage().getObjectNumber());
-    }*/
-
-    /**
-     * Test getPage.
-     */
-    /*@Test
-    public void testGetPageWithLimit() {
-        assertEquals(2, computerService.getPage(1, 2).getObjectNumber());
-    }*/
-
-    /**
-     * Test getPage.
-     */
-    /*@Test
-    public void testGetPageWithSearch() {
-        assertEquals(2, computerService.getPage(1, 2, "Compu", null, null).getObjectNumber());
-    }*/
-
-    /**
-     * Test getPage.
-     */
-    /*@Test
-    public void testGetPageWithSearchNotFound() {
-        assertEquals(0, computerService.getPage(1, 2, "Compurdg", null, null).getObjectNumber());
-    }*/
+        assertEquals(2, computerDAO.getByName("Computer2").size());
+    }
 
     /**
      * Test getCompany.
      */
-    /*@Test
+    @Test
     public void testGetCompany() {
         try {
-            assertEquals(1L, computerService.getCompany(1L).getId());
+            assertEquals(1L, computerDAO.getCompany(1L).getId());
         } catch (ComputerNotFoundException e) {
             fail("Computer Not Found");
         } catch (CompanyNotFoundException e) {
             fail("Company Not Found");
         }
-    }*/
+    }
 
     /**
      * Test getCompany when the computer does not exist.
      */
-    /*@Test
+    @Test
     public void testGetCompanyComputerNonPresent() {
         try {
-            computerService.getCompany(1500L);
+            computerDAO.getCompany(1500L);
             fail("Exception Not Thrown");
         } catch (ComputerNotFoundException e) {
         } catch (CompanyNotFoundException e) {
             fail("Bad Exception Thrown");
         }
-    }*/
+    }
 
     /**
      * Test add.
      */
-    /*@Test
+    @Test
     public void testAdd() {
 
         try {
-            computerService.add(c1);
-            Computer c = ComputerMapper.createBean(computerService.getById(c1.getId()));
-            assertEquals(c1, c);
+            computerDAO.add(c1);
+            assertEquals(c1.getId(), computerDAO.getById(c1.getId()).getId());
         } catch (ComputerNotFoundException e) {
             fail("Computer Not Added");
         } catch (CompanyNotFoundException e) {
             fail("Company Not Found");
         }
-    }*/
+    }
 
     /**
      * Test add.
      */
-    /*@Test
+    @Test
     public void testAddNonPresentCompany() {
 
         try {
-            computerService.add(c3);
+            computerDAO.add(c3);
             fail("Exception Not Thrown");
         } catch (CompanyNotFoundException e) {
         }
-    }*/
+    }
 
     /**
      * Test update.
      */
-    /*@Test
+    @Test
     public void testUpdate() {
-
         c1.setId(1L);
         try {
-            computerService.update(c1);
+            computerDAO.update(c1);
         } catch (ComputerNotFoundException e1) {
             fail("Computer Not Found");
         } catch (CompanyNotFoundException e1) {
@@ -232,68 +202,62 @@ public class ComputerDAOTest extends DatabaseTestCase {
         }
 
         try {
-            Computer c = ComputerMapper.createBean(computerService.getById(c1.getId()));
-            assertEquals(c1, c);
+            assertEquals(c1.getId(), computerDAO.getById(c1.getId()).getId());
         } catch (ComputerNotFoundException e) {
             fail("Computer Not Updated");
         } catch (CompanyNotFoundException e) {
             fail("Company Not Found");
         }
-    }*/
+    }
 
     /**
      * Test update.
      */
-    /*@Test
+    @Test
     public void testUpdateNonPresent() {
 
         c1.setId(1500L);
         try {
-            computerService.update(c1);
+            computerDAO.update(c1);
             fail("Exception Not Thrown");
         } catch (ComputerNotFoundException e) {
         } catch (CompanyNotFoundException e1) {
             fail("Bad Exception thrown");
         }
-    }*/
+    }
 
     /**
      * Test delete.
      */
-    /*@Test
+    @Test
     public void testDelete() {
         try {
-            computerService.delete(1L);
-        } catch (ComputerNotFoundException e) {
-            fail("Computer Not Found");
-        }
-
-        try {
-            computerService.getById(1L);
+            computerDAO.delete(1L);
+            computerDAO.getById(1L);
             fail("Computer Not Deleted");
         } catch (ComputerNotFoundException e) {
+        } catch (CompanyNotFoundException e) {
+            fail("Computer Not Deleted");
         }
-    }*/
+    }
 
     /**
      * Test delete.
      */
-    /*@Test
+    @Test
     public void testDeleteList() {
         try {
-            computerService.delete(new ArrayList<Long>(Arrays.asList(1L, 2L)));
-            computerService.getById(1L);
-            computerService.getById(2L);
+            computerDAO.delete(new ArrayList<Long>(Arrays.asList(1L, 2L)));
+            computerDAO.getById(1L);
+            computerDAO.getById(2L);
             fail("Computer Not Deleted");
         } catch (Exception e) {
         }
-    }*/
-
+    }
 
     /**
      * Prepare the test instance by handling the Spring annotations and updating
      * the database to the stale state.
-     * 
      * @throws java.lang.Exception
      */
     @Before
@@ -326,7 +290,7 @@ public class ComputerDAOTest extends DatabaseTestCase {
         IDataSet dataSet = builder.build(new File(SAMPLE_TEST_XML));
         return dataSet;
     }
-    
+
     @Override
     protected void setUpDatabaseConfig(DatabaseConfig config) {
         config.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new MySqlDataTypeFactory());
@@ -343,8 +307,7 @@ public class ComputerDAOTest extends DatabaseTestCase {
     }
 
     /**
-     * On tearDown() bring back to the state it was in
-     * before the tests started.
+     * On tearDown() bring back to the state it was in before the tests started.
      */
     @Override
     protected DatabaseOperation getTearDownOperation() {
@@ -355,6 +318,6 @@ public class ComputerDAOTest extends DatabaseTestCase {
     protected IDatabaseConnection getConnection() throws Exception {
         Connection jdbcConnection = DriverManager.getConnection(URL, USER, PASSWORD);
 
-        return new DatabaseConnection(jdbcConnection); 
+        return new DatabaseConnection(jdbcConnection);
     }
 }

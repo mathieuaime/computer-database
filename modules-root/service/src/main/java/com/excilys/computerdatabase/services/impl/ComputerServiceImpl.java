@@ -55,7 +55,7 @@ public class ComputerServiceImpl implements ComputerService {
     }
 
     @Override
-    public ComputerDTO getById(long id) throws ComputerNotFoundException {
+    public ComputerDTO getById(long id) throws ComputerNotFoundException, CompanyNotFoundException {
         LOGGER.info("getById(id : " + id + ")");
         return ComputerMapper.createDTO(computerDAO.getById(id));
     }

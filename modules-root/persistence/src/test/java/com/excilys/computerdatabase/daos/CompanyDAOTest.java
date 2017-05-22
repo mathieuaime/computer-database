@@ -1,4 +1,4 @@
-package com.excilys.computerdatabase.services;
+package com.excilys.computerdatabase.daos;
 
 import java.io.File;
 import java.sql.Connection;
@@ -63,120 +63,75 @@ public class CompanyDAOTest extends DatabaseTestCase {
     /**
      * Test get by id.
      */
-    /*@Test
+    @Test
     public void testGetByIdNonPresent() {
 
         try {
-            companyService.getById(1000L);
+            companyDAO.getById(1000L);
             fail("Exception Not Thrown");
         } catch (CompanyNotFoundException e) {
         }
-    }*/
+    }
 
     /**
      * Test get by name.
      */
-    /*@Test
+    @Test
     public void testGetByNameZeroValue() {
-        assertEquals(0, companyService.getByName("Company1000").size());
-    }*/
+        assertEquals(0, companyDAO.getByName("Company1000").size());
+    }
 
     /**
      * Test get by name.
      */
-    /*@Test
+    @Test
     public void testGetByNameOneValue() {
-        assertEquals(1, companyService.getByName("Company1").size());
-    }*/
+        assertEquals(1, companyDAO.getByName("Company1").size());
+    }
 
     /**
      * Test get by name.
      */
-    /*@Test
+    @Test
     public void testGetByNameManyValue() {
-        assertEquals(2, companyService.getByName("Company2").size());
-    }*/
-
-    /**
-     * Test get by id.
-     */
-    /*@Test
-    public void testGetPage() {
-        assertEquals(3, companyService.getPage().getObjectNumber());
-    }*/
-
-    /**
-     * Test get by id.
-     */
-    /*@Test
-    public void testGetPageWithLimit() {
-        assertEquals(1, companyService.getPage(1, 1).getObjectNumber());
-    }*/
-
-    /**
-     * Test get by id.
-     */
-    /*@Test
-    public void testGetPageWithSearch() {
-        assertEquals(1, companyService.getPage(1, 1, "Compa", null, null).getObjectNumber());
-    }*/
+        assertEquals(2, companyDAO.getByName("Company2").size());
+    }
 
     /**
      * Test getComputer.
      */
-    /*@Test
+    @Test
     public void testGetComputerZeroValue() {
         try {
-            assertEquals(0, companyService.getComputers(3L).size());
+            assertEquals(0, companyDAO.getComputers(3L).size());
         } catch (CompanyNotFoundException e) {
             fail("Company Not Found");
         }
-    }*/
+    }
     
     /**
      * Test getComputer.
      */
-    /*@Test
+    @Test
     public void testGetComputerOneValue() {
         try {
-            assertEquals(1, companyService.getComputers(2L).size());
+            assertEquals(1, companyDAO.getComputers(2L).size());
         } catch (CompanyNotFoundException e) {
             fail("Company Not Found");
         }
-    }*/
+    }
     
     /**
      * Test getComputer.
      */
-    /*@Test
+    @Test
     public void testGetComputerManyValue() {
         try {
-            assertEquals(2, companyService.getComputers(1L).size());
+            assertEquals(2, companyDAO.getComputers(1L).size());
         } catch (CompanyNotFoundException e) {
             fail("Company Not Found");
         }
-    }*/
-
-    /**
-     * Test delete.
-     */
-    /*@Test
-    public void testDelete() {
-        try {
-            companyService.delete(1L);
-
-            assertEquals(0, companyService.getComputers(1L).size());
-
-            try {
-                companyService.getById(1L);
-                fail("Company Not Deleted");
-            } catch (CompanyNotFoundException e) {
-            }
-
-        } catch (CompanyNotFoundException e) {
-            fail("Company Not Found");
-        }
-    }*/
+    }
 
     /**
      * Prepare the test instance by handling the Spring annotations and updating

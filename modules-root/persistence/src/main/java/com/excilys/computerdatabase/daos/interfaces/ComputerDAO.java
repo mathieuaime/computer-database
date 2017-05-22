@@ -30,8 +30,9 @@ public interface ComputerDAO {
      * @param id the id of the computer
      * @return Computer
      * @throws ComputerNotFoundException ComputerNotFoundException
+     * @throws CompanyNotFoundException 
      */
-    Computer getById(long id) throws ComputerNotFoundException;
+    Computer getById(long id) throws ComputerNotFoundException, CompanyNotFoundException;
 
     /**
      * Returns the list of the computers found by its name.

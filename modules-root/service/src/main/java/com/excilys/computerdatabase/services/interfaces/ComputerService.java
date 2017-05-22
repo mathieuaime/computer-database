@@ -15,8 +15,9 @@ public interface ComputerService extends PageService<ComputerDTO> {
      * @param id the id of the computer
      * @return ComputerDTO
      * @throws ComputerNotFoundException exception when the computer is not found
+     * @throws CompanyNotFoundException 
      */
-    ComputerDTO getById(long id) throws ComputerNotFoundException;
+    ComputerDTO getById(long id) throws ComputerNotFoundException, CompanyNotFoundException;
 
     /**
      * Returns the list of computers of name name.

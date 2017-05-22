@@ -82,7 +82,7 @@ public class CLI {
         try {
             ComputerDTO c = computerService.getById(id);
             System.out.println(c);
-        } catch (ComputerNotFoundException e) {
+        } catch (CompanyNotFoundException | ComputerNotFoundException e) {
             System.out.println("Pas de pc trouvé");
         }
     }

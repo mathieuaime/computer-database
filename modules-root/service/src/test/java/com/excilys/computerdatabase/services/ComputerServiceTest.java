@@ -89,6 +89,8 @@ public class ComputerServiceTest extends DatabaseTestCase {
             assertEquals(1, computerService.getById(1L).getId());
         } catch (ComputerNotFoundException e) {
             fail("Computer Not Found");
+        } catch (CompanyNotFoundException e) {
+            fail("Company Not Found");
         }
     }
 
@@ -101,6 +103,8 @@ public class ComputerServiceTest extends DatabaseTestCase {
             computerService.getById(1000L);
             fail("Exception Not Thrown");
         } catch (ComputerNotFoundException e) {
+        } catch (CompanyNotFoundException e) {
+            fail("Company Not Found");
         }
     }
 
@@ -274,6 +278,8 @@ public class ComputerServiceTest extends DatabaseTestCase {
             computerService.getById(1L);
             fail("Computer Not Deleted");
         } catch (ComputerNotFoundException e) {
+        } catch (CompanyNotFoundException e) {
+            fail("Company Not Found");
         }
     }
 
