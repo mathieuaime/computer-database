@@ -59,6 +59,7 @@
 			<scope>compile</scope>
 		</dependency>
 
+
 		<!-- Selenium dependencies -->
 		<dependency>
 			<groupId>org.seleniumhq.selenium</groupId>

@@ -1,11 +1,9 @@
 package com.excilys.computerdatabase.exceptions;
 
 public class NameEmptyException extends Exception {
-
     private static final long serialVersionUID = 3681709208879518921L;
 
     /**
-    *
     * @param message message
     */
    public NameEmptyException(String message) {
@@ -13,7 +11,6 @@ public class NameEmptyException extends Exception {
    }
 
    /**
-    *
     * @param cause cause
     */
    public NameEmptyException(Throwable cause) {
@@ -21,7 +18,6 @@ public class NameEmptyException extends Exception {
    }
 
    /**
-    *
     * @param message message
     * @param cause cause
     */
