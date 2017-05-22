@@ -1,0 +1,6 @@
+/home/excilys/workspace/computer-database/modules-root/service/src/main/java/com/excilys/computerdatabase/services/interfaces/PageService.java
+/home/excilys/workspace/computer-database/modules-root/service/src/main/java/com/excilys/computerdatabase/services/impl/CompanyServiceImpl.java
+/home/excilys/workspace/computer-database/modules-root/service/src/main/java/com/excilys/computerdatabase/services/interfaces/ComputerService.java
+/home/excilys/workspace/computer-database/modules-root/service/src/main/java/com/excilys/computerdatabase/services/impl/ComputerServiceImpl.java
+/home/excilys/workspace/computer-database/modules-root/service/src/main/java/com/excilys/computerdatabase/services/interfaces/CompanyService.java
+/home/excilys/workspace/computer-database/modules-root/service/src/main/java/com/excilys/computerdatabase/config/spring/ServiceConfig.java

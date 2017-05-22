@@ -1,0 +1,6 @@
+/home/excilys/workspace/computer-database/modules-root/persistence/src/main/java/com/excilys/computerdatabase/daos/impl/CompanyDAOImpl.java
+/home/excilys/workspace/computer-database/modules-root/persistence/src/main/java/com/excilys/computerdatabase/config/spring/DAOConfig.java
+/home/excilys/workspace/computer-database/modules-root/persistence/src/main/java/com/excilys/computerdatabase/config/hibernate/HibernateConfig.java
+/home/excilys/workspace/computer-database/modules-root/persistence/src/main/java/com/excilys/computerdatabase/daos/interfaces/CompanyDAO.java
+/home/excilys/workspace/computer-database/modules-root/persistence/src/main/java/com/excilys/computerdatabase/daos/interfaces/ComputerDAO.java
+/home/excilys/workspace/computer-database/modules-root/persistence/src/main/java/com/excilys/computerdatabase/daos/impl/ComputerDAOImpl.java

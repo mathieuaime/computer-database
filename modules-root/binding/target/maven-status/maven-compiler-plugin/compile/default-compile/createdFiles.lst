@@ -1,0 +1,5 @@
+com/excilys/computerdatabase/dtos/Page.class
+com/excilys/computerdatabase/mappers/ComputerMapper.class
+com/excilys/computerdatabase/dtos/ComputerDTO.class
+com/excilys/computerdatabase/dtos/CompanyDTO.class
+com/excilys/computerdatabase/mappers/CompanyMapper.class
