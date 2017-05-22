@@ -1,8 +1,0 @@
-/home/excilys/workspace/computer-database/modules-root/core/src/main/java/com/excilys/computerdatabase/models/Company.java
-/home/excilys/workspace/computer-database/modules-root/core/src/main/java/com/excilys/computerdatabase/exceptions/CompanyNotFoundException.java
-/home/excilys/workspace/computer-database/modules-root/core/src/main/java/com/excilys/computerdatabase/exceptions/ComputerNotFoundException.java
-/home/excilys/workspace/computer-database/modules-root/core/src/main/java/com/excilys/computerdatabase/models/Computer.java
-/home/excilys/workspace/computer-database/modules-root/core/src/main/java/com/excilys/computerdatabase/config/Config.java
-/home/excilys/workspace/computer-database/modules-root/core/src/main/java/com/excilys/computerdatabase/validators/ComputerValidator.java
-/home/excilys/workspace/computer-database/modules-root/core/src/main/java/com/excilys/computerdatabase/exceptions/NameEmptyException.java
-/home/excilys/workspace/computer-database/modules-root/core/src/main/java/com/excilys/computerdatabase/exceptions/IntroducedAfterDiscontinuedException.java

@@ -1,6 +1,0 @@
-com/excilys/computerdatabase/daos/interfaces/ComputerDAO.class
-com/excilys/computerdatabase/daos/impl/CompanyDAOImpl.class
-com/excilys/computerdatabase/daos/interfaces/CompanyDAO.class
-com/excilys/computerdatabase/daos/impl/ComputerDAOImpl.class
-com/excilys/computerdatabase/config/spring/DAOConfig.class
-com/excilys/computerdatabase/config/hibernate/HibernateConfig.class
