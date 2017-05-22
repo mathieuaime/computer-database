@@ -5,13 +5,13 @@
    <parent>
         <groupId>com.excilys</groupId>
         <artifactId>computerdatabase</artifactId>
-        <version>0.8.1-SNAPSHOT</version>
+        <version>0.8.2-SNAPSHOT</version>
     </parent>
 
     <groupId>com.excilys.computerdatabase</groupId>
     <artifactId>modules-root</artifactId>
     <packaging>pom</packaging>
-        <version>0.8.1-SNAPSHOT</version>
+        <version>0.8.2-SNAPSHOT</version>
 
     <modules>
         <module>core</module>
