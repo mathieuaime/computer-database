@@ -2,12 +2,16 @@ package com.excilys.computerdatabase.services.interfaces;
 
 import java.util.List;
 
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
+
 import com.excilys.computerdatabase.dtos.CompanyDTO;
 import com.excilys.computerdatabase.dtos.ComputerDTO;
 import com.excilys.computerdatabase.exceptions.CompanyNotFoundException;
 import com.excilys.computerdatabase.exceptions.ComputerNotFoundException;
 import com.excilys.computerdatabase.models.Computer;
 
+@Secured("ROLE_USER")
 public interface ComputerService extends PageService<ComputerDTO> {
 
     /**
@@ -62,6 +66,8 @@ public interface ComputerService extends PageService<ComputerDTO> {
      * @return int number of computers
      * @param search the field to search for
      */
+    //@PreAuthorize("hasRole('USER')")
+    //@Secured("ROLE_USER")
     int count(String search);
 
     /**

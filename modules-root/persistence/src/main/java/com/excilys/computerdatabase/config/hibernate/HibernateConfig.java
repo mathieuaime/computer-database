@@ -1,5 +1,7 @@
 package com.excilys.computerdatabase.config.hibernate;
 
+import javax.annotation.PostConstruct;
+
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
@@ -41,5 +43,10 @@ public class HibernateConfig {
         if (sessionFactory == null)
             sessionFactory = buildSessionFactory();
         return sessionFactory;
+    }
+    
+    @PostConstruct
+    public void initApp() {
+        LOGGER.info("Hibernate configuring...");
     }
 }

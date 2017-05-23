@@ -21,6 +21,8 @@
 			<div class="alert alert-danger">
 				Error 403: Access denied!
 				<br/>
+					Dear <strong>${user}</strong>, You are not authorized to perform this action.
+					<a href="logout">Logout</a>
 				<!-- stacktrace -->
 			</div>
 		</div>

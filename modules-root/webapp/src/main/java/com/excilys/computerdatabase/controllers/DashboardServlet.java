@@ -3,10 +3,17 @@ package com.excilys.computerdatabase.controllers;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,7 +28,6 @@ import com.excilys.computerdatabase.exceptions.ComputerNotFoundException;
 import com.excilys.computerdatabase.services.interfaces.ComputerService;
 
 @Controller
-@RequestMapping("/dashboard")
 public class DashboardServlet  {
 
     @Autowired
@@ -37,9 +43,12 @@ public class DashboardServlet  {
      * @param request request
      * @param response response
      */
-    @GetMapping
+    @GetMapping(value = "/dashboard")
     public String get(ModelMap model, @Valid @ModelAttribute Page<ComputerDTO> page) {
         LOGGER.info("get");
+        
+        LOGGER.info(SecurityContextHolder.getContext().getAuthentication().getName());
+        
         int computerCount = computerService.count(page.getSearch());
 
         model.addAttribute("computerPage", computerService.getPage(page));
@@ -60,7 +69,7 @@ public class DashboardServlet  {
      * @param request request
      * @param response response
      */
-    @PostMapping
+    @PostMapping(value = "/dashboard")
     public String post(ModelMap model, @RequestParam(value = "selection") String selection) {
         LOGGER.info("post(selection : " + selection + ")");
         String[] listComputersToDelete = selection.split(",");
@@ -78,5 +87,52 @@ public class DashboardServlet  {
         }
 
         return get(model, new Page<ComputerDTO>(Integer.parseInt(PAGE_DEFAULT), Integer.parseInt(PAGE_SIZE_DEFAULT)));
+    }
+
+    @GetMapping(value = "/login")
+    public String login(ModelMap model, @RequestParam(value = "error", required = false) String error,
+            @RequestParam(value = "logout", required = false) String logout) {
+
+        if (error != null) {
+            model.addAttribute("error", "Invalid username and password!");
+        }
+
+        if (logout != null) {
+            model.addAttribute("msg", "You've been logged out successfully.");
+        }
+
+        return "login";
+    }
+
+    @GetMapping(value = "/logout")
+    public String logoutPage(HttpServletRequest request, HttpServletResponse response) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null) {
+            new SecurityContextLogoutHandler().logout(request, response, auth);
+        }
+        return "redirect:/login?logout";
+    }
+    
+    @GetMapping(value = "/about")
+    public String about() {
+        return "about";
+    }
+
+    @GetMapping(value = "/403")
+    public String accessDeniedPage(ModelMap model) {
+        model.addAttribute("user", getPrincipal());
+        return "403";
+    }
+
+    private String getPrincipal() {
+        String userName = null;
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        if (principal instanceof UserDetails) {
+            userName = ((UserDetails) principal).getUsername() + ((UserDetails) principal).getAuthorities().toString();
+        } else {
+            userName = principal.toString();
+        }
+        return userName;
     }
 }

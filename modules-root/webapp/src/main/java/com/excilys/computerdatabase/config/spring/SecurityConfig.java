@@ -1,79 +1,88 @@
 package com.excilys.computerdatabase.config.spring;
 
+import java.util.Properties;
+
+import javax.annotation.PostConstruct;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Scope;
-import org.springframework.context.annotation.ScopedProxyMode;
-import org.springframework.security.authentication.RememberMeAuthenticationToken;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.web.authentication.www.DigestAuthenticationEntryPoint;
+import org.springframework.security.web.authentication.www.DigestAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
+    private static final Logger LOG = LoggerFactory.getLogger(SecurityConfig.class);
+    private static final String REALM_NAME = "Contacts Realm via Digest Authentication";
+
+    //@Autowired
+    //UserDetailsService userDetailsService;
+    
     @Autowired
-    UserDetailsService userDetailsService;
-
-    @Autowired
-    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
+    public void configureGlobalSecurity(AuthenticationManagerBuilder auth) throws Exception {
+        auth.inMemoryAuthentication().withUser("bill").password("abc123").roles("USER");
+        auth.inMemoryAuthentication().withUser("admin").password("root123").roles("ADMIN");
+        auth.inMemoryAuthentication().withUser("dba").password("root123").roles("ADMIN","DBA");
     }
-
-    @Override
-    public void configure(WebSecurity web) throws Exception {
-        web.ignoring().antMatchers("/resources/**");
+    
+    @Bean
+    public UserDetailsService userDetailsService() {
+        Properties users = new Properties();
+        users.setProperty("user", "pwd" + ",USER");
+        users.setProperty("admin", "admin" + ",USER,ADMIN");
+        return new InMemoryUserDetailsManager(users);
     }
+    
+    /*@Override
+    protected void configure(AuthenticationManagerBuilder builder) throws Exception {
+        LOG.info("Spring Security configuration 1 ...");
+        builder.userDetailsService(userDetailsService());
+    }*/
 
+    /*@Override
+    protected void configure(HttpSecurity http) throws Exception {
+        LOG.info("Spring Security configuration 2 ...");
+        DigestAuthenticationEntryPoint authenticationEntryPoint = new DigestAuthenticationEntryPoint();
+        authenticationEntryPoint.setKey("acegi");
+        authenticationEntryPoint.setRealmName(REALM_NAME);
+
+        DigestAuthenticationFilter filter = new DigestAuthenticationFilter();
+        filter.setAuthenticationEntryPoint(authenticationEntryPoint);
+        filter.setUserDetailsService(userDetailsService());
+
+        http.authorizeRequests()
+        .antMatchers("/resources/**", "/signup", "/about").permitAll()
+        .anyRequest().authenticated()
+        .and().formLogin().loginPage("/login")
+        .usernameParameter("username").passwordParameter("password")
+        .failureUrl("/login?error").permitAll().and().logout().permitAll()
+        .and().exceptionHandling().accessDeniedPage("/403");
+    }*/
+    
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests()
-            .antMatchers("/signup", "/about").permitAll()
-            .antMatchers("/admin/**")
-            .access("hasRole('ADMIN')")
-            .and().formLogin().loginPage("/login").failureUrl("/login?error")
-            .usernameParameter("username").passwordParameter("password")
-            .and().logout().logoutSuccessUrl("/login?logout")
-            .and().csrf()
-            .and().exceptionHandling().accessDeniedPage("/403");
+      
+      http.authorizeRequests()
+          .antMatchers("/resources/**", "/signup", "/about").permitAll()
+          .and().formLogin().loginPage("/login")
+          .usernameParameter("username").passwordParameter("password")
+          .and().exceptionHandling().accessDeniedPage("/403");
     }
 
-    /**
-     * Authenticated user information available as a proxified Spring bean.
-     * <p>
-     * Could be inject into beans of scope singleton (ie. @Service
-     * or @Controler)
-     */
-    @Bean
-    @Scope(value = "session", proxyMode = ScopedProxyMode.TARGET_CLASS)
-    public UserDetails authenticatedUserDetails() {
-        SecurityContextHolder.getContext().getAuthentication();
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null) {
-            if (authentication instanceof UsernamePasswordAuthenticationToken) {
-                return (UserDetails) authentication.getPrincipal();
-            }
-            if (authentication instanceof RememberMeAuthenticationToken) {
-                return (UserDetails) authentication.getPrincipal();
-            }
-        }
-        return null;
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        PasswordEncoder encoder = new BCryptPasswordEncoder();
-        return encoder;
+    @PostConstruct
+    public void initApp() {
+        LOG.info("Spring Security configuration ...");
     }
 }

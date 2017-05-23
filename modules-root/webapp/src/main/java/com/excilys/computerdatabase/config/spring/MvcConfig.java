@@ -57,6 +57,6 @@ public class MvcConfig extends WebMvcConfigurerAdapter {
 
     @PostConstruct
     public void initApp() {
-        LOG.debug("Spring MVC configuration ...");
+        LOG.info("Spring MVC configuration ...");
     }
 }

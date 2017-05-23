@@ -29,7 +29,7 @@ public class WebAppInitializer implements WebApplicationInitializer {
         dispatcher.setLoadOnStartup(1);
         dispatcher.addMapping("/");
         dispatcher.setInitParameter("throwExceptionIfNoHandlerFound", "true");
-        
+
         rootContext.setServletContext(servletContext);
         rootContext.refresh();
     }

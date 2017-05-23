@@ -14,7 +14,6 @@ import org.hibernate.exception.ConstraintViolationException;
 import org.hibernate.query.Query;
 
 import org.slf4j.Logger;
-
 import org.springframework.stereotype.Repository;
 
 import com.excilys.computerdatabase.config.hibernate.HibernateConfig;

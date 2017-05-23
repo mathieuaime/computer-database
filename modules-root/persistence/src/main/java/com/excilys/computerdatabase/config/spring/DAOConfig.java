@@ -50,8 +50,7 @@ public class DAOConfig {
      */
     @PostConstruct
     public void initApp() {
-        LOG.debug("Spring DataSource configuring...");
-        LOG.debug("URL : " + environment.getProperty("spring.datasource.url"));
+        LOG.info("Spring DataSource configuring...");
     }
 
 }
