@@ -13,6 +13,8 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.excilys.computerdatabase.models.User;
+
 @Controller
 public class CommonServlet {
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(CommonServlet.class);
@@ -20,14 +22,23 @@ public class CommonServlet {
     @GetMapping(value = "/login")
     public String login(ModelMap model, @RequestParam(value = "error", required = false) String error,
             @RequestParam(value = "logout", required = false) String logout) {
-
+        LOGGER.info("get");
         if (error != null) {
-            model.addAttribute("error", "Invalid username and password!");
+            switch (error) {
+            case "login":
+                model.addAttribute("error", "Invalid username and password!");
+                break;
+            case "register":
+                model.addAttribute("error", "Invalid username and password!");
+                break;
+            }
         }
 
         if (logout != null) {
             model.addAttribute("msg", "You've been logged out successfully.");
         }
+
+        model.addAttribute("User", new User());
 
         return "login";
     }
@@ -40,7 +51,7 @@ public class CommonServlet {
         }
         return "redirect:/login?logout";
     }
-    
+
     @GetMapping(value = "/about")
     public String about() {
         return "about";
@@ -51,13 +62,13 @@ public class CommonServlet {
         model.addAttribute("user", getPrincipal());
         return "403";
     }
-    
+
     @GetMapping(value = "/404")
     public String notFoundPage(ModelMap model) {
         model.addAttribute("user", getPrincipal());
         return "404";
     }
-    
+
     @GetMapping(value = "/500")
     public String errorPage(ModelMap model) {
         model.addAttribute("user", getPrincipal());

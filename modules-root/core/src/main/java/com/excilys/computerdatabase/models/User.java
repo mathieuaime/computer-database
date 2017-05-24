@@ -1,5 +1,6 @@
 package com.excilys.computerdatabase.models;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 import javax.persistence.Column;
@@ -11,7 +12,9 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "users")
-public class User {
+public class User implements Serializable {
+
+    private static final long serialVersionUID = -2370657471686855278L;
 
     private String username;
     private String password;
@@ -19,6 +22,10 @@ public class User {
     private Set<UserRole> userRole = new HashSet<UserRole>(0);
 
     public User() {
+    }
+    
+    public User(String username, String password) {
+        this(username, password, false);
     }
 
     public User(String username, String password, boolean enabled) {

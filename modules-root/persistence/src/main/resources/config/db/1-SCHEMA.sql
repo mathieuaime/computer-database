@@ -22,15 +22,15 @@ drop schema if exists `computer-database-db`;
 
   create table users (
     username                  varchar(255) not null,
-    password                  varchar(255) not null,
-    enabled		      boolean default false,
+    password                  varchar(60) not null,
+    enabled		      	      boolean default false,
     constraint pk_users primary key (username))
   ;
 
   create table users_roles (
-    id			      bigint not null auto_increment,
-    user		      varchar(255) not null,
-    role		      varchar(255) not null,
+    id					      bigint not null auto_increment,
+    user		 		      varchar(255) not null,
+    role				      varchar(45) not null,
     constraint pk_users_roles primary key (id),
     constraint unique_users_roles unique (user, role))
   ;

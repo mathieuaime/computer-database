@@ -1,7 +1,6 @@
 package com.excilys.computerdatabase.services.interfaces;
 
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.access.prepost.PreAuthorize;
 
 import com.excilys.computerdatabase.dtos.Page;
 

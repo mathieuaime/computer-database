@@ -5,4 +5,5 @@ import com.excilys.computerdatabase.models.User;
 
 public interface UserDAO {
     User findByUserName(String username) throws UserNotFoundException;
+    User save(User user);
 }

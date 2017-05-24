@@ -1,17 +1,12 @@
 package com.excilys.computerdatabase.services.impl;
 
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import com.excilys.computerdatabase.daos.interfaces.UserDAO;
-import com.excilys.computerdatabase.exceptions.UserNotFoundException;
-import com.excilys.computerdatabase.models.UserRole;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -19,21 +14,31 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.excilys.computerdatabase.exceptions.UserNotFoundException;
+import com.excilys.computerdatabase.models.UserRole;
+import com.excilys.computerdatabase.services.interfaces.UserService;
 
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
 
+    private static final Logger LOG = LoggerFactory.getLogger(UserDetailsServiceImpl.class);
+
     @Autowired
-    private UserDAO userDao;
+    private UserService userService;
 
     @Transactional(readOnly = true)
     @Override
     public UserDetails loadUserByUsername(final String username) throws UsernameNotFoundException {
+        LOG.info("loadUserByName(username : " + username + ")");
         try {
-            com.excilys.computerdatabase.models.User user = userDao.findByUserName(username);
+            com.excilys.computerdatabase.models.User user = userService.findByUsername(username);
             List<GrantedAuthority> authorities = buildUserAuthority(user.getUserRole());
             return buildUserForAuthentication(user, authorities);
         } catch (UserNotFoundException e) {
+            LOG.error("User " + username + " Not Found");
             throw new UsernameNotFoundException("Username " + username + " Not Found");
         }
     }

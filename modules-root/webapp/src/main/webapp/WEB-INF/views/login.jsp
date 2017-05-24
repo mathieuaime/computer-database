@@ -2,6 +2,8 @@
 	pageEncoding="ISO-8859-1"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="utils"%>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <html>
 <head>
 <title>Computer Database</title>
@@ -67,7 +69,8 @@
 					<div id="signup">
 						<h1>Sign Up</h1>
 
-						<form action="register" method="post">
+						<form:form action="signup" method="POST"
+							commandName="signupForm" modelAttribute="User">
 							<c:if test="${param.error != null}">
 								<div class="alert alert-danger">
 									<p>Invalid username and password.</p>
@@ -78,20 +81,28 @@
 									<p>You have been logged out successfully.</p>
 								</div>
 							</c:if>
-							<div class="field-wrap">
-								<label> Set A Username<span class="req">*</span>
-								</label> <input type="text" name="username" required autocomplete="off" />
-							</div>
+							<fieldset>
+								<div class="field-wrap">
+									<form:label path="username">
+										 Set A Username<span class="req">*</span>
+									</form:label>
+									<form:input type="text" path="username"
+										autocomplete="off" />
+									<form:errors path="username" cssClass="error" />
+								</div>
 
-							<div class="field-wrap">
-								<label> Set A Password<span class="req">*</span>
-								</label> <input type="password" name="password" required
-									autocomplete="off" />
-							</div>
-
-							<button type="submit" class="button button-block">Let's Go</button>
-
-						</form>
+								<div class="field-wrap">
+									<form:label path="password">
+										 Set A Password<span class="req">*</span>
+									</form:label>
+									<form:input type="password" path="password"
+										autocomplete="off" />
+									<form:errors path="password" cssClass="error" />
+								</div>
+								<button type="submit" class="button button-block">Let's
+									Go</button>
+							</fieldset>
+						</form:form>
 
 					</div>
 
