@@ -10,6 +10,8 @@ import org.slf4j.Logger;
 
 import com.excilys.computerdatabase.models.Company;
 import com.excilys.computerdatabase.models.Computer;
+import com.excilys.computerdatabase.models.User;
+import com.excilys.computerdatabase.models.UserRole;
 
 public class HibernateConfig {
 
@@ -24,6 +26,8 @@ public class HibernateConfig {
             configuration.configure("config/db/hibernate.cfg.xml");
             configuration.addAnnotatedClass(Computer.class);
             configuration.addAnnotatedClass(Company.class);
+            configuration.addAnnotatedClass(User.class);
+            configuration.addAnnotatedClass(UserRole.class);
             LOGGER.info("Hibernate Configuration loaded");
 
             ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()

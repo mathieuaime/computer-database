@@ -12,19 +12,19 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 @Entity
-@Table(name = "user_roles", uniqueConstraints = @UniqueConstraint(columnNames = { "role", "username" }))
+@Table(name = "users_roles", uniqueConstraints = @UniqueConstraint(columnNames = { "role", "user" }))
 public class UserRole {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
-    @Column(name = "user_role_id", unique = true, nullable = false)
-    private Integer userRoleId;
+    @Column(name = "id", unique = true, nullable = false)
+    private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "username", nullable = false)
+    @JoinColumn(name = "user", nullable = false)
     private User user;
 
-    @Column(name = "role", nullable = false, length = 45)
+    @Column(name = "role", nullable = false)
     private String role;
 
     public UserRole() {
@@ -36,11 +36,11 @@ public class UserRole {
     }
 
     public Integer getUserRoleId() {
-        return this.userRoleId;
+        return this.id;
     }
 
-    public void setUserRoleId(Integer userRoleId) {
-        this.userRoleId = userRoleId;
+    public void setUserRoleId(Integer id) {
+        this.id = id;
     }
 
     public User getUser() {
