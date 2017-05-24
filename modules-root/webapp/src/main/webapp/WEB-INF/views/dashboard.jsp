@@ -18,9 +18,7 @@
 </head>
 <body>
 	<header class="navbar navbar-inverse navbar-fixed-top">
-		<div class="container">
-			<utils:link home="true" href="dashboard" classe="navbar-brand" />
-		</div>
+		<utils:navbar user="${user}"></utils:navbar>
 	</header>
 
 	<section id="main">
@@ -37,7 +35,7 @@
 				</div>
 			</c:if>
 
-			<h1 id="homeTitle">${computerCount}Computer${computerCount > 1 ? 's' : ''}</h1>
+			<h1 id="homeTitle">${computerCount} Computer${computerCount > 1 ? 's' : ''}</h1>
 
 			<div id="actions" class="form-horizontal">
 				<div class="pull-left">

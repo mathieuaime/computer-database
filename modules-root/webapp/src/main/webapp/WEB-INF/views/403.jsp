@@ -11,9 +11,7 @@
 </head>
 <body>
 	<header class="navbar navbar-inverse navbar-fixed-top">
-		<div class="container">
-			<utils:link home="true" href="dashboard" classe="navbar-brand" />
-		</div>
+		<utils:navbar user="${user}"></utils:navbar>
 	</header>
 
 	<section id="main">
@@ -22,7 +20,6 @@
 				Error 403: Access denied!
 				<br/>
 					Dear <strong>${user}</strong>, You are not authorized to perform this action.
-					<a href="logout">Logout</a>
 				<!-- stacktrace -->
 			</div>
 		</div>

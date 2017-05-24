@@ -10,11 +10,9 @@
     <link href="resources/css/main.css" rel="stylesheet" media="screen">
 </head>
 <body>
-    <header class="navbar navbar-inverse navbar-fixed-top">
-        <div class="container">
-            <utils:link home="true" href="dashboard" classe="navbar-brand" />
-        </div>
-    </header>
+	<header class="navbar navbar-inverse navbar-fixed-top">
+		<utils:navbar user="${user}"></utils:navbar>
+	</header>
 
     <section id="main">
         <div class="container">

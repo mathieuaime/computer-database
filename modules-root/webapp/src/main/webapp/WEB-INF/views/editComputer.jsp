@@ -19,10 +19,9 @@
 </head>
 <body>
 	<header class="navbar navbar-inverse navbar-fixed-top">
-		<div class="container">
-			<utils:link home="true" href="dashboard" classe="navbar-brand" />
-		</div>
+		<utils:navbar user="${user}"></utils:navbar>
 	</header>
+
 	<section id="main">
 		<div class="container">
 			<div class="row">
@@ -35,7 +34,7 @@
 					<form:form action="editComputer" method="POST"
 						modelAttribute="computerDTO">
 						<fieldset>
-							<form:hidden path="id"/>
+							<form:hidden path="id" />
 							<div class="form-group">
 								<form:label path="name">
 									<spring:message code="label.computer.name" />

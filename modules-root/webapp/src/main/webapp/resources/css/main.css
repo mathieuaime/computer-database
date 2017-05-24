@@ -4,6 +4,10 @@ body {
     padding-bottom: 70px;
 }
 
+header {
+	padding:0 10px;
+}
+
 footer {
     position:fixed;
     bottom:0;
