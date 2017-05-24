@@ -41,6 +41,7 @@ public class AddComputerServlet {
     @GetMapping
     public String get(ModelMap model) {
         LOGGER.info("get()");
+        model.addAttribute("user", CommonServlet.getPrincipal());
         model.addAttribute("companies", companyService.getPage().getObjects());
         model.addAttribute("computerDTO", new ComputerDTO());
         return "addComputer";

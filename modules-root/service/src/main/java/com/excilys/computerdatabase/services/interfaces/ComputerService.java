@@ -36,6 +36,7 @@ public interface ComputerService extends PageService<ComputerDTO> {
      * @return ComputerDTO
      * @throws CompanyNotFoundException 
      */
+    @Secured("ROLE_ADMIN")
     ComputerDTO add(Computer computer) throws CompanyNotFoundException;
 
     /**
@@ -45,6 +46,7 @@ public interface ComputerService extends PageService<ComputerDTO> {
      * @throws ComputerNotFoundException exception when the computer is not found
      * @throws CompanyNotFoundException 
      */
+    @Secured("ROLE_ADMIN")
     ComputerDTO update(Computer computer) throws ComputerNotFoundException, CompanyNotFoundException;
 
     /**
@@ -52,6 +54,7 @@ public interface ComputerService extends PageService<ComputerDTO> {
      * @param id the id of the computer
      * @throws ComputerNotFoundException exception when the computer is not found
      */
+    @Secured("ROLE_ADMIN")
     void delete(long id) throws ComputerNotFoundException;
 
     /**
@@ -59,6 +62,7 @@ public interface ComputerService extends PageService<ComputerDTO> {
      * @param ids the ids of the computers
      * @throws ComputerNotFoundException exception when the computer is not found
      */
+    @Secured("ROLE_ADMIN")
     void delete(List<Long> ids) throws ComputerNotFoundException;
 
     /**
@@ -66,8 +70,6 @@ public interface ComputerService extends PageService<ComputerDTO> {
      * @return int number of computers
      * @param search the field to search for
      */
-    //@PreAuthorize("hasRole('USER')")
-    //@Secured("ROLE_USER")
     int count(String search);
 
     /**

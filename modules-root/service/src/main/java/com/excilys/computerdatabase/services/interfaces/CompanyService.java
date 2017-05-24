@@ -40,5 +40,6 @@ public interface CompanyService extends PageService<CompanyDTO> {
      * @param id the id of the company
      * @throws CompanyNotFoundException when the company does not exist
      */
+    @Secured("ROLE_ADMIN")
     void delete(long id) throws CompanyNotFoundException;
 }

@@ -45,6 +45,7 @@ public class EditComputerServlet {
     @GetMapping
     public String get(ModelMap model, @RequestParam(value = "id", defaultValue = "0") long id) {
         LOGGER.info("get(id : " + id + ")");
+        model.addAttribute("user", CommonServlet.getPrincipal());
         model.addAttribute("companies", companyService.getPage().getObjects());
         model.addAttribute("dateFormat", Config.getProperties().getProperty("date_format"));
 

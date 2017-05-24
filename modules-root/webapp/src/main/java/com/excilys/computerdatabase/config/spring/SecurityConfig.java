@@ -27,31 +27,24 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private static final Logger LOG = LoggerFactory.getLogger(SecurityConfig.class);
     private static final String REALM_NAME = "Contacts Realm via Digest Authentication";
 
-    //@Autowired
-    //UserDetailsService userDetailsService;
-    
     @Autowired
-    public void configureGlobalSecurity(AuthenticationManagerBuilder auth) throws Exception {
-        auth.inMemoryAuthentication().withUser("bill").password("abc123").roles("USER");
-        auth.inMemoryAuthentication().withUser("admin").password("root123").roles("ADMIN");
-        auth.inMemoryAuthentication().withUser("dba").password("root123").roles("ADMIN","DBA");
-    }
-    
-    @Bean
+    UserDetailsService userDetailsService;
+
+    /*@Bean
     public UserDetailsService userDetailsService() {
         Properties users = new Properties();
-        users.setProperty("user", "pwd" + ",USER");
-        users.setProperty("admin", "admin" + ",USER,ADMIN");
+        users.setProperty("user", "pwd" + ",ROLE_USER");
+        users.setProperty("admin", "admin" + ",ROLE_USER,ROLE_ADMIN");
         return new InMemoryUserDetailsManager(users);
-    }
-    
-    /*@Override
-    protected void configure(AuthenticationManagerBuilder builder) throws Exception {
-        LOG.info("Spring Security configuration 1 ...");
-        builder.userDetailsService(userDetailsService());
     }*/
 
-    /*@Override
+    @Override
+    protected void configure(AuthenticationManagerBuilder builder) throws Exception {
+        LOG.info("Spring Security configuration 1 ...");
+        builder.userDetailsService(userDetailsService);
+    }
+
+    @Override
     protected void configure(HttpSecurity http) throws Exception {
         LOG.info("Spring Security configuration 2 ...");
         DigestAuthenticationEntryPoint authenticationEntryPoint = new DigestAuthenticationEntryPoint();
@@ -62,23 +55,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         filter.setAuthenticationEntryPoint(authenticationEntryPoint);
         filter.setUserDetailsService(userDetailsService());
 
-        http.authorizeRequests()
-        .antMatchers("/resources/**", "/signup", "/about").permitAll()
-        .anyRequest().authenticated()
-        .and().formLogin().loginPage("/login")
-        .usernameParameter("username").passwordParameter("password")
-        .failureUrl("/login?error").permitAll().and().logout().permitAll()
-        .and().exceptionHandling().accessDeniedPage("/403");
-    }*/
-    
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-      
-      http.authorizeRequests()
-          .antMatchers("/resources/**", "/signup", "/about").permitAll()
-          .and().formLogin().loginPage("/login")
-          .usernameParameter("username").passwordParameter("password")
-          .and().exceptionHandling().accessDeniedPage("/403");
+        http.authorizeRequests().antMatchers("/resources/**", "/signup", "/about").permitAll().and().formLogin()
+                .loginPage("/login").usernameParameter("username").passwordParameter("password").and()
+                .exceptionHandling().accessDeniedPage("/403");
     }
 
     @PostConstruct
