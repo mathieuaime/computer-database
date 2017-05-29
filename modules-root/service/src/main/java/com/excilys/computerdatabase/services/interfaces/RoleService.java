@@ -10,4 +10,11 @@ public interface RoleService {
      * @throws UserNotFoundException when the user doesn't exist
      */
     void save(User user) throws UserNotFoundException;
+    
+    /**
+     * Update a role for a user.
+     * @param user user
+     * @throws UserNotFoundException when the user doesn't exist
+     */
+    void update(User user) throws UserNotFoundException;
 }

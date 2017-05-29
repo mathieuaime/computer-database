@@ -18,4 +18,12 @@ public interface UserService {
      * @return User
      */
     User save(User user);
+    
+
+    /**
+     * Update a user.
+     * @param user user
+     * @return User
+     */
+    User update(User user);
 }

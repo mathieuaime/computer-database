@@ -18,4 +18,11 @@ public interface UserDAO {
      * @return User
      */
     User save(User user);
+
+    /**
+     * Update a user.
+     * @param user user
+     * @return User
+     */
+    User update(User user);
 }

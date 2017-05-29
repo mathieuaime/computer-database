@@ -18,4 +18,9 @@ public class RoleServiceImpl implements RoleService {
     public void save(User user) throws UserNotFoundException {
         roleDAO.save(user.getUserRole());
     }
+
+    @Override
+    public void update(User user) throws UserNotFoundException {
+        roleDAO.update(user.getUserRole());
+    }
 }

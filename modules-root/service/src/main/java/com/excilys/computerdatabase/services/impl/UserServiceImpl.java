@@ -24,6 +24,13 @@ public class UserServiceImpl implements UserService {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userDao.save(user);
     }
+    
+    @Override
+    @Transactional(readOnly = false)
+    public User update(com.excilys.computerdatabase.models.User user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        return userDao.update(user);
+    }
 
     @Override
     public User findByUsername(String username) throws UserNotFoundException {

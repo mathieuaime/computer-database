@@ -18,6 +18,7 @@ public class UserDAOImpl implements UserDAO {
 
     @Override
     public User findByUserName(String username) throws UserNotFoundException {
+        LOGGER.info("findByUserName(username : " + username + ")");
         try (Session session = HibernateConfig.getSessionFactory().openSession();) {
             return session.createQuery("from User where username=:username", User.class)
                     .setParameter("username", username).getSingleResult();
@@ -31,6 +32,15 @@ public class UserDAOImpl implements UserDAO {
         LOGGER.info("save(user : " + user.getUsername() + ")");
         try (Session session = HibernateConfig.getSessionFactory().openSession();) {
             session.save(user);
+            return user;
+        }
+    }
+
+    @Override
+    public User update(User user) {
+        LOGGER.info("update(user : " + user.getUsername() + ")");
+        try (Session session = HibernateConfig.getSessionFactory().openSession();) {
+            session.update(user);
             return user;
         }
     }

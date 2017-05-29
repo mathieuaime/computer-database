@@ -33,4 +33,21 @@ public class UserRoleDAOImpl implements UserRoleDAO {
             save(role);
         }
     }
+
+    @Override
+    public void update(UserRole role) throws UserNotFoundException {
+        LOGGER.info("update(role : " + role + ")");
+        try (Session session = HibernateConfig.getSessionFactory().openSession();) {
+            session.update(role);
+        } catch (ConstraintViolationException e) {
+            throw new UserNotFoundException("User " + role.getUser().getUsername() + " not Found");
+        }
+    }
+
+    @Override
+    public void update(Set<UserRole> userRole) throws UserNotFoundException {
+        for (UserRole role : userRole) {
+            update(role);
+        }
+    }
 }
