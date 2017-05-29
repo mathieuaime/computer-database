@@ -81,7 +81,7 @@ public class CommonController {
      */
     @GetMapping(value = "/403")
     public String accessDeniedPage(ModelMap model) {
-        model.addAttribute("user", getPrincipal());
+        model.addAttribute("user", getUsername());
         return "403";
     }
 
@@ -92,7 +92,7 @@ public class CommonController {
      */
     @GetMapping(value = "/404")
     public String notFoundPage(ModelMap model) {
-        model.addAttribute("user", getPrincipal());
+        model.addAttribute("user", getUsername());
         return "404";
     }
 
@@ -103,7 +103,7 @@ public class CommonController {
      */
     @GetMapping(value = "/500")
     public String errorPage(ModelMap model) {
-        model.addAttribute("user", getPrincipal());
+        model.addAttribute("user", getUsername());
         return "500";
     }
 
@@ -111,7 +111,7 @@ public class CommonController {
      * Get the username of the user in session.
      * @return username
      */
-    static String getPrincipal() {
+    static String getUsername() {
         String userName = null;
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 

@@ -4,6 +4,8 @@ import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -28,6 +30,7 @@ import com.excilys.computerdatabase.validators.ComputerValidator;
 
 @Controller
 @RequestMapping("/editComputer")
+@EnableGlobalMethodSecurity(securedEnabled = true)
 public class EditComputerController {
     @Autowired
     private ComputerService computerService;
@@ -44,9 +47,10 @@ public class EditComputerController {
      * @return redirection
      */
     @GetMapping
+    @Secured("ROLE_ADMIN")
     public String get(ModelMap model, @RequestParam(value = "id", defaultValue = "0") long id) {
         LOGGER.info("get(id : " + id + ")");
-        model.addAttribute("user", CommonController.getPrincipal());
+        model.addAttribute("user", CommonController.getUsername());
         model.addAttribute("companies", companyService.getPage().getObjects());
         model.addAttribute("dateFormat", Config.getProperties().getProperty("date_format"));
 
@@ -76,6 +80,7 @@ public class EditComputerController {
      * @return redirection
      */
     @PostMapping
+    @Secured("ROLE_ADMIN")
     public String post(@Valid @ModelAttribute("computerDTO") ComputerDTO computerDTO, BindingResult result,
             ModelMap model) {
         LOGGER.info("post(computerDTO : " + computerDTO + ")");

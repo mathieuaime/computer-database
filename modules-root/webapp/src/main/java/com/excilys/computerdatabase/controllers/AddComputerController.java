@@ -4,6 +4,10 @@ import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -25,6 +29,7 @@ import com.excilys.computerdatabase.validators.ComputerValidator;
 
 @Controller
 @RequestMapping("/addComputer")
+@EnableGlobalMethodSecurity(securedEnabled = true)
 public class AddComputerController {
     @Autowired
     private ComputerService computerService;
@@ -40,9 +45,11 @@ public class AddComputerController {
      * @return redirection
      */
     @GetMapping
+    @Secured("ROLE_ADMIN")
     public String get(ModelMap model) {
         LOGGER.info("get()");
-        model.addAttribute("user", CommonController.getPrincipal());
+
+        model.addAttribute("user", CommonController.getUsername());
         model.addAttribute("companies", companyService.getPage().getObjects());
         model.addAttribute("computerDTO", new ComputerDTO());
         return "addComputer";
@@ -56,6 +63,7 @@ public class AddComputerController {
      * @return redirection
      */
     @PostMapping
+    @Secured("ROLE_ADMIN")
     public String post(@Valid @ModelAttribute("computerDTO") ComputerDTO computerDTO,
             BindingResult result, ModelMap model) {
         LOGGER.info("post(computerDTO : " + computerDTO + ")");

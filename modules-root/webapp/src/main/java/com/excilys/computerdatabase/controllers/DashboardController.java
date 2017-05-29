@@ -8,6 +8,8 @@ import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -39,15 +41,18 @@ public class DashboardController {
      * @return redirection
      */
     @GetMapping(value = "/dashboard")
+    @Secured("ROLE_USER")
     public String get(Locale locale, ModelMap model, @Valid @ModelAttribute Page<ComputerDTO> page) {
         LOGGER.info("get");
         LOGGER.info("Locale : " + locale.getDisplayName());
-        LOGGER.info(SecurityContextHolder.getContext().getAuthentication().getName());
-        LOGGER.info(SecurityContextHolder.getContext().getAuthentication().getAuthorities().toString());
+        LOGGER.info(CommonController.getUsername());
+        LOGGER.info("" + SecurityContextHolder.getContext().getAuthentication().getAuthorities());
 
         int computerCount = computerService.count(page.getSearch());
 
-        model.addAttribute("user", CommonController.getPrincipal());
+        model.addAttribute("user", CommonController.getUsername());
+        model.addAttribute("isAdmin", SecurityContextHolder.getContext().getAuthentication().getAuthorities()
+                .contains(new SimpleGrantedAuthority("ROLE_ADMIN")));
         model.addAttribute("computerPage", computerService.getPage(page));
         model.addAttribute("computerCount", computerCount);
         model.addAttribute("page", page.getPage());
@@ -68,6 +73,7 @@ public class DashboardController {
      * @return redirection
      */
     @PostMapping(value = "/dashboard")
+    @Secured("ROLE_ADMIN")
     public String post(Locale locale, ModelMap model, @RequestParam(value = "selection") String selection) {
         LOGGER.info("post(selection : " + selection + ")");
         String[] listComputersToDelete = selection.split(",");

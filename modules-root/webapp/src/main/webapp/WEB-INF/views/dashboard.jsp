@@ -3,6 +3,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="utils"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -51,18 +52,23 @@
 							value="${filterMessage}" class="btn btn-primary" />
 					</form>
 				</div>
-				<div class="pull-right">
-					<a class="btn btn-success" id="addComputer" href="addComputer"><spring:message
-							code="label.addComputer.title" /></a> <a class="btn btn-default"
-						id="editComputer" href="#" onclick="$.fn.toggleEditMode();"><spring:message
-							code="label.edit" /></a>
-				</div>
+				<c:if test="${isAdmin}">
+					<div class="pull-right">
+						<a class="btn btn-success" id="addComputer" href="addComputer"><spring:message
+								code="label.addComputer.title" /></a> <a class="btn btn-default"
+							id="editComputer" href="#" onclick="$.fn.toggleEditMode();"><spring:message
+								code="label.edit" /></a>
+					</div>
+				</c:if>
 			</div>
 		</div>
 
-		<form id="deleteForm" action="dashboard" method="POST">
-			<input type="hidden" name="selection" value="">
-		</form>
+		<c:if test="${isAdmin}">
+			<form id="deleteForm" action="dashboard" method="POST">
+				<input type="hidden" name="selection" value="" /> 
+				<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+			</form>
+		</c:if>
 
 		<div class="container" style="margin-top: 10px;">
 			<table class="table table-striped table-bordered">
@@ -70,13 +76,15 @@
 					<tr>
 						<!-- Variable declarations for passing labels as parameters -->
 
-						<th class="editMode" style="width: 60px; height: 22px;"><input
-							type="checkbox" id="selectall" /> <span
-							style="vertical-align: top;"> - <a href="#"
-								id="deleteSelected" onclick="$.fn.deleteSelected();"> <i
-									class="fa fa-trash-o fa-lg"></i>
-							</a>
-						</span></th>
+						<c:if test="${isAdmin}">
+							<th class="editMode" style="width: 60px; height: 22px;"><input
+								type="checkbox" id="selectall" /> <span
+								style="vertical-align: top;"> - <a href="#"
+									id="deleteSelected" onclick="$.fn.deleteSelected();"> <i
+										class="fa fa-trash-o fa-lg"></i>
+								</a>
+							</span></th>
+						</c:if>
 
 						<!-- Table header for Computer Name -->
 						<spring:message code="label.computer.name"
@@ -136,8 +144,10 @@
 				<tbody id="results">
 					<c:forEach items="${computerPage.objects}" var="computer">
 						<tr>
-							<td class="editMode"><input type="checkbox" name="cb"
-								class="cb" value="${computer.id}"></td>
+							<c:if test="${isAdmin}">
+								<td class="editMode"><input type="checkbox" name="cb"
+									class="cb" value="${computer.id}"></td>
+							</c:if>
 							<td><a href="editComputer?id=${computer.id}" onclick="">${computer.name}</a></td>
 							<td>${computer.introduced}</td>
 							<td>${computer.discontinued}</td>
