@@ -6,7 +6,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title><spring:message code="label.title" /></title>
+<title><spring:message code="label.title" /> - <spring:message
+		code="label.dashboard.title" /></title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta charset="utf-8">
 <!-- Bootstrap -->

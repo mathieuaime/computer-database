@@ -2,6 +2,7 @@ package com.excilys.computerdatabase.controllers;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import javax.validation.Valid;
 
@@ -38,9 +39,9 @@ public class DashboardController {
      * @return redirection
      */
     @GetMapping(value = "/dashboard")
-    public String get(ModelMap model, @Valid @ModelAttribute Page<ComputerDTO> page) {
+    public String get(Locale locale, ModelMap model, @Valid @ModelAttribute Page<ComputerDTO> page) {
         LOGGER.info("get");
-
+        LOGGER.info("Locale : " + locale.getDisplayName());
         LOGGER.info(SecurityContextHolder.getContext().getAuthentication().getName());
         LOGGER.info(SecurityContextHolder.getContext().getAuthentication().getAuthorities().toString());
 
@@ -67,7 +68,7 @@ public class DashboardController {
      * @return redirection
      */
     @PostMapping(value = "/dashboard")
-    public String post(ModelMap model, @RequestParam(value = "selection") String selection) {
+    public String post(Locale locale, ModelMap model, @RequestParam(value = "selection") String selection) {
         LOGGER.info("post(selection : " + selection + ")");
         String[] listComputersToDelete = selection.split(",");
 
@@ -83,6 +84,6 @@ public class DashboardController {
             model.addAttribute("error", "Computer inconnu");
         }
 
-        return get(model, new Page<ComputerDTO>(Integer.parseInt(PAGE_DEFAULT), Integer.parseInt(PAGE_SIZE_DEFAULT)));
+        return get(locale, model, new Page<ComputerDTO>(Integer.parseInt(PAGE_DEFAULT), Integer.parseInt(PAGE_SIZE_DEFAULT)));
     }
 }
