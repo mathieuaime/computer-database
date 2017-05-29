@@ -125,6 +125,7 @@ public class ComputerDAOImpl implements ComputerDAO {
         try (Session session = HibernateConfig.getSessionFactory().openSession();) {
             long id = (Long) session.save(computer);
             computer.setId(id);
+            ++countTotal;
             return computer;
         } catch (ConstraintViolationException e) {
             throw new CompanyNotFoundException("Computer Not Found");
