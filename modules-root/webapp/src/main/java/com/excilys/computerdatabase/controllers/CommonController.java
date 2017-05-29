@@ -16,9 +16,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.excilys.computerdatabase.models.User;
 
 @Controller
-public class CommonServlet {
-    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(CommonServlet.class);
+public class CommonController {
+    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(CommonController.class);
 
+    /**
+     * GET login.
+     * @param model model
+     * @param error error
+     * @param logout logout
+     * @return redirection
+     */
     @GetMapping(value = "/login")
     public String login(ModelMap model, @RequestParam(value = "error", required = false) String error,
             @RequestParam(value = "logout", required = false) String logout) {
@@ -43,6 +50,12 @@ public class CommonServlet {
         return "login";
     }
 
+    /**
+     * GET logout.
+     * @param request request
+     * @param response response
+     * @return redirection
+     */
     @GetMapping(value = "/logout")
     public String logoutPage(HttpServletRequest request, HttpServletResponse response) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -52,29 +65,52 @@ public class CommonServlet {
         return "redirect:/login?logout";
     }
 
+    /**
+     * GET about.
+     * @return redirection
+     */
     @GetMapping(value = "/about")
     public String about() {
         return "about";
     }
 
+    /**
+     * GET 403.
+     * @param model model
+     * @return redirection
+     */
     @GetMapping(value = "/403")
     public String accessDeniedPage(ModelMap model) {
         model.addAttribute("user", getPrincipal());
         return "403";
     }
 
+    /**
+     * GET 404.
+     * @param model model
+     * @return redirection
+     */
     @GetMapping(value = "/404")
     public String notFoundPage(ModelMap model) {
         model.addAttribute("user", getPrincipal());
         return "404";
     }
 
+    /**
+     * GET 500.
+     * @param model model
+     * @return redirection
+     */
     @GetMapping(value = "/500")
     public String errorPage(ModelMap model) {
         model.addAttribute("user", getPrincipal());
         return "500";
     }
 
+    /**
+     * Get the username of the user in session.
+     * @return username
+     */
     static String getPrincipal() {
         String userName = null;
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();

@@ -28,24 +28,25 @@ import com.excilys.computerdatabase.validators.ComputerValidator;
 
 @Controller
 @RequestMapping("/editComputer")
-public class EditComputerServlet {
+public class EditComputerController {
     @Autowired
     private ComputerService computerService;
 
     @Autowired
     private CompanyService companyService;
 
-    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(EditComputerServlet.class);
+    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(EditComputerController.class);
 
     /**
      * GET editComputer.
-     * @param request request
-     * @param response response
+     * @param model model
+     * @param id the id of the computer
+     * @return redirection
      */
     @GetMapping
     public String get(ModelMap model, @RequestParam(value = "id", defaultValue = "0") long id) {
         LOGGER.info("get(id : " + id + ")");
-        model.addAttribute("user", CommonServlet.getPrincipal());
+        model.addAttribute("user", CommonController.getPrincipal());
         model.addAttribute("companies", companyService.getPage().getObjects());
         model.addAttribute("dateFormat", Config.getProperties().getProperty("date_format"));
 
@@ -69,9 +70,10 @@ public class EditComputerServlet {
 
     /**
      * POST editComputer.
-     * 
-     * @param request request
-     * @param response response
+     * @param computerDTO the computer to edit
+     * @param result binding result
+     * @param model model
+     * @return redirection
      */
     @PostMapping
     public String post(@Valid @ModelAttribute("computerDTO") ComputerDTO computerDTO, BindingResult result,

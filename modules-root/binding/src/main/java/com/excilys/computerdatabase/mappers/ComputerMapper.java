@@ -75,10 +75,10 @@ public class ComputerMapper {
      * @return Computer
      * @throws CompanyNotFoundException Company Not Found
      */
-    public static Computer createBean(ComputerDTO computerDTO) throws CompanyNotFoundException {        
+    public static Computer createBean(ComputerDTO computerDTO) throws CompanyNotFoundException {
         CompanyDTO companyDTO = new CompanyDTO();
         companyDTO.setId(computerDTO.getCompany().getId());
-        companyDTO.setName(computerDTO.getCompany().getName()); 
+        companyDTO.setName(computerDTO.getCompany().getName());
 
         return new Computer.Builder(computerDTO.getName()).id(computerDTO.getId()).introduced(computerDTO.getIntroduced())
                 .discontinued(computerDTO.getDiscontinued())

@@ -33,13 +33,25 @@ public class UserRole implements Serializable {
     @Column(name = "role", nullable = false)
     private String role;
 
+    /**
+     * Default constructor.
+     */
     public UserRole() {
     }
 
+    /**
+     * Constructor with role user by default.
+     * @param user user
+     */
     public UserRole(User user) {
         this(user, "ROLE_USER");
     }
 
+    /**
+     * Constructor with user and role.
+     * @param user user
+     * @param role role
+     */
     public UserRole(User user, String role) {
         this.user = user;
         this.role = role;

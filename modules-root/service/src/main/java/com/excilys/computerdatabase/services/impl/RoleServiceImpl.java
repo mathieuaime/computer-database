@@ -10,7 +10,7 @@ import com.excilys.computerdatabase.services.interfaces.RoleService;
 
 @Service
 public class RoleServiceImpl implements RoleService {
-    
+
     @Autowired
     UserRoleDAO roleDAO;
 

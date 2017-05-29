@@ -32,9 +32,7 @@ public class Company implements Serializable {
 
     /**
      * Company private constructor.
-     * 
-     * @param name
-     *            name
+     * @param name name
      */
     private Company(String name) {
         this.name = name;
@@ -61,9 +59,7 @@ public class Company implements Serializable {
 
         /**
          * Builder constructor.
-         * 
-         * @param name
-         *            name
+         * @param name name
          */
         public Builder(String name) {
             this.company = new Company(name);

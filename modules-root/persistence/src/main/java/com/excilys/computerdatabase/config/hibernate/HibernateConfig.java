@@ -19,6 +19,10 @@ public class HibernateConfig {
 
     private static SessionFactory sessionFactory;
 
+    /**
+     * Create the Session Factory.
+     * @return SessionFactory session factory
+     */
     private static SessionFactory buildSessionFactory() {
         try {
             // Create the SessionFactory from hibernate.cfg.xml
@@ -43,12 +47,17 @@ public class HibernateConfig {
         }
     }
 
+    /**
+     * get a singleton of SessionFactory.
+     * @return SessionFactory session factory
+     */
     public static SessionFactory getSessionFactory() {
-        if (sessionFactory == null)
+        if (sessionFactory == null) {
             sessionFactory = buildSessionFactory();
+        }
         return sessionFactory;
     }
-    
+
     @PostConstruct
     public void initApp() {
         LOGGER.info("Hibernate configuring...");

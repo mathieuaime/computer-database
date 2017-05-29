@@ -21,19 +21,40 @@ public class User implements Serializable {
     private boolean enabled;
     private Set<UserRole> userRole = new HashSet<UserRole>(0);
 
+    /**
+     * Default constructor.
+     */
     public User() {
     }
-    
+
+    /**
+     * Constructor enabled false.
+     * @param username username
+     * @param password password
+     */
     public User(String username, String password) {
         this(username, password, false);
     }
 
+    /**
+     * Constructor with enabled.
+     * @param username username
+     * @param password password
+     * @param enabled enabled
+     */
     public User(String username, String password, boolean enabled) {
         this.username = username;
         this.password = password;
         this.enabled = enabled;
     }
 
+    /**
+     * Constructor with userRole.
+     * @param username username
+     * @param password password
+     * @param enabled enabled
+     * @param userRole set of user role
+     */
     public User(String username, String password, boolean enabled, Set<UserRole> userRole) {
         this.username = username;
         this.password = password;

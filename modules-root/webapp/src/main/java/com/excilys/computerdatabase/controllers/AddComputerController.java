@@ -25,35 +25,38 @@ import com.excilys.computerdatabase.validators.ComputerValidator;
 
 @Controller
 @RequestMapping("/addComputer")
-public class AddComputerServlet {
+public class AddComputerController {
     @Autowired
     private ComputerService computerService;
 
     @Autowired
     private CompanyService companyService;
 
-    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(AddComputerServlet.class);
+    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(AddComputerController.class);
 
     /**
      * GET addComputer.
-     * @param request request
+     * @param model model
+     * @return redirection
      */
     @GetMapping
     public String get(ModelMap model) {
         LOGGER.info("get()");
-        model.addAttribute("user", CommonServlet.getPrincipal());
+        model.addAttribute("user", CommonController.getPrincipal());
         model.addAttribute("companies", companyService.getPage().getObjects());
         model.addAttribute("computerDTO", new ComputerDTO());
         return "addComputer";
     }
-    
+
     /**
      * POST addComputer.
-     * @param request request
-     * @param response response
+     * @param computerDTO the computer to add
+     * @param result binding result
+     * @param model model
+     * @return redirection
      */
     @PostMapping
-    public String post(@Valid @ModelAttribute("computerDTO") ComputerDTO computerDTO, 
+    public String post(@Valid @ModelAttribute("computerDTO") ComputerDTO computerDTO,
             BindingResult result, ModelMap model) {
         LOGGER.info("post(computerDTO : " + computerDTO + ")");
 

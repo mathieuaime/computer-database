@@ -18,7 +18,7 @@ public interface ComputerService extends PageService<ComputerDTO> {
      * @param id the id of the computer
      * @return ComputerDTO
      * @throws ComputerNotFoundException exception when the computer is not found
-     * @throws CompanyNotFoundException 
+     * @throws CompanyNotFoundException exception when the company is not found
      */
     ComputerDTO getById(long id) throws ComputerNotFoundException, CompanyNotFoundException;
 
@@ -33,7 +33,7 @@ public interface ComputerService extends PageService<ComputerDTO> {
      * Add a computer.
      * @param computer the computer to add
      * @return ComputerDTO
-     * @throws CompanyNotFoundException 
+     * @throws CompanyNotFoundException exception when the company is not found
      */
     @Secured("ROLE_ADMIN")
     ComputerDTO add(Computer computer) throws CompanyNotFoundException;
@@ -43,7 +43,7 @@ public interface ComputerService extends PageService<ComputerDTO> {
      * @param computer the computer to update
      * @return ComputerDTO
      * @throws ComputerNotFoundException exception when the computer is not found
-     * @throws CompanyNotFoundException 
+     * @throws CompanyNotFoundException exception when the company is not found
      */
     @Secured("ROLE_ADMIN")
     ComputerDTO update(Computer computer) throws ComputerNotFoundException, CompanyNotFoundException;
@@ -75,8 +75,8 @@ public interface ComputerService extends PageService<ComputerDTO> {
      * Returns the company of the computer id.
      * @param id the id of the computer
      * @return CompanyDTO
-     * @throws CompanyNotFoundException Company Not Found Exception
-     * @throws ComputerNotFoundException Computer Not Found Exception
+     * @throws CompanyNotFoundException exception when the company is not found
+     * @throws ComputerNotFoundException exception when the computer is not found
      */
     CompanyDTO getCompany(long id) throws CompanyNotFoundException, ComputerNotFoundException;
 }

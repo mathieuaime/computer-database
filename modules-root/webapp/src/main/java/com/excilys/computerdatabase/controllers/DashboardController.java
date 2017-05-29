@@ -21,31 +21,32 @@ import com.excilys.computerdatabase.exceptions.ComputerNotFoundException;
 import com.excilys.computerdatabase.services.interfaces.ComputerService;
 
 @Controller
-public class DashboardServlet  {
+public class DashboardController {
 
     @Autowired
     private ComputerService computerService;
 
-    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(DashboardServlet.class);
+    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(DashboardController.class);
 
     private static final String PAGE_DEFAULT = "1";
     private static final String PAGE_SIZE_DEFAULT = "10";
 
     /**
-     * GET Dashboard.
-     * @param request request
-     * @param response response
+     * GET dashboard.
+     * @param model model
+     * @param page page
+     * @return redirection
      */
     @GetMapping(value = "/dashboard")
     public String get(ModelMap model, @Valid @ModelAttribute Page<ComputerDTO> page) {
         LOGGER.info("get");
-        
+
         LOGGER.info(SecurityContextHolder.getContext().getAuthentication().getName());
         LOGGER.info(SecurityContextHolder.getContext().getAuthentication().getAuthorities().toString());
-        
+
         int computerCount = computerService.count(page.getSearch());
 
-        model.addAttribute("user", CommonServlet.getPrincipal());
+        model.addAttribute("user", CommonController.getPrincipal());
         model.addAttribute("computerPage", computerService.getPage(page));
         model.addAttribute("computerCount", computerCount);
         model.addAttribute("page", page.getPage());
@@ -54,15 +55,16 @@ public class DashboardServlet  {
         model.addAttribute("column", page.getColumn());
         model.addAttribute("pageSize", page.getPageSize());
         model.addAttribute("nbPage", Math.ceil((float) computerCount / page.getPageSize()));
-        model.addAttribute("pageSizes", new int[] { 10, 50, 100 });
+        model.addAttribute("pageSizes", new int[] {10, 50, 100});
 
         return "dashboard";
     }
 
     /**
-     * POST Dashboard.
-     * @param request request
-     * @param response response
+     * POST dashboard.
+     * @param model model
+     * @param selection computers to delete
+     * @return redirection
      */
     @PostMapping(value = "/dashboard")
     public String post(ModelMap model, @RequestParam(value = "selection") String selection) {

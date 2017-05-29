@@ -37,7 +37,7 @@ public class ComputerDAOImpl implements ComputerDAO {
     private static final String QUERY_FIND_COMPANY              = "SELECT c.company from Computer c where c.id = :id";
 
     private static final String QUERY_COUNT_COMPUTERS           = "SELECT COUNT(c) FROM Computer c";
-    
+
     private static final String QUERY_COUNT_COMPUTERS_SEARCH    = QUERY_COUNT_COMPUTERS + " WHERE c.name LIKE :search OR c.company.name LIKE :search";
 
     private static long countTotal = -1;
@@ -61,11 +61,11 @@ public class ComputerDAOImpl implements ComputerDAO {
 
         String query1 = QUERY_FIND_COMPUTER;
         boolean isSearch = search != null && !search.equals("");
-        
+
         //TODO forcer hibernate à utiliser une requete sql custom pour le tri par companie
         /*if (column.startsWith("company")) {
             query1 = QUERY_FIND_COMPUTER_ORDER_BY_COMPANY;
-            
+
             if (isSearch) {
                 query1 += " AND c.name LIKE :search OR c.company.name LIKE :search";
             }
@@ -97,7 +97,7 @@ public class ComputerDAOImpl implements ComputerDAO {
 
     @Override
     public Computer getById(long id) throws ComputerNotFoundException, CompanyNotFoundException {
-        LOGGER.info("getById(id : " + id + ")");        
+        LOGGER.info("getById(id : " + id + ")");
         try (Session session = HibernateConfig.getSessionFactory().openSession();) {
             Computer computer = session.load(Computer.class, id);
             Hibernate.initialize(computer);
@@ -139,8 +139,8 @@ public class ComputerDAOImpl implements ComputerDAO {
             session.update(computer);
             session.getTransaction().commit();
             return computer;
-        } catch(OptimisticLockException e) {
-            throw new ComputerNotFoundException("Computer Not Found");            
+        } catch (OptimisticLockException e) {
+            throw new ComputerNotFoundException("Computer Not Found");
         } catch (ConstraintViolationException e) {
             throw new CompanyNotFoundException("Computer Not Found");
         }

@@ -43,20 +43,28 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         }
     }
 
-    // Converts com.excilys.computerdatabase.models.User user to
-    // org.springframework.security.core.userdetails.User
+    /**
+     * Converts com.excilys.computerdatabase.models.User user to
+     * org.springframework.security.core.userdetails.User.
+     * @param user user
+     * @param authorities authorities
+     * @return User
+     */
     private User buildUserForAuthentication(com.excilys.computerdatabase.models.User user,
             List<GrantedAuthority> authorities) {
         return new User(user.getUsername(), user.getPassword(), user.isEnabled(), true, true, true, authorities);
     }
 
+    /**
+     * Build user authority.
+     * @param userRoles roles
+     * @return List of granted authority
+     */
     private List<GrantedAuthority> buildUserAuthority(Set<UserRole> userRoles) {
         Set<GrantedAuthority> setAuths = new HashSet<GrantedAuthority>();
-        // Build user's authorities
         for (UserRole userRole : userRoles) {
             setAuths.add(new SimpleGrantedAuthority(userRole.getRole()));
         }
-        List<GrantedAuthority> Result = new ArrayList<GrantedAuthority>(setAuths);
-        return Result;
+        return new ArrayList<GrantedAuthority>(setAuths);
     }
 }

@@ -31,7 +31,6 @@ public interface PageService<T> {
      * @return Page T
      */
     Page<T> getPage(int pageNumero, int length, String search, String order, String column);
-    
 
     /**
      * Returns the page numero pageNumero of length length.

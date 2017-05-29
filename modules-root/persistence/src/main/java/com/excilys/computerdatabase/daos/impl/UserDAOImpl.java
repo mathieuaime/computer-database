@@ -16,6 +16,7 @@ public class UserDAOImpl implements UserDAO {
 
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(UserDAOImpl.class);
 
+    @Override
     public User findByUserName(String username) throws UserNotFoundException {
         try (Session session = HibernateConfig.getSessionFactory().openSession();) {
             return session.createQuery("from User where username=:username", User.class)

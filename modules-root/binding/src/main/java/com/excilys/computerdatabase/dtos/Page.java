@@ -19,29 +19,47 @@ public class Page<T> {
     }
 
     /**
-     * Page constructor.
+     * Page constructor with objects.
      * @param objects list of T objects
-     * @param pageNumero numero of the page
+     * @param page numero of the page
+     * @param pageSize size of the page
      */
     public Page(List<T> objects, int page, int pageSize) {
         this.objects = objects;
         this.page = page;
         this.pageSize = pageSize;
     }
-    
+
     /**
      * Page constructor.
-     * @param objects list of T objects
-     * @param pageNumero numero of the page
+     * @param page numero of the page
+     * @param pageSize size of the page
      */
     public Page(int page, int pageSize) {
         this(new ArrayList<T>(), page, pageSize);
     }
-    
+
+    /**
+     * Page constructor.
+     * @param page numero of the page
+     * @param pageSize size of the page
+     * @param search value for search
+     * @param order value for order
+     * @param column value for column
+     */
     public Page(int page, int pageSize, String search, String order, String column) {
         this(new ArrayList<T>(), page, pageSize, search, order, column);
     }
 
+    /**
+     * Page constructor.
+     * @param objects list of T objects
+     * @param page numero of the page
+     * @param pageSize size of the page
+     * @param search value for search
+     * @param order value for order
+     * @param column value for column
+     */
     public Page(List<T> objects, int page, int pageSize, String search, String order, String column) {
         super();
         this.objects = objects;

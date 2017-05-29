@@ -11,8 +11,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import com.excilys.computerdatabase.exceptions.UserNotFoundException;
 import com.excilys.computerdatabase.models.User;
@@ -21,9 +19,9 @@ import com.excilys.computerdatabase.services.interfaces.RoleService;
 import com.excilys.computerdatabase.services.interfaces.UserService;
 
 @Controller
-public class UserServlet {
+public class UserController {
 
-    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(UserServlet.class);
+    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(UserController.class);
 
     @Autowired
     UserService userService;
@@ -31,6 +29,12 @@ public class UserServlet {
     @Autowired
     RoleService roleService;
 
+    /**
+     * POST signup.
+     * @param model model
+     * @param user user to register
+     * @return redirection
+     */
     @PostMapping(value = "/signup")
     public String signup(ModelMap model, @Valid @ModelAttribute User user) {
         LOGGER.info("signup(user :" + user.getUsername() + ")");

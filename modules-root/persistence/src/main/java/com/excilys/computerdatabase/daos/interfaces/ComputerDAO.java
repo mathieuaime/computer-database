@@ -29,8 +29,8 @@ public interface ComputerDAO {
      * Return the computer found by its id.
      * @param id the id of the computer
      * @return Computer
-     * @throws ComputerNotFoundException ComputerNotFoundException
-     * @throws CompanyNotFoundException 
+     * @throws ComputerNotFoundException when the computer doesn't exist
+     * @throws CompanyNotFoundException when the company doesn't exist
      */
     Computer getById(long id) throws ComputerNotFoundException, CompanyNotFoundException;
 
@@ -45,7 +45,7 @@ public interface ComputerDAO {
      * Add a computer.
      * @param computer the computer to add
      * @return Computer
-     * @throws CompanyNotFoundException 
+     * @throws CompanyNotFoundException when the company doesn't exist
      */
     Computer add(Computer computer) throws CompanyNotFoundException;
 
@@ -53,8 +53,8 @@ public interface ComputerDAO {
      * Update a computer.
      * @param computer the computer to update
      * @return Computer
-     * @throws ComputerNotFoundException Computer Not Found Exception
-     * @throws CompanyNotFoundException Company Not Found Exception
+     * @throws ComputerNotFoundException when the computer doesn't exist
+     * @throws CompanyNotFoundException when the company doesn't exist
      */
     Computer update(Computer computer) throws ComputerNotFoundException, CompanyNotFoundException;
 
@@ -81,15 +81,15 @@ public interface ComputerDAO {
      * Returns the Company of the computer id.
      * @param id the id of the computer
      * @return Company
-     * @throws CompanyNotFoundException Company Not Found Exception
-     * @throws ComputerNotFoundException Computer Not Found Exception
+     * @throws CompanyNotFoundException when the company doesn't exist
+     * @throws ComputerNotFoundException when the computer doesn't exist
      */
     Company getCompany(long id) throws CompanyNotFoundException, ComputerNotFoundException;
 
     /**
      * Delete the computer of the company id.
      * @param companyId the company id
-     * @throws CompanyNotFoundException Company Not Found
+     * @throws CompanyNotFoundException when the company doesn't exist
      */
     void deleteFromCompany(long companyId) throws CompanyNotFoundException;
 }

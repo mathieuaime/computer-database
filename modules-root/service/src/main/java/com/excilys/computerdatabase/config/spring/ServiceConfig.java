@@ -9,6 +9,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.TransactionManagementConfigurer;
@@ -22,7 +24,16 @@ public class ServiceConfig implements TransactionManagementConfigurer {
 
     @Autowired
     private DataSource dataSource;
-    
+
+    /**
+     * Password Encoder.
+     * @return Password Encoder
+     */
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
     /**
      * Transaction Manager.
      * @return Transaction Manager
@@ -31,12 +42,12 @@ public class ServiceConfig implements TransactionManagementConfigurer {
     public DataSourceTransactionManager txManager() {
         return new DataSourceTransactionManager(dataSource);
     }
-    
+
     @Override
     public PlatformTransactionManager annotationDrivenTransactionManager() {
         return txManager();
     }
-    
+
     @PostConstruct
     public void initApp() {
         LOG.info("Spring Service configuring...");
