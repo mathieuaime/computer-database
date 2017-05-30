@@ -30,6 +30,7 @@ import com.excilys.computerdatabase.config.Config;
 import com.excilys.computerdatabase.config.spring.DAOConfig;
 import com.excilys.computerdatabase.exceptions.CompanyNotFoundException;
 import com.excilys.computerdatabase.exceptions.ComputerNotFoundException;
+import com.excilys.computerdatabase.exceptions.NotFoundException;
 import com.excilys.computerdatabase.models.Company;
 import com.excilys.computerdatabase.models.Computer;
 import com.excilys.computerdatabase.daos.interfaces.ComputerDAO;
@@ -85,10 +86,14 @@ public class ComputerDAOTest extends DatabaseTestCase {
     public void testGetById() {
         try {
             assertEquals(1, computerDAO.getById(1L).getId());
-        } catch (ComputerNotFoundException e) {
-            fail("Computer Not Found");
-        } catch (CompanyNotFoundException e) {
-            fail("Company Not Found");
+        } catch (NotFoundException e) {
+            if (e instanceof ComputerNotFoundException) {
+                fail("Computer Not Found");
+            } else if (e instanceof CompanyNotFoundException) {
+                fail("Company Not Found");
+            } else {
+                fail("Bad Exception Thrown");
+            }
         }
     }
 
@@ -100,9 +105,13 @@ public class ComputerDAOTest extends DatabaseTestCase {
         try {
             computerDAO.getById(1000L);
             fail("Exception Not Thrown");
-        } catch (ComputerNotFoundException e) {
-        } catch (CompanyNotFoundException e) {
-            fail("Company Not Found");
+        } catch (NotFoundException e) {
+            if (e instanceof ComputerNotFoundException) {
+            } else if (e instanceof CompanyNotFoundException) {
+                fail("Company Not Found");
+            } else {
+                fail("Bad Exception Thrown");
+            }
         }
     }
 
@@ -165,12 +174,16 @@ public class ComputerDAOTest extends DatabaseTestCase {
     public void testAdd() {
 
         try {
-            computerDAO.add(c1);
+            computerDAO.save(c1);
             assertEquals(c1.getId(), computerDAO.getById(c1.getId()).getId());
-        } catch (ComputerNotFoundException e) {
-            fail("Computer Not Added");
-        } catch (CompanyNotFoundException e) {
-            fail("Company Not Found");
+        } catch (NotFoundException e) {
+            if (e instanceof ComputerNotFoundException) {
+                fail("Computer Not Added");
+            } else if (e instanceof CompanyNotFoundException) {
+                fail("Company Not Added");
+            } else {
+                fail("Bad Exception Thrown");
+            }
         }
     }
 
@@ -181,9 +194,13 @@ public class ComputerDAOTest extends DatabaseTestCase {
     public void testAddNonPresentCompany() {
 
         try {
-            computerDAO.add(c3);
+            computerDAO.save(c3);
             fail("Exception Not Thrown");
-        } catch (CompanyNotFoundException e) {
+        } catch (NotFoundException e) {
+            if (e instanceof CompanyNotFoundException) {
+            } else {
+                fail("Bad Exception Thrown");
+            }
         }
     }
 
@@ -195,18 +212,26 @@ public class ComputerDAOTest extends DatabaseTestCase {
         c1.setId(1L);
         try {
             computerDAO.update(c1);
-        } catch (ComputerNotFoundException e1) {
-            fail("Computer Not Found");
-        } catch (CompanyNotFoundException e1) {
-            fail("Company Not Found");
+        } catch (NotFoundException e) {
+            if (e instanceof ComputerNotFoundException) {
+                fail("Computer Not Found");
+            } else if (e instanceof CompanyNotFoundException) {
+                fail("Company Not Found");
+            } else {
+                fail("Bad Exception Thrown");
+            }
         }
 
         try {
             assertEquals(c1.getId(), computerDAO.getById(c1.getId()).getId());
-        } catch (ComputerNotFoundException e) {
-            fail("Computer Not Updated");
-        } catch (CompanyNotFoundException e) {
-            fail("Company Not Found");
+        } catch (NotFoundException e) {
+            if (e instanceof ComputerNotFoundException) {
+                fail("Computer Not Updated");
+            } else if (e instanceof CompanyNotFoundException) {
+                fail("Company Not Updated");
+            } else {
+                fail("Bad Exception Thrown");
+            }
         }
     }
 
@@ -220,9 +245,11 @@ public class ComputerDAOTest extends DatabaseTestCase {
         try {
             computerDAO.update(c1);
             fail("Exception Not Thrown");
-        } catch (ComputerNotFoundException e) {
-        } catch (CompanyNotFoundException e1) {
-            fail("Bad Exception thrown");
+        } catch (NotFoundException e) {
+            if (e instanceof ComputerNotFoundException) {
+            } else {
+                fail("Bad Exception Thrown");
+            }
         }
     }
 
@@ -235,9 +262,11 @@ public class ComputerDAOTest extends DatabaseTestCase {
             computerDAO.delete(1L);
             computerDAO.getById(1L);
             fail("Computer Not Deleted");
-        } catch (ComputerNotFoundException e) {
-        } catch (CompanyNotFoundException e) {
-            fail("Computer Not Deleted");
+        } catch (NotFoundException e) {
+            if (e instanceof ComputerNotFoundException) {
+            } else {
+                fail("Bad Exception Thrown");
+            }
         }
     }
 

@@ -1,6 +1,6 @@
 package com.excilys.computerdatabase.exceptions;
 
-public class UserNotFoundException extends Exception {
+public class UserNotFoundException extends NotFoundException {
     private static final long serialVersionUID = 1291570029220364884L;
 
     /**

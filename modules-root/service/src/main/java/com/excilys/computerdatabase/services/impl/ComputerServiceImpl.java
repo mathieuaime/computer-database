@@ -12,8 +12,7 @@ import com.excilys.computerdatabase.daos.interfaces.ComputerDAO;
 import com.excilys.computerdatabase.dtos.CompanyDTO;
 import com.excilys.computerdatabase.dtos.ComputerDTO;
 import com.excilys.computerdatabase.dtos.Page;
-import com.excilys.computerdatabase.exceptions.CompanyNotFoundException;
-import com.excilys.computerdatabase.exceptions.ComputerNotFoundException;
+import com.excilys.computerdatabase.exceptions.NotFoundException;
 import com.excilys.computerdatabase.mappers.CompanyMapper;
 import com.excilys.computerdatabase.mappers.ComputerMapper;
 import com.excilys.computerdatabase.models.Computer;
@@ -55,7 +54,7 @@ public class ComputerServiceImpl implements ComputerService {
     }
 
     @Override
-    public ComputerDTO getById(long id) throws ComputerNotFoundException, CompanyNotFoundException {
+    public ComputerDTO getById(long id) throws NotFoundException {
         LOGGER.info("getById(id : " + id + ")");
         return ComputerMapper.createDTO(computerDAO.getById(id));
     }
@@ -68,29 +67,29 @@ public class ComputerServiceImpl implements ComputerService {
     }
 
     @Override
-    @Transactional(readOnly = false, rollbackFor = CompanyNotFoundException.class)
-    public ComputerDTO add(Computer computer) throws CompanyNotFoundException {
+    @Transactional(readOnly = false, rollbackFor = NotFoundException.class)
+    public ComputerDTO save(Computer computer) throws NotFoundException {
         LOGGER.info("add(computer : " + computer + ")");
-        return ComputerMapper.createDTO(computerDAO.add(computer));
+        return ComputerMapper.createDTO(computerDAO.save(computer));
     }
 
     @Override
-    @Transactional(readOnly = false, rollbackFor = CompanyNotFoundException.class)
-    public ComputerDTO update(Computer computer) throws ComputerNotFoundException, CompanyNotFoundException {
+    @Transactional(readOnly = false, rollbackFor = NotFoundException.class)
+    public ComputerDTO update(Computer computer) throws NotFoundException {
         LOGGER.info("update(computer : " + computer + ")");
         return ComputerMapper.createDTO(computerDAO.update(computer));
     }
 
     @Override
-    @Transactional(readOnly = false, rollbackFor = CompanyNotFoundException.class)
-    public void delete(long id) throws ComputerNotFoundException {
+    @Transactional(readOnly = false, rollbackFor = NotFoundException.class)
+    public void delete(long id) throws NotFoundException {
         LOGGER.info("delete(id : " + id + ")");
         computerDAO.delete(id);
     }
 
     @Override
-    @Transactional(readOnly = false, rollbackFor = ComputerNotFoundException.class)
-    public void delete(List<Long> ids) throws ComputerNotFoundException {
+    @Transactional(readOnly = false, rollbackFor = NotFoundException.class)
+    public void delete(List<Long> ids) throws NotFoundException {
         LOGGER.info("delete(ids : " + ids + ")");
         computerDAO.delete(ids);
     }
@@ -102,7 +101,7 @@ public class ComputerServiceImpl implements ComputerService {
     }
 
     @Override
-    public CompanyDTO getCompany(long id) throws CompanyNotFoundException, ComputerNotFoundException {
+    public CompanyDTO getCompany(long id) throws NotFoundException {
         LOGGER.info("getCompany(id : " + id + ")");
         return CompanyMapper.createDTO(computerDAO.getCompany(id));
     }

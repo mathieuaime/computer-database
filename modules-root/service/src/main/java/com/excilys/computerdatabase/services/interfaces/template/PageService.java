@@ -1,4 +1,4 @@
-package com.excilys.computerdatabase.services.interfaces;
+package com.excilys.computerdatabase.services.interfaces.template;
 
 import org.springframework.security.access.annotation.Secured;
 
@@ -38,4 +38,12 @@ public interface PageService<T> {
      * @return Page T
      */
     Page<T> getPage(Page<T> page);
+    
+
+    /**
+     * Return the number of computers.
+     * @return int number of computers
+     * @param search the field to search for
+     */
+    int count(String search);
 }

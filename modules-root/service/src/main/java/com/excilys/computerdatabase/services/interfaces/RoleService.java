@@ -1,20 +1,23 @@
 package com.excilys.computerdatabase.services.interfaces;
 
-import com.excilys.computerdatabase.exceptions.UserNotFoundException;
-import com.excilys.computerdatabase.models.User;
+import java.util.Set;
 
-public interface RoleService {
+import com.excilys.computerdatabase.exceptions.UserNotFoundException;
+import com.excilys.computerdatabase.models.UserRole;
+import com.excilys.computerdatabase.services.interfaces.template.CrudService;
+
+public interface RoleService extends CrudService<UserRole, UserRole>{
     /**
-     * Create a role for a user.
-     * @param user user
+     * Create several roles for a user.
+     * @param userRole the roles
      * @throws UserNotFoundException when the user doesn't exist
      */
-    void save(User user) throws UserNotFoundException;
-    
+    void save(Set<UserRole> userRole) throws UserNotFoundException;
+
     /**
-     * Update a role for a user.
-     * @param user user
+     * Update roles for a user.
+     * @param userRole the roles
      * @throws UserNotFoundException when the user doesn't exist
      */
-    void update(User user) throws UserNotFoundException;
+    void update(Set<UserRole> userRole) throws UserNotFoundException;
 }

@@ -1,6 +1,6 @@
 package com.excilys.computerdatabase.exceptions;
 
-public class ComputerNotFoundException extends Exception {
+public class ComputerNotFoundException extends NotFoundException {
     /**
      *
      */

@@ -6,8 +6,6 @@ import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -21,6 +19,7 @@ import com.excilys.computerdatabase.dtos.ComputerDTO;
 import com.excilys.computerdatabase.exceptions.CompanyNotFoundException;
 import com.excilys.computerdatabase.exceptions.IntroducedAfterDiscontinuedException;
 import com.excilys.computerdatabase.exceptions.NameEmptyException;
+import com.excilys.computerdatabase.exceptions.NotFoundException;
 import com.excilys.computerdatabase.mappers.ComputerMapper;
 import com.excilys.computerdatabase.models.Computer;
 import com.excilys.computerdatabase.services.interfaces.CompanyService;
@@ -64,8 +63,8 @@ public class AddComputerController {
      */
     @PostMapping
     @Secured("ROLE_ADMIN")
-    public String post(@Valid @ModelAttribute("computerDTO") ComputerDTO computerDTO,
-            BindingResult result, ModelMap model) {
+    public String post(@Valid @ModelAttribute("computerDTO") ComputerDTO computerDTO, BindingResult result,
+            ModelMap model) {
         LOGGER.info("post(computerDTO : " + computerDTO + ")");
 
         if (result.hasErrors()) {
@@ -76,9 +75,9 @@ public class AddComputerController {
             CompanyDTO companyDTO = companyService.getById(computerDTO.getCompany().getId());
             computerDTO.setCompany(companyDTO);
 
-            Computer computer =  ComputerMapper.createBean(computerDTO);
+            Computer computer = ComputerMapper.createBean(computerDTO);
             ComputerValidator.validate(computer);
-            computerService.add(computer);
+            computerService.save(computer);
 
             return "redirect:dashboard";
         } catch (IntroducedAfterDiscontinuedException e) {
@@ -87,8 +86,10 @@ public class AddComputerController {
         } catch (NameEmptyException e) {
             model.addAttribute("error", "Le nom doit être spécifié");
             return get(model);
-        } catch (CompanyNotFoundException e) {
-            model.addAttribute("error", "La company n'existe pas");
+        } catch (NotFoundException e) {
+            if (e instanceof CompanyNotFoundException) {
+                model.addAttribute("error", "La company n'existe pas");
+            }
             return get(model);
         }
     }

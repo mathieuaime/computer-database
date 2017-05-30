@@ -17,7 +17,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.excilys.computerdatabase.exceptions.UserNotFoundException;
 import com.excilys.computerdatabase.models.UserRole;
 import com.excilys.computerdatabase.services.interfaces.UserService;
 
@@ -33,13 +32,14 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(final String username) throws UsernameNotFoundException {
         LOG.info("loadUserByName(username : " + username + ")");
-        try {
-            com.excilys.computerdatabase.models.User user = userService.findByUsername(username);
-            List<GrantedAuthority> authorities = buildUserAuthority(user.getUserRole());
-            return buildUserForAuthentication(user, authorities);
-        } catch (UserNotFoundException e) {
+        List<com.excilys.computerdatabase.models.User> users = userService.getByName(username);
+        if (users.isEmpty()) {
             LOG.error("User " + username + " Not Found");
             throw new UsernameNotFoundException("Username " + username + " Not Found");
+        } else {
+            com.excilys.computerdatabase.models.User user = users.get(0);
+            List<GrantedAuthority> authorities = buildUserAuthority(user.getUserRole());
+            return buildUserForAuthentication(user, authorities);
         }
     }
 

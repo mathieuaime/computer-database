@@ -28,6 +28,7 @@ import com.excilys.computerdatabase.config.Config;
 import com.excilys.computerdatabase.config.spring.DAOConfig;
 import com.excilys.computerdatabase.config.spring.ServiceConfig;
 import com.excilys.computerdatabase.exceptions.CompanyNotFoundException;
+import com.excilys.computerdatabase.exceptions.NotFoundException;
 import com.excilys.computerdatabase.services.interfaces.CompanyService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -70,7 +71,11 @@ public class CompanyServiceTest extends DatabaseTestCase {
         try {
             companyService.getById(1000L);
             fail("Exception Not Thrown");
-        } catch (CompanyNotFoundException e) {
+        } catch (NotFoundException e) {
+            if (e instanceof CompanyNotFoundException) {
+            } else {
+                fail("Bad Exception Thrown");
+            }
         }
     }
 
@@ -171,11 +176,19 @@ public class CompanyServiceTest extends DatabaseTestCase {
             try {
                 companyService.getById(1L);
                 fail("Company Not Deleted");
-            } catch (CompanyNotFoundException e) {
+            } catch (NotFoundException e) {
+                if (e instanceof CompanyNotFoundException) {
+                } else {
+                    fail("Bad Exception Thrown");
+                }
             }
 
-        } catch (CompanyNotFoundException e) {
-            fail("Company Not Found");
+        } catch (NotFoundException e) {
+            if (e instanceof CompanyNotFoundException) {
+                fail("Company Not Found");
+            } else {
+                fail("Bad Exception Thrown");
+            }
         }
     }
 

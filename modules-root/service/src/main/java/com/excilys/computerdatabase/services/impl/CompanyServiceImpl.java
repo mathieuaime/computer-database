@@ -3,9 +3,10 @@ package com.excilys.computerdatabase.services.impl;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.validation.ConstraintViolationException;
+
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,8 +16,10 @@ import com.excilys.computerdatabase.dtos.CompanyDTO;
 import com.excilys.computerdatabase.dtos.ComputerDTO;
 import com.excilys.computerdatabase.dtos.Page;
 import com.excilys.computerdatabase.exceptions.CompanyNotFoundException;
+import com.excilys.computerdatabase.exceptions.NotFoundException;
 import com.excilys.computerdatabase.mappers.CompanyMapper;
 import com.excilys.computerdatabase.mappers.ComputerMapper;
+import com.excilys.computerdatabase.models.Company;
 import com.excilys.computerdatabase.services.interfaces.CompanyService;
 
 @Service
@@ -53,14 +56,18 @@ public class CompanyServiceImpl implements CompanyService {
     public Page<CompanyDTO> getPage(int pageNumero, int length, String search, String order, String column) {
         LOGGER.info("getPage(pageNumero : " + pageNumero + ", length : " + length + ", search : " + search
                 + ", order : " + order + ", column : " + column + ")");
-        return new Page<CompanyDTO>(companyDAO.findAll((pageNumero - 1) * length, length, column).stream()
+        return new Page<CompanyDTO>(companyDAO.findAll((pageNumero - 1) * length, length, search, order, column).stream()
                 .map(it -> CompanyMapper.createDTO(it)).collect(Collectors.toList()), pageNumero, length);
     }
 
     @Override
     public CompanyDTO getById(long id) throws CompanyNotFoundException {
         LOGGER.info("getById(id : " + id + ")");
-        return CompanyMapper.createDTO(companyDAO.getById(id));
+        try {
+            return CompanyMapper.createDTO(companyDAO.getById(id));
+        } catch (NotFoundException e) {
+            throw new CompanyNotFoundException("Company " + id + "Not Found");
+        }
     }
 
     @Override
@@ -77,11 +84,30 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
-    @Transactional(readOnly = false, rollbackFor = { CompanyNotFoundException.class,
-            DataIntegrityViolationException.class })
+    @Transactional(readOnly = false, rollbackFor = { NotFoundException.class, ConstraintViolationException.class })
     public void delete(long id) throws CompanyNotFoundException {
         LOGGER.info("delete(id : " + id + ")");
         computerDAO.deleteFromCompany(id);
         companyDAO.delete(id);
+    }
+
+    @Override
+    public CompanyDTO save(Company object) throws NotFoundException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public CompanyDTO update(Company object) throws NotFoundException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void delete(List<Long> ids) throws NotFoundException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public int count(String search) {
+        throw new UnsupportedOperationException();
     }
 }

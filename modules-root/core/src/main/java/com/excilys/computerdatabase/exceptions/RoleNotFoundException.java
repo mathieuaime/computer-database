@@ -1,6 +1,6 @@
 package com.excilys.computerdatabase.exceptions;
 
-public class RoleNotFoundException extends Exception {
+public class RoleNotFoundException extends NotFoundException {
     private static final long serialVersionUID = -5189006088297552567L;
 
     /**

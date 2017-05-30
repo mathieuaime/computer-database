@@ -16,9 +16,17 @@ public class User implements Serializable {
 
     private static final long serialVersionUID = -2370657471686855278L;
 
+    @Id
+    @Column(name = "username", unique = true, nullable = false, length = 45)
     private String username;
+
+    @Column(name = "password", nullable = false, length = 60)
     private String password;
+
+    @Column(name = "enabled", nullable = false)
     private boolean enabled;
+
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "user")
     private Set<UserRole> userRole = new HashSet<UserRole>(0);
 
     /**
@@ -62,8 +70,6 @@ public class User implements Serializable {
         this.userRole = userRole;
     }
 
-    @Id
-    @Column(name = "username", unique = true, nullable = false, length = 45)
     public String getUsername() {
         return this.username;
     }
@@ -72,7 +78,6 @@ public class User implements Serializable {
         this.username = username;
     }
 
-    @Column(name = "password", nullable = false, length = 60)
     public String getPassword() {
         return this.password;
     }
@@ -81,7 +86,6 @@ public class User implements Serializable {
         this.password = password;
     }
 
-    @Column(name = "enabled", nullable = false)
     public boolean isEnabled() {
         return this.enabled;
     }
@@ -90,7 +94,6 @@ public class User implements Serializable {
         this.enabled = enabled;
     }
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "user")
     public Set<UserRole> getUserRole() {
         return this.userRole;
     }
