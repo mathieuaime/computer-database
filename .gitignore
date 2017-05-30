@@ -5,8 +5,4 @@
 .settings/
 /target/
 /doc/
-/src/test/resources/gatling.conf
-/src/main/resources/config/config.properties
-/src/test/resources/config/config.properties
-/src/main/resources/config/hikari.properties
-/src/test/resources/config/hikari.properties
+pom.xml.versionsBackup

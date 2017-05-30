@@ -1,0 +1,47 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+   <parent>
+        <groupId>com.excilys</groupId>
+        <artifactId>computerdatabase</artifactId>
+        <version>0.8.2-SNAPSHOT</version>
+    </parent>
+
+    <groupId>com.excilys.computerdatabase</groupId>
+    <artifactId>modules-root</artifactId>
+    <packaging>pom</packaging>
+    <version>0.8.2-SNAPSHOT</version>
+
+    <properties>
+    	<checkstyleDir>${basedir}/checkstyle</checkstyleDir>
+    </properties>
+
+
+        <build>
+                <pluginManagement>
+                        <plugins>
+                                <plugin>
+                                    <groupId>org.apache.maven.plugins</groupId>
+                                    <artifactId>maven-checkstyle-plugin</artifactId>
+                                    <configuration>
+                                        <configLocation>${checkstyleDir}/checkstyle.xml</configLocation>
+					<suppressionsLocation>${checkstyleDir}/suppressions.xml</suppressionsLocation>
+					<suppressionsFileExpression>checkstyle.suppressions.file</suppressionsFileExpression>
+                                    </configuration>
+                                </plugin>
+                        </plugins>
+                </pluginManagement>
+        </build>
+
+
+    <modules>
+        <module>core</module>
+	<module>binding</module>
+	<module>webapp</module>
+	<module>persistence</module>
+	<module>service</module>
+	<module>console</module>
+    </modules>
+
+</project>
