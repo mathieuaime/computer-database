@@ -31,6 +31,12 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Autowired
     private ComputerDAO computerDAO;
+    
+    @Autowired
+    CompanyMapper companyMapper;
+    
+    @Autowired
+    ComputerMapper computerMapper;
 
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(CompanyServiceImpl.class);
 
@@ -57,14 +63,14 @@ public class CompanyServiceImpl implements CompanyService {
         LOGGER.info("getPage(pageNumero : " + pageNumero + ", length : " + length + ", search : " + search
                 + ", order : " + order + ", column : " + column + ")");
         return new Page<CompanyDTO>(companyDAO.findAll((pageNumero - 1) * length, length, search, order, column).stream()
-                .map(it -> CompanyMapper.createDTO(it)).collect(Collectors.toList()), pageNumero, length);
+                .map(it -> companyMapper.dto(it)).collect(Collectors.toList()), pageNumero, length);
     }
 
     @Override
     public CompanyDTO getById(long id) throws CompanyNotFoundException {
         LOGGER.info("getById(id : " + id + ")");
         try {
-            return CompanyMapper.createDTO(companyDAO.getById(id));
+            return companyMapper.dto(companyDAO.getById(id));
         } catch (NotFoundException e) {
             throw new CompanyNotFoundException("Company " + id + "Not Found");
         }
@@ -73,13 +79,13 @@ public class CompanyServiceImpl implements CompanyService {
     @Override
     public List<CompanyDTO> getByName(String name) {
         LOGGER.info("getByName(name : " + name + ")");
-        return companyDAO.getByName(name).stream().map(it -> CompanyMapper.createDTO(it)).collect(Collectors.toList());
+        return companyDAO.getByName(name).stream().map(it -> companyMapper.dto(it)).collect(Collectors.toList());
     }
 
     @Override
     public List<ComputerDTO> getComputers(long id) throws CompanyNotFoundException {
         LOGGER.info("getComputers(id : " + id + ")");
-        return companyDAO.getComputers(id).stream().map(it -> ComputerMapper.createDTO(it))
+        return companyDAO.getComputers(id).stream().map(it -> computerMapper.dto(it))
                 .collect(Collectors.toList());
     }
 

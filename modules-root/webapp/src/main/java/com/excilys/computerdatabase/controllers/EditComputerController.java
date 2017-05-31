@@ -39,6 +39,9 @@ public class EditComputerController {
     @Autowired
     private CompanyService companyService;
 
+    @Autowired
+    ComputerMapper computerMapper;
+
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(EditComputerController.class);
 
     /**
@@ -96,7 +99,7 @@ public class EditComputerController {
             CompanyDTO companyDTO = companyService.getById(computerDTO.getCompany().getId());
             computerDTO.setCompany(companyDTO);
 
-            Computer computer = ComputerMapper.createBean(computerDTO);
+            Computer computer = computerMapper.bean(computerDTO);
             ComputerValidator.validate(computer);
             computerService.update(computer);
 

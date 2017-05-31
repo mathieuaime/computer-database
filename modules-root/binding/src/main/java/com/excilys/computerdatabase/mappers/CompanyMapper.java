@@ -6,19 +6,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
+import org.springframework.stereotype.Component;
 
 import com.excilys.computerdatabase.dtos.CompanyDTO;
+import com.excilys.computerdatabase.mappers.interfaces.Mapper;
 import com.excilys.computerdatabase.models.Company;
 
-public class CompanyMapper {
+@Component
+public class CompanyMapper implements Mapper<Company, CompanyDTO> {
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(CompanyMapper.class);
 
-    /**
-     * Create a company from a ResultSet.
-     * @param rset the ResultSet
-     * @return Company
-     */
-    public static Company getCompany(ResultSet rset) {
+    @Override
+    public Company bean(ResultSet rset) {
         Company company = null;
 
         try {
@@ -32,17 +31,13 @@ public class CompanyMapper {
         return company;
     }
 
-    /**
-     * Create a list of companies from a ResultSet.
-     * @param rset the ResultSet
-     * @return List Company
-     */
-    public static List<Company> getCompanies(ResultSet rset) {
+    @Override
+    public List<Company> beans(ResultSet rset) {
         List<Company> companies = new ArrayList<>();
 
         try {
             while (rset.next()) {
-                companies.add(getCompany(rset));
+                companies.add(bean(rset));
             }
         } catch (SQLException e) {
             LOGGER.debug("Exception: " + e);
@@ -51,12 +46,8 @@ public class CompanyMapper {
         return companies;
     }
 
-    /**
-     * Create a DTO from a company.
-     * @param company the company
-     * @return CompanyDTO
-     */
-    public static CompanyDTO createDTO(Company company) {
+    @Override
+    public CompanyDTO dto(Company company) {
         CompanyDTO companyDTO = new CompanyDTO();
 
         if (company != null) {
@@ -67,12 +58,8 @@ public class CompanyMapper {
         return companyDTO;
     }
 
-    /**
-     * Create a company from a DTO.
-     * @param companyDTO the companyDTO
-     * @return Company
-     */
-    public static Company createBean(CompanyDTO companyDTO) {
+    @Override
+    public Company bean(CompanyDTO companyDTO) {
         return new Company.Builder(companyDTO.getName()).id(companyDTO.getId()).build();
     }
 }

@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import com.excilys.computerdatabase.config.Config;
@@ -21,6 +22,9 @@ import com.excilys.computerdatabase.services.interfaces.ComputerService;
 import com.excilys.computerdatabase.validators.ComputerValidator;
 
 public class CLI {
+
+    @Autowired
+    private static ComputerMapper computerMapper;
 
     private static Scanner scanner;
     private static CompanyService companyService;
@@ -159,7 +163,7 @@ public class CLI {
                     computerDTO.setDiscontinued(!discontinuedComputer.equals("") ? LocalDate.parse(discontinuedComputer, DateTimeFormatter.ofPattern("yyyy-MM-dd")) : null);
                     computerDTO.setCompany(companyDTO);
 
-                    Computer computer = ComputerMapper.createBean(computerDTO);
+                    Computer computer = computerMapper.bean(computerDTO);
 
                     ComputerValidator.validate(computer);
                     computerService.save(computer);
@@ -207,7 +211,7 @@ public class CLI {
                     computerDTO.setDiscontinued(!discontinuedComputer.equals("") ? LocalDate.parse(discontinuedComputer, DateTimeFormatter.ofPattern("yyyy-MM-dd")) : null);
                     computerDTO.setCompany(companyDTO);
 
-                    Computer computer = ComputerMapper.createBean(computerDTO);
+                    Computer computer = computerMapper.bean(computerDTO);
 
                     ComputerValidator.validate(computer);
                     computerService.update(computer);

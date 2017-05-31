@@ -32,6 +32,7 @@ import com.excilys.computerdatabase.config.spring.ServiceConfig;
 import com.excilys.computerdatabase.exceptions.CompanyNotFoundException;
 import com.excilys.computerdatabase.exceptions.ComputerNotFoundException;
 import com.excilys.computerdatabase.exceptions.NotFoundException;
+import com.excilys.computerdatabase.mappers.CompanyMapper;
 import com.excilys.computerdatabase.mappers.ComputerMapper;
 import com.excilys.computerdatabase.models.Company;
 import com.excilys.computerdatabase.models.Computer;
@@ -46,6 +47,9 @@ public class ComputerServiceTest extends DatabaseTestCase {
 
     @Autowired
     private DataSource dataSource;
+
+    @Autowired
+    ComputerMapper computerMapper;
 
     private IDatabaseTester databaseTester;
     
@@ -213,7 +217,7 @@ public class ComputerServiceTest extends DatabaseTestCase {
 
         try {
             computerService.save(c1);
-            Computer c = ComputerMapper.createBean(computerService.getById(c1.getId()));
+            Computer c = computerMapper.bean(computerService.getById(c1.getId()));
             assertEquals(c1, c);
         } catch (NotFoundException e) {
             if (e instanceof ComputerNotFoundException) {
@@ -263,7 +267,7 @@ public class ComputerServiceTest extends DatabaseTestCase {
         }
 
         try {
-            Computer c = ComputerMapper.createBean(computerService.getById(c1.getId()));
+            Computer c = computerMapper.bean(computerService.getById(c1.getId()));
             assertEquals(c1, c);
         } catch (NotFoundException e) {
             if (e instanceof ComputerNotFoundException) {
