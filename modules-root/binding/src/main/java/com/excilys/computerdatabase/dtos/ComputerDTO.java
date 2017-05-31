@@ -1,10 +1,6 @@
 package com.excilys.computerdatabase.dtos;
 
-import java.time.LocalDate;
-
 import javax.validation.constraints.NotNull;
-
-import org.springframework.format.annotation.DateTimeFormat;
 
 public class ComputerDTO {
 
@@ -13,11 +9,9 @@ public class ComputerDTO {
     @NotNull(message = "{label.error.nameEmpty}")
     private String name;
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private LocalDate introduced;
+    private String introduced;
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private LocalDate discontinued;
+    private String discontinued;
 
     private CompanyDTO company;
 
@@ -37,19 +31,19 @@ public class ComputerDTO {
         this.name = name;
     }
 
-    public LocalDate getIntroduced() {
+    public String getIntroduced() {
         return introduced;
     }
 
-    public void setIntroduced(LocalDate introduced) {
+    public void setIntroduced(String introduced) {
         this.introduced = introduced;
     }
 
-    public LocalDate getDiscontinued() {
+    public String getDiscontinued() {
         return discontinued;
     }
 
-    public void setDiscontinued(LocalDate discontinued) {
+    public void setDiscontinued(String discontinued) {
         this.discontinued = discontinued;
     }
 

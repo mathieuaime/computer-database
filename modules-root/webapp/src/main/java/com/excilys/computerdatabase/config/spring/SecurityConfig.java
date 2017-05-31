@@ -24,7 +24,7 @@ import org.springframework.security.web.authentication.www.DigestAuthenticationF
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private static final Logger LOG = LoggerFactory.getLogger(SecurityConfig.class);
-    private static final String REALM_NAME = "Contacts Realm via Digest Authentication";
+    private static final String REALM_NAME = "CDB REALM";
 
     @Autowired
     UserDetailsService userDetailsService;
@@ -63,7 +63,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         filter.setUserDetailsService(userDetailsService);
 
         http.authorizeRequests()
-            .antMatchers("/resources/**", "/signup", "/about", "/login").permitAll()
+            .antMatchers("/resources/**", "/signup", "/about", "/login", "/api").permitAll()
             .and().formLogin().loginPage("/login").usernameParameter("username").passwordParameter("password")
             .and().exceptionHandling().accessDeniedPage("/403");
     }

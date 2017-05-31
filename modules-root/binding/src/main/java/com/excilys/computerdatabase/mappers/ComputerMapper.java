@@ -4,6 +4,7 @@ import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,6 +26,9 @@ public class ComputerMapper implements Mapper<Computer, ComputerDTO> {
 
     @Autowired
     private CompanyMapper companyMapper;
+
+    @Autowired
+    private DateTimeFormatter formatter;
 
     @Override
     public Computer bean(ResultSet rset) {
@@ -71,9 +75,13 @@ public class ComputerMapper implements Mapper<Computer, ComputerDTO> {
         companyDTO.setId(computerDTO.getCompany().getId());
         companyDTO.setName(computerDTO.getCompany().getName());
 
-        return new Computer.Builder(computerDTO.getName()).id(computerDTO.getId())
-                .introduced(computerDTO.getIntroduced()).discontinued(computerDTO.getDiscontinued())
-                .company(companyMapper.bean(companyDTO)).build();
+        LocalDate introduced = computerDTO.getIntroduced() != null
+                ? LocalDate.parse(computerDTO.getIntroduced(), formatter) : null;
+        LocalDate discontinued = computerDTO.getDiscontinued() != null
+                ? LocalDate.parse(computerDTO.getDiscontinued(), formatter) : null;
+
+        return new Computer.Builder(computerDTO.getName()).id(computerDTO.getId()).introduced(introduced)
+                .discontinued(discontinued).company(companyMapper.bean(companyDTO)).build();
     }
 
     @Override
@@ -86,8 +94,8 @@ public class ComputerMapper implements Mapper<Computer, ComputerDTO> {
 
             computerDTO.setId(computer.getId());
             computerDTO.setName(computer.getName());
-            computerDTO.setIntroduced(introduced);
-            computerDTO.setDiscontinued(discontinued);
+            computerDTO.setIntroduced((introduced != null ? formatter.format(introduced) : null));
+            computerDTO.setDiscontinued((discontinued != null ? formatter.format(discontinued) : null));
             computerDTO.setCompany(companyMapper.dto(computer.getCompany()));
         }
 

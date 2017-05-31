@@ -1,7 +1,5 @@
 package com.excilys.computerdatabase.cli;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -159,8 +157,8 @@ public class CLI {
 
                     computerDTO.setName(nameComputer);
                     computerDTO.setId(Long.parseLong(idComputer));
-                    computerDTO.setIntroduced(!introducedComputer.equals("") ? LocalDate.parse(introducedComputer, DateTimeFormatter.ofPattern("yyyy-MM-dd")) : null);
-                    computerDTO.setDiscontinued(!discontinuedComputer.equals("") ? LocalDate.parse(discontinuedComputer, DateTimeFormatter.ofPattern("yyyy-MM-dd")) : null);
+                    computerDTO.setIntroduced(!introducedComputer.equals("") ? introducedComputer : null);
+                    computerDTO.setDiscontinued(!discontinuedComputer.equals("") ? discontinuedComputer : null);
                     computerDTO.setCompany(companyDTO);
 
                     Computer computer = computerMapper.bean(computerDTO);
@@ -207,8 +205,8 @@ public class CLI {
 
                     computerDTO.setName(nameComputer);
                     computerDTO.setId(Long.parseLong(idComputer));
-                    computerDTO.setIntroduced(!introducedComputer.equals("") ? LocalDate.parse(introducedComputer, DateTimeFormatter.ofPattern("yyyy-MM-dd")) : null);
-                    computerDTO.setDiscontinued(!discontinuedComputer.equals("") ? LocalDate.parse(discontinuedComputer, DateTimeFormatter.ofPattern("yyyy-MM-dd")) : null);
+                    computerDTO.setIntroduced(!introducedComputer.equals("") ? introducedComputer : null);
+                    computerDTO.setDiscontinued(!discontinuedComputer.equals("") ? discontinuedComputer : null);
                     computerDTO.setCompany(companyDTO);
 
                     Computer computer = computerMapper.bean(computerDTO);

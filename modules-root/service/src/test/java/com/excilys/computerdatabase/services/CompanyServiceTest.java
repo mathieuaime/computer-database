@@ -25,6 +25,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.excilys.computerdatabase.config.Config;
+import com.excilys.computerdatabase.config.spring.BindingConfig;
 import com.excilys.computerdatabase.config.spring.DAOConfig;
 import com.excilys.computerdatabase.config.spring.ServiceConfig;
 import com.excilys.computerdatabase.exceptions.CompanyNotFoundException;
@@ -32,7 +33,7 @@ import com.excilys.computerdatabase.exceptions.NotFoundException;
 import com.excilys.computerdatabase.services.interfaces.CompanyService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { DAOConfig.class, ServiceConfig.class} )
+@ContextConfiguration(classes = { BindingConfig.class, DAOConfig.class, ServiceConfig.class} )
 public class CompanyServiceTest extends DatabaseTestCase {
 
     @Autowired

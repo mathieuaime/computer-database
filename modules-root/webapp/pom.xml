@@ -8,9 +8,9 @@
 		<version>0.9.0-SNAPSHOT</version>
 	</parent>
 
-        <properties>
-            <checkstyleDir>${basedir}/../../checkstyle</checkstyleDir>
-        </properties>
+	<properties>
+		<checkstyleDir>${basedir}/../../checkstyle</checkstyleDir>
+	</properties>
 
 	<artifactId>webapp</artifactId>
 	<packaging>war</packaging>
@@ -62,7 +62,6 @@
 			<version>${jstlVersion}</version>
 			<scope>compile</scope>
 		</dependency>
-
 
 		<!-- Selenium dependencies -->
 		<dependency>
