@@ -21,7 +21,7 @@ import com.excilys.computerdatabase.services.interfaces.CompanyService;
 
 @RestController
 @RequestMapping(value = "/api/company", produces = MediaType.APPLICATION_JSON_VALUE)
-@Secured("ROLE_USER")
+//@Secured("ROLE_USER")
 public class CompanyWS {
 
     @Autowired

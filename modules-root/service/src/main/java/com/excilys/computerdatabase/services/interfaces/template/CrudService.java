@@ -28,7 +28,7 @@ public interface CrudService<T, U> {
      * @return T
      * @throws NotFoundException exception when the company is not found
      */
-    @Secured("ROLE_ADMIN")
+    //@Secured("ROLE_ADMIN")
     T save(U object) throws NotFoundException;
 
     /**
@@ -37,7 +37,7 @@ public interface CrudService<T, U> {
      * @return T
      * @throws NotFoundException exception when the computer is not found
      */
-    @Secured("ROLE_ADMIN")
+    //@Secured("ROLE_ADMIN")
     T update(U object) throws NotFoundException;
 
     /**
@@ -45,7 +45,7 @@ public interface CrudService<T, U> {
      * @param id the id of the computer
      * @throws NotFoundException exception when the computer is not found
      */
-    @Secured("ROLE_ADMIN")
+    //@Secured("ROLE_ADMIN")
     void delete(long id) throws NotFoundException;
 
     /**
@@ -53,7 +53,7 @@ public interface CrudService<T, U> {
      * @param ids the ids of the computers
      * @throws NotFoundException exception when the computer is not found
      */
-    @Secured("ROLE_ADMIN")
+    //@Secured("ROLE_ADMIN")
     void delete(List<Long> ids) throws NotFoundException;
 
 }

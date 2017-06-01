@@ -11,7 +11,7 @@ import com.excilys.computerdatabase.models.Computer;
 import com.excilys.computerdatabase.services.interfaces.template.CrudService;
 import com.excilys.computerdatabase.services.interfaces.template.PageService;
 
-@Secured("ROLE_USER")
+//@Secured("ROLE_USER")
 public interface ComputerService extends CrudService<ComputerDTO, Computer>, PageService<ComputerDTO> {
     /**
      * Returns the company of the computer id.
