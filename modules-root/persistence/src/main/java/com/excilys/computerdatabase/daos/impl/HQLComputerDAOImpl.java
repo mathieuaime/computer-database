@@ -24,7 +24,7 @@ import com.excilys.computerdatabase.models.Company;
 import com.excilys.computerdatabase.models.Computer;
 
 @Repository
-public class ComputerDAOImpl implements ComputerDAO {
+public class HQLComputerDAOImpl implements ComputerDAO {
 
     private static final String QUERY_DELETE_FROM_COMPANY       = "DELETE FROM Computer WHERE company_id = :id";
 
@@ -42,7 +42,7 @@ public class ComputerDAOImpl implements ComputerDAO {
 
     private static long countTotal = -1;
 
-    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(ComputerDAOImpl.class);
+    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(HQLComputerDAOImpl.class);
 
     @Override
     public List<Computer> findAll() {
@@ -120,7 +120,7 @@ public class ComputerDAOImpl implements ComputerDAO {
     }
 
     @Override
-    public Computer add(Computer computer) throws CompanyNotFoundException {
+    public Computer save(Computer computer) throws CompanyNotFoundException {
         LOGGER.info("add(computer : " + computer + ")");
         try (Session session = HibernateConfig.getSessionFactory().openSession();) {
             long id = (Long) session.save(computer);
@@ -219,7 +219,6 @@ public class ComputerDAOImpl implements ComputerDAO {
             session.beginTransaction();
             countTotal -= q.executeUpdate();
             session.getTransaction().commit();
-            session.close();
         }
     }
 }

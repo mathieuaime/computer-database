@@ -27,17 +27,19 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.excilys.computerdatabase.config.Config;
+import com.excilys.computerdatabase.config.spring.BindingConfig;
 import com.excilys.computerdatabase.config.spring.DAOConfig;
 import com.excilys.computerdatabase.config.spring.ServiceConfig;
 import com.excilys.computerdatabase.exceptions.CompanyNotFoundException;
 import com.excilys.computerdatabase.exceptions.ComputerNotFoundException;
+import com.excilys.computerdatabase.exceptions.NotFoundException;
 import com.excilys.computerdatabase.mappers.ComputerMapper;
 import com.excilys.computerdatabase.models.Company;
 import com.excilys.computerdatabase.models.Computer;
 import com.excilys.computerdatabase.services.interfaces.ComputerService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { DAOConfig.class, ServiceConfig.class} )
+@ContextConfiguration(classes = { BindingConfig.class, DAOConfig.class, ServiceConfig.class} )
 public class ComputerServiceTest extends DatabaseTestCase {
 
     @Autowired
@@ -45,6 +47,9 @@ public class ComputerServiceTest extends DatabaseTestCase {
 
     @Autowired
     private DataSource dataSource;
+
+    @Autowired
+    ComputerMapper computerMapper;
 
     private IDatabaseTester databaseTester;
     
@@ -87,10 +92,14 @@ public class ComputerServiceTest extends DatabaseTestCase {
     public void testGetById() {
         try {
             assertEquals(1, computerService.getById(1L).getId());
-        } catch (ComputerNotFoundException e) {
-            fail("Computer Not Found");
-        } catch (CompanyNotFoundException e) {
-            fail("Company Not Found");
+        } catch (NotFoundException e) {
+            if (e instanceof ComputerNotFoundException) {
+                fail("Computer Not Found");
+            } else if (e instanceof CompanyNotFoundException) {
+                fail("Company Not Found");
+            } else {
+                fail("Bad Exception Thrown");
+            }
         }
     }
 
@@ -102,9 +111,11 @@ public class ComputerServiceTest extends DatabaseTestCase {
         try {
             computerService.getById(1000L);
             fail("Exception Not Thrown");
-        } catch (ComputerNotFoundException e) {
-        } catch (CompanyNotFoundException e) {
-            fail("Company Not Found");
+        } catch (NotFoundException e) {
+            if (e instanceof ComputerNotFoundException) {
+            } else {
+                fail("Bad Exception Thrown");
+            }
         }
     }
 
@@ -171,10 +182,14 @@ public class ComputerServiceTest extends DatabaseTestCase {
     public void testGetCompany() {
         try {
             assertEquals(1L, computerService.getCompany(1L).getId());
-        } catch (ComputerNotFoundException e) {
-            fail("Computer Not Found");
-        } catch (CompanyNotFoundException e) {
-            fail("Company Not Found");
+        } catch (NotFoundException e) {
+            if (e instanceof ComputerNotFoundException) {
+                fail("Computer Not Found");
+            } else if (e instanceof CompanyNotFoundException) {
+                fail("Company Not Found");
+            } else {
+                fail("Bad Exception Thrown");
+            }
         }
     }
 
@@ -186,9 +201,11 @@ public class ComputerServiceTest extends DatabaseTestCase {
         try {
             computerService.getCompany(1500L);
             fail("Exception Not Thrown");
-        } catch (ComputerNotFoundException e) {
-        } catch (CompanyNotFoundException e) {
-            fail("Bad Exception Thrown");
+        } catch (NotFoundException e) {
+            if (e instanceof ComputerNotFoundException) {
+            } else {
+                fail("Bad Exception Thrown");
+            }
         }
     }
 
@@ -199,13 +216,17 @@ public class ComputerServiceTest extends DatabaseTestCase {
     public void testAdd() {
 
         try {
-            computerService.add(c1);
-            Computer c = ComputerMapper.createBean(computerService.getById(c1.getId()));
+            computerService.save(c1);
+            Computer c = computerMapper.bean(computerService.getById(c1.getId()));
             assertEquals(c1, c);
-        } catch (ComputerNotFoundException e) {
-            fail("Computer Not Added");
-        } catch (CompanyNotFoundException e) {
-            fail("Company Not Found");
+        } catch (NotFoundException e) {
+            if (e instanceof ComputerNotFoundException) {
+                fail("Computer Not Found");
+            } else if (e instanceof CompanyNotFoundException) {
+                fail("Company Not Found");
+            } else {
+                fail("Bad Exception Thrown");
+            }
         }
     }
 
@@ -216,9 +237,13 @@ public class ComputerServiceTest extends DatabaseTestCase {
     public void testAddNonPresentCompany() {
 
         try {
-            computerService.add(c3);
+            computerService.save(c3);
             fail("Exception Not Thrown");
-        } catch (CompanyNotFoundException e) {
+        } catch (NotFoundException e) {
+            if (e instanceof CompanyNotFoundException) {
+            } else {
+                fail("Bad Exception Thrown");
+            }
         }
     }
 
@@ -231,19 +256,27 @@ public class ComputerServiceTest extends DatabaseTestCase {
         c1.setId(1L);
         try {
             computerService.update(c1);
-        } catch (ComputerNotFoundException e1) {
-            fail("Computer Not Found");
-        } catch (CompanyNotFoundException e1) {
-            fail("Company Not Found");
+        } catch (NotFoundException e) {
+            if (e instanceof ComputerNotFoundException) {
+                fail("Computer Not Found");
+            } else if (e instanceof CompanyNotFoundException) {
+                fail("Company Not Found");
+            } else {
+                fail("Bad Exception Thrown");
+            }
         }
 
         try {
-            Computer c = ComputerMapper.createBean(computerService.getById(c1.getId()));
+            Computer c = computerMapper.bean(computerService.getById(c1.getId()));
             assertEquals(c1, c);
-        } catch (ComputerNotFoundException e) {
-            fail("Computer Not Updated");
-        } catch (CompanyNotFoundException e) {
-            fail("Company Not Found");
+        } catch (NotFoundException e) {
+            if (e instanceof ComputerNotFoundException) {
+                fail("Computer Not Updated");
+            } else if (e instanceof CompanyNotFoundException) {
+                fail("Company Not Found");
+            } else {
+                fail("Bad Exception Thrown");
+            }
         }
     }
 
@@ -257,9 +290,11 @@ public class ComputerServiceTest extends DatabaseTestCase {
         try {
             computerService.update(c1);
             fail("Exception Not Thrown");
-        } catch (ComputerNotFoundException e) {
-        } catch (CompanyNotFoundException e1) {
-            fail("Bad Exception thrown");
+        } catch (NotFoundException e) {
+            if (e instanceof ComputerNotFoundException) {
+            } else {
+                fail("Bad Exception Thrown");
+            }
         }
     }
 
@@ -270,16 +305,22 @@ public class ComputerServiceTest extends DatabaseTestCase {
     public void testDelete() {
         try {
             computerService.delete(1L);
-        } catch (ComputerNotFoundException e) {
-            fail("Computer Not Found");
+        } catch (NotFoundException e) {
+            if (e instanceof ComputerNotFoundException) {
+                fail("Computer Not Found");
+            } else {
+                fail("Bad Exception Thrown");
+            }
         }
 
         try {
             computerService.getById(1L);
             fail("Computer Not Deleted");
-        } catch (ComputerNotFoundException e) {
-        } catch (CompanyNotFoundException e) {
-            fail("Company Not Found");
+        } catch (NotFoundException e) {
+            if (e instanceof ComputerNotFoundException) {
+            } else {
+                fail("Bad Exception Thrown");
+            }
         }
     }
 

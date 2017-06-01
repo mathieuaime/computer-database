@@ -27,6 +27,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import com.excilys.computerdatabase.config.Config;
 import com.excilys.computerdatabase.config.spring.DAOConfig;
 import com.excilys.computerdatabase.exceptions.CompanyNotFoundException;
+import com.excilys.computerdatabase.exceptions.NotFoundException;
 import com.excilys.computerdatabase.daos.interfaces.CompanyDAO;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -69,7 +70,11 @@ public class CompanyDAOTest extends DatabaseTestCase {
         try {
             companyDAO.getById(1000L);
             fail("Exception Not Thrown");
-        } catch (CompanyNotFoundException e) {
+        } catch (NotFoundException e) {
+            if (e instanceof CompanyNotFoundException) {
+            } else {
+                fail("Bad Exception Thrown");
+            }
         }
     }
 

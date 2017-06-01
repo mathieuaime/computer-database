@@ -1,6 +1,6 @@
 package com.excilys.computerdatabase.exceptions;
 
-public class CompanyNotFoundException extends Exception {
+public class CompanyNotFoundException extends NotFoundException {
     /**
      *
      */

@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.excilys.computerdatabase.dtos.ComputerDTO;
 import com.excilys.computerdatabase.dtos.Page;
 import com.excilys.computerdatabase.exceptions.ComputerNotFoundException;
+import com.excilys.computerdatabase.exceptions.NotFoundException;
 import com.excilys.computerdatabase.services.interfaces.ComputerService;
 
 @Controller
@@ -86,8 +87,10 @@ public class DashboardController {
 
         try {
             computerService.delete(ids);
-        } catch (ComputerNotFoundException e) {
-            model.addAttribute("error", "Computer inconnu");
+        } catch (NotFoundException e) {
+            if (e instanceof ComputerNotFoundException) {
+                model.addAttribute("error", "Computer inconnu");
+            }
         }
 
         return get(locale, model, new Page<ComputerDTO>(Integer.parseInt(PAGE_DEFAULT), Integer.parseInt(PAGE_SIZE_DEFAULT)));

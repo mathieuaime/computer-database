@@ -22,6 +22,7 @@ import com.excilys.computerdatabase.exceptions.CompanyNotFoundException;
 import com.excilys.computerdatabase.exceptions.ComputerNotFoundException;
 import com.excilys.computerdatabase.exceptions.IntroducedAfterDiscontinuedException;
 import com.excilys.computerdatabase.exceptions.NameEmptyException;
+import com.excilys.computerdatabase.exceptions.NotFoundException;
 import com.excilys.computerdatabase.mappers.ComputerMapper;
 import com.excilys.computerdatabase.models.Computer;
 import com.excilys.computerdatabase.services.interfaces.CompanyService;
@@ -37,6 +38,9 @@ public class EditComputerController {
 
     @Autowired
     private CompanyService companyService;
+
+    @Autowired
+    ComputerMapper computerMapper;
 
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(EditComputerController.class);
 
@@ -58,12 +62,14 @@ public class EditComputerController {
 
         try {
             computerDTO = computerService.getById(id);
-        } catch (ComputerNotFoundException e) {
-            LOGGER.error("ComputerNotFound");
-            model.addAttribute("error", "Computer inconnu");
-        } catch (CompanyNotFoundException e) {
-            LOGGER.error("ComputerNotFound");
-            model.addAttribute("error", "Company inconnu");
+        } catch (NotFoundException e) {
+            if (e instanceof ComputerNotFoundException) {
+                LOGGER.error("ComputerNotFound");
+                model.addAttribute("error", "Computer inconnu");
+            } else if (e instanceof CompanyNotFoundException) {
+                LOGGER.error("ComputerNotFound");
+                model.addAttribute("error", "Company inconnu");
+            }
         }
 
         model.addAttribute("computerDTO", computerDTO);
@@ -93,7 +99,7 @@ public class EditComputerController {
             CompanyDTO companyDTO = companyService.getById(computerDTO.getCompany().getId());
             computerDTO.setCompany(companyDTO);
 
-            Computer computer = ComputerMapper.createBean(computerDTO);
+            Computer computer = computerMapper.bean(computerDTO);
             ComputerValidator.validate(computer);
             computerService.update(computer);
 
@@ -107,14 +113,18 @@ public class EditComputerController {
             LOGGER.error("NameEmpty");
             model.addAttribute("error", "{label.error.nameEmpty}");
             return get(model, computerDTO.getId());
-        } catch (ComputerNotFoundException e) {
-            LOGGER.error("ComputerNotFound");
-            model.addAttribute("error", "Le computer n'existe pas");
-            return get(model, computerDTO.getId());
-        } catch (CompanyNotFoundException e) {
-            LOGGER.error("CompanyNotFound");
-            model.addAttribute("error", "La company n'existe pas");
-            return get(model, computerDTO.getId());
+        } catch (NotFoundException e) {
+            if (e instanceof ComputerNotFoundException) {
+                LOGGER.error("ComputerNotFound");
+                model.addAttribute("error", "Le computer n'existe pas");
+                return get(model, computerDTO.getId());
+            } else if (e instanceof CompanyNotFoundException) {
+                LOGGER.error("CompanyNotFound");
+                model.addAttribute("error", "La company n'existe pas");
+                return get(model, computerDTO.getId());
+            } else {
+                return "500";
+            }
         }
     }
 }

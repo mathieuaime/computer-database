@@ -1,9 +1,8 @@
 package com.excilys.computerdatabase.cli;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import com.excilys.computerdatabase.config.Config;
@@ -13,6 +12,7 @@ import com.excilys.computerdatabase.exceptions.CompanyNotFoundException;
 import com.excilys.computerdatabase.exceptions.ComputerNotFoundException;
 import com.excilys.computerdatabase.exceptions.IntroducedAfterDiscontinuedException;
 import com.excilys.computerdatabase.exceptions.NameEmptyException;
+import com.excilys.computerdatabase.exceptions.NotFoundException;
 import com.excilys.computerdatabase.mappers.ComputerMapper;
 import com.excilys.computerdatabase.models.Computer;
 import com.excilys.computerdatabase.services.interfaces.CompanyService;
@@ -20,6 +20,9 @@ import com.excilys.computerdatabase.services.interfaces.ComputerService;
 import com.excilys.computerdatabase.validators.ComputerValidator;
 
 public class CLI {
+
+    @Autowired
+    private static ComputerMapper computerMapper;
 
     private static Scanner scanner;
     private static CompanyService companyService;
@@ -82,7 +85,7 @@ public class CLI {
         try {
             ComputerDTO c = computerService.getById(id);
             System.out.println(c);
-        } catch (CompanyNotFoundException | ComputerNotFoundException e) {
+        } catch (NotFoundException e) {
             System.out.println("Pas de pc trouvé");
         }
     }
@@ -154,14 +157,14 @@ public class CLI {
 
                     computerDTO.setName(nameComputer);
                     computerDTO.setId(Long.parseLong(idComputer));
-                    computerDTO.setIntroduced(!introducedComputer.equals("") ? LocalDate.parse(introducedComputer, DateTimeFormatter.ofPattern("yyyy-MM-dd")) : null);
-                    computerDTO.setDiscontinued(!discontinuedComputer.equals("") ? LocalDate.parse(discontinuedComputer, DateTimeFormatter.ofPattern("yyyy-MM-dd")) : null);
+                    computerDTO.setIntroduced(!introducedComputer.equals("") ? introducedComputer : null);
+                    computerDTO.setDiscontinued(!discontinuedComputer.equals("") ? discontinuedComputer : null);
                     computerDTO.setCompany(companyDTO);
 
-                    Computer computer = ComputerMapper.createBean(computerDTO);
+                    Computer computer = computerMapper.bean(computerDTO);
 
                     ComputerValidator.validate(computer);
-                    computerService.add(computer);
+                    computerService.save(computer);
 
                     System.out.println("Computer ajouté");
 
@@ -171,7 +174,7 @@ public class CLI {
                     System.out.println("La date d'ajout doit être antérieure à la date de retrait");
                 } catch (NameEmptyException e) {
                     System.out.println("Le nom doit être non nul");
-                } catch (CompanyNotFoundException e) {
+                } catch (NotFoundException e) {
                     System.out.println("La company n'existe pas");
                 }
                 break;
@@ -202,11 +205,11 @@ public class CLI {
 
                     computerDTO.setName(nameComputer);
                     computerDTO.setId(Long.parseLong(idComputer));
-                    computerDTO.setIntroduced(!introducedComputer.equals("") ? LocalDate.parse(introducedComputer, DateTimeFormatter.ofPattern("yyyy-MM-dd")) : null);
-                    computerDTO.setDiscontinued(!discontinuedComputer.equals("") ? LocalDate.parse(discontinuedComputer, DateTimeFormatter.ofPattern("yyyy-MM-dd")) : null);
+                    computerDTO.setIntroduced(!introducedComputer.equals("") ? introducedComputer : null);
+                    computerDTO.setDiscontinued(!discontinuedComputer.equals("") ? discontinuedComputer : null);
                     computerDTO.setCompany(companyDTO);
 
-                    Computer computer = ComputerMapper.createBean(computerDTO);
+                    Computer computer = computerMapper.bean(computerDTO);
 
                     ComputerValidator.validate(computer);
                     computerService.update(computer);
@@ -217,10 +220,12 @@ public class CLI {
                     System.out.println("La date d'ajout doit être antérieure à la date de retrait");
                 } catch (NameEmptyException e) {
                     System.out.println("Le nom doit être non nul");
-                } catch (ComputerNotFoundException e) {
-                    System.out.println("Le computer n'existe pas");
-                } catch (CompanyNotFoundException e) {
-                    System.out.println("La company n'existe pas");
+                } catch (NotFoundException e) {
+                    if (e instanceof ComputerNotFoundException) {
+                        System.out.println("Le computer n'existe pas");
+                    } else if (e instanceof CompanyNotFoundException) {
+                        System.out.println("La company n'exste pas");
+                    }
                 }
                 break;
 
@@ -233,7 +238,7 @@ public class CLI {
                     System.out.println("Computer supprimé");
                 } catch (NumberFormatException e) {
                     System.out.println("L'id doit être un nombre");
-                } catch (ComputerNotFoundException e) {
+                } catch (NotFoundException e) {
                     System.out.println("Le computer n'existe pas");
                 }
                 break;
@@ -247,7 +252,7 @@ public class CLI {
                     System.out.println("Computer supprimé");
                 } catch (NumberFormatException e) {
                     System.out.println("L'id doit être un nombre");
-                } catch (CompanyNotFoundException e) {
+                } catch (NotFoundException e) {
                     System.out.println("Le computer n'existe pas");
                 }
                 break;

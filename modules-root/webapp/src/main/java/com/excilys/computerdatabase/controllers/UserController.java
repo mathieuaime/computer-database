@@ -14,7 +14,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import com.excilys.computerdatabase.exceptions.UserNotFoundException;
+import com.excilys.computerdatabase.exceptions.NotFoundException;
 import com.excilys.computerdatabase.models.User;
 import com.excilys.computerdatabase.models.UserRole;
 import com.excilys.computerdatabase.services.interfaces.RoleService;
@@ -50,9 +50,9 @@ public class UserController {
             sur.add(new UserRole(user));
 
             user.setUserRole(sur);
-            roleService.save(user);
+            roleService.save(user.getUserRole());
             return "redirect:/login";
-        } catch (UserNotFoundException e) {
+        } catch (NotFoundException e) {
             return "redirect:/login?error=register";
         }
     }
