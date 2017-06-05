@@ -14,12 +14,13 @@ import com.excilys.computerdatabase.daos.interfaces.CompanyDAO;
 import com.excilys.computerdatabase.daos.interfaces.ComputerDAO;
 import com.excilys.computerdatabase.dtos.CompanyDTO;
 import com.excilys.computerdatabase.dtos.ComputerDTO;
-import com.excilys.computerdatabase.dtos.Page;
+import com.excilys.computerdatabase.models.Page;
 import com.excilys.computerdatabase.exceptions.CompanyNotFoundException;
 import com.excilys.computerdatabase.exceptions.NotFoundException;
 import com.excilys.computerdatabase.mappers.CompanyMapper;
 import com.excilys.computerdatabase.mappers.ComputerMapper;
 import com.excilys.computerdatabase.models.Company;
+import com.excilys.computerdatabase.models.Computer;
 import com.excilys.computerdatabase.services.interfaces.CompanyService;
 
 @Service
@@ -41,52 +42,37 @@ public class CompanyServiceImpl implements CompanyService {
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(CompanyServiceImpl.class);
 
     @Override
-    public Page<CompanyDTO> getPage() {
+    public Page<Company> getPage() {
         LOGGER.info("getPage()");
-        return getPage(1, -1);
+        return getPage(new Page<>());
     }
 
     @Override
-    public Page<CompanyDTO> getPage(int pageNumero, int length) {
-        LOGGER.info("getPage(pageNumero : " + pageNumero + ", length : " + length + ")");
-        return getPage(pageNumero, length, null, "ASC", "name");
-    }
-
-    @Override
-    public Page<CompanyDTO> getPage(Page<CompanyDTO> page) {
+    public Page<Company> getPage(Page<?> page) {
         LOGGER.info("getPage(page: " + page + ")");
-        return getPage(page.getPage(), page.getPageSize(), page.getSearch(), page.getOrder(), page.getColumn());
+        return companyDAO.findAll(page);
     }
 
     @Override
-    public Page<CompanyDTO> getPage(int pageNumero, int length, String search, String order, String column) {
-        LOGGER.info("getPage(pageNumero : " + pageNumero + ", length : " + length + ", search : " + search
-                + ", order : " + order + ", column : " + column + ")");
-        return new Page<CompanyDTO>(companyDAO.findAll((pageNumero - 1) * length, length, search, order, column).stream()
-                .map(it -> companyMapper.dto(it)).collect(Collectors.toList()), pageNumero, length);
-    }
-
-    @Override
-    public CompanyDTO getById(long id) throws CompanyNotFoundException {
+    public Company getById(long id) throws CompanyNotFoundException {
         LOGGER.info("getById(id : " + id + ")");
         try {
-            return companyMapper.dto(companyDAO.getById(id));
+            return companyDAO.getById(id);
         } catch (NotFoundException e) {
             throw new CompanyNotFoundException("Company " + id + "Not Found");
         }
     }
 
     @Override
-    public List<CompanyDTO> getByName(String name) {
+    public List<Company> getByName(String name) {
         LOGGER.info("getByName(name : " + name + ")");
-        return companyDAO.getByName(name).stream().map(it -> companyMapper.dto(it)).collect(Collectors.toList());
+        return companyDAO.getByName(name);
     }
 
     @Override
-    public List<ComputerDTO> getComputers(long id) throws CompanyNotFoundException {
+    public List<Computer> getComputers(long id) throws CompanyNotFoundException {
         LOGGER.info("getComputers(id : " + id + ")");
-        return companyDAO.getComputers(id).stream().map(it -> computerMapper.dto(it))
-                .collect(Collectors.toList());
+        return companyDAO.getComputers(id);
     }
 
     @Override
@@ -98,12 +84,12 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
-    public CompanyDTO save(Company object) throws NotFoundException {
+    public Company save(Company object) throws NotFoundException {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public CompanyDTO update(Company object) throws NotFoundException {
+    public Company update(Company object) throws NotFoundException {
         throw new UnsupportedOperationException();
     }
 

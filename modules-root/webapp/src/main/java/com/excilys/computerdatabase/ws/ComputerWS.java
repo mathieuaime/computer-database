@@ -21,10 +21,11 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.excilys.computerdatabase.dtos.ComputerDTO;
-import com.excilys.computerdatabase.dtos.Page;
+import com.excilys.computerdatabase.models.Page;
 import com.excilys.computerdatabase.exceptions.IntroducedAfterDiscontinuedException;
 import com.excilys.computerdatabase.exceptions.NameEmptyException;
 import com.excilys.computerdatabase.exceptions.NotFoundException;
+import com.excilys.computerdatabase.mappers.CompanyMapper;
 import com.excilys.computerdatabase.mappers.ComputerMapper;
 import com.excilys.computerdatabase.models.Computer;
 import com.excilys.computerdatabase.services.interfaces.CompanyService;
@@ -44,6 +45,9 @@ public class ComputerWS {
 
     @Autowired
     private ComputerMapper computerMapper;
+
+    @Autowired
+    private CompanyMapper companyMapper;
 
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(ComputerWS.class);
 
@@ -69,10 +73,10 @@ public class ComputerWS {
     public ResponseEntity<?> post(@Valid @ModelAttribute("computerDTO") ComputerDTO computerDTO) {
         LOGGER.info("post(computerDTO: " + computerDTO + ")");
         try {
-            computerDTO.setCompany(companyService.getById(computerDTO.getCompany().getId()));
+            computerDTO.setCompany(companyMapper.dto(companyService.getById(computerDTO.getCompany().getId())));
             Computer computer = computerMapper.bean(computerDTO);
             ComputerValidator.validate(computer);
-            computerDTO = computerService.save(computer);
+            computerDTO = computerMapper.dto(computerService.save(computer));
 
             URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
                     .buildAndExpand(computerDTO.getId()).toUri();
@@ -90,7 +94,7 @@ public class ComputerWS {
     public ResponseEntity<?> put(@Valid @ModelAttribute("computerDTO") ComputerDTO computerDTO) {
         LOGGER.info("update(computerDTO: " + computerDTO + ")");
         try {
-            computerDTO.setCompany(companyService.getById(computerDTO.getCompany().getId()));
+            computerDTO.setCompany(companyMapper.dto(companyService.getById(computerDTO.getCompany().getId())));
             Computer computer = computerMapper.bean(computerDTO);
             ComputerValidator.validate(computer);
             return ResponseEntity.ok(computerService.update(computer));

@@ -14,6 +14,7 @@ import com.excilys.computerdatabase.exceptions.IntroducedAfterDiscontinuedExcept
 import com.excilys.computerdatabase.exceptions.NameEmptyException;
 import com.excilys.computerdatabase.exceptions.NotFoundException;
 import com.excilys.computerdatabase.mappers.ComputerMapper;
+import com.excilys.computerdatabase.models.Company;
 import com.excilys.computerdatabase.models.Computer;
 import com.excilys.computerdatabase.services.interfaces.CompanyService;
 import com.excilys.computerdatabase.services.interfaces.ComputerService;
@@ -25,7 +26,11 @@ public class CLI {
     private static ComputerMapper computerMapper;
 
     private static Scanner scanner;
+    
+    @Autowired
     private static CompanyService companyService;
+    
+    @Autowired
     private static ComputerService computerService;
 
     private static final String DATE_FORMAT = Config.getProperties().getProperty("date_format");
@@ -33,7 +38,7 @@ public class CLI {
     /**
      * Constructor.
      */
-    public CLI() {
+    /*public CLI() {
         AnnotationConfigApplicationContext  context = new AnnotationConfigApplicationContext();
         context.scan("com.excilys.computerdatabase");
         context.refresh();
@@ -42,7 +47,7 @@ public class CLI {
         companyService = (CompanyService) context.getBean("companyService");
 
         context.close();
-    }
+    }*/
 
     /**
      * Print the differents choices of the menu.
@@ -63,7 +68,7 @@ public class CLI {
      * Print the list of the companies.
      */
     public static void printListCompanies() {
-        for (CompanyDTO c : companyService.getPage().getObjects()) {
+        for (Company c : companyService.getPage().getObjects()) {
             System.out.println(c);
         }
     }
@@ -72,7 +77,7 @@ public class CLI {
      * Print the list of the computers.
      */
     public static void printListComputers() {
-        for (ComputerDTO c : computerService.getPage().getObjects()) {
+        for (Computer c : computerService.getPage().getObjects()) {
             System.out.println(c);
         }
     }
@@ -83,7 +88,7 @@ public class CLI {
      */
     public static void printComputer(long id) {
         try {
-            ComputerDTO c = computerService.getById(id);
+            Computer c = computerService.getById(id);
             System.out.println(c);
         } catch (NotFoundException e) {
             System.out.println("Pas de pc trouvé");

@@ -33,9 +33,9 @@ import com.excilys.computerdatabase.config.spring.ServiceConfig;
 import com.excilys.computerdatabase.exceptions.CompanyNotFoundException;
 import com.excilys.computerdatabase.exceptions.ComputerNotFoundException;
 import com.excilys.computerdatabase.exceptions.NotFoundException;
-import com.excilys.computerdatabase.mappers.ComputerMapper;
 import com.excilys.computerdatabase.models.Company;
 import com.excilys.computerdatabase.models.Computer;
+import com.excilys.computerdatabase.models.Page;
 import com.excilys.computerdatabase.services.interfaces.ComputerService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -48,20 +48,17 @@ public class ComputerServiceTest extends DatabaseTestCase {
     @Autowired
     private DataSource dataSource;
 
-    @Autowired
-    ComputerMapper computerMapper;
-
     private IDatabaseTester databaseTester;
     
     private static final String URL = Config.getProperties().getProperty("urlTest");
     private static final String USER = Config.getProperties().getProperty("user");
     private static final String PASSWORD = Config.getProperties().getProperty("password");
 
-    private Company comp1;
-    private Company comp2;
-    private Computer c1;
-    private Computer c2;
-    private Computer c3;
+    private final Company comp1;
+    private final Company comp2;
+    private final Computer c1;
+    private final Computer c2;
+    private final Computer c3;
 
     private static final String SAMPLE_TEST_XML = "src/test/resources/db-sample.xml";
 
@@ -156,7 +153,7 @@ public class ComputerServiceTest extends DatabaseTestCase {
      */
     @Test
     public void testGetPageWithLimit() {
-        assertEquals(2, computerService.getPage(1, 2).getObjectNumber());
+        assertEquals(2, computerService.getPage(new Page<>(1, 2)).getObjectNumber());
     }
 
     /**
@@ -164,7 +161,7 @@ public class ComputerServiceTest extends DatabaseTestCase {
      */
     @Test
     public void testGetPageWithSearch() {
-        assertEquals(2, computerService.getPage(1, 2, "Compu", null, null).getObjectNumber());
+        assertEquals(2, computerService.getPage(new Page<>(1, 2, "Compu", "ASC", "name")).getObjectNumber());
     }
 
     /**
@@ -172,7 +169,7 @@ public class ComputerServiceTest extends DatabaseTestCase {
      */
     @Test
     public void testGetPageWithSearchNotFound() {
-        assertEquals(0, computerService.getPage(1, 2, "Compurdg", null, null).getObjectNumber());
+        assertEquals(0, computerService.getPage(new Page<>(1, 2, "Compurdg", "ASC", "name")).getObjectNumber());
     }
 
     /**
@@ -216,8 +213,7 @@ public class ComputerServiceTest extends DatabaseTestCase {
     public void testAdd() {
 
         try {
-            computerService.save(c1);
-            Computer c = computerMapper.bean(computerService.getById(c1.getId()));
+            Computer c = computerService.save(c1);
             assertEquals(c1, c);
         } catch (NotFoundException e) {
             if (e instanceof ComputerNotFoundException) {
@@ -255,23 +251,11 @@ public class ComputerServiceTest extends DatabaseTestCase {
 
         c1.setId(1L);
         try {
-            computerService.update(c1);
-        } catch (NotFoundException e) {
-            if (e instanceof ComputerNotFoundException) {
-                fail("Computer Not Found");
-            } else if (e instanceof CompanyNotFoundException) {
-                fail("Company Not Found");
-            } else {
-                fail("Bad Exception Thrown");
-            }
-        }
-
-        try {
-            Computer c = computerMapper.bean(computerService.getById(c1.getId()));
+            Computer c = computerService.update(c1);
             assertEquals(c1, c);
         } catch (NotFoundException e) {
             if (e instanceof ComputerNotFoundException) {
-                fail("Computer Not Updated");
+                fail("Computer Not Found");
             } else if (e instanceof CompanyNotFoundException) {
                 fail("Company Not Found");
             } else {
@@ -330,11 +314,11 @@ public class ComputerServiceTest extends DatabaseTestCase {
     @Test
     public void testDeleteList() {
         try {
-            computerService.delete(new ArrayList<Long>(Arrays.asList(1L, 2L)));
+            computerService.delete(new ArrayList<>(Arrays.asList(1L, 2L)));
             computerService.getById(1L);
             computerService.getById(2L);
             fail("Computer Not Deleted");
-        } catch (Exception e) {
+        } catch (NotFoundException e) {
         }
     }
 
@@ -346,6 +330,7 @@ public class ComputerServiceTest extends DatabaseTestCase {
      * @throws java.lang.Exception
      */
     @Before
+    @Override
     public void setUp() throws Exception {
         databaseTester = new DataSourceDatabaseTester(dataSource);
         databaseTester.setDataSet(this.getDataSet());
@@ -360,6 +345,7 @@ public class ComputerServiceTest extends DatabaseTestCase {
      * @throws java.lang.Exception
      */
     @After
+    @Override
     public void tearDown() throws Exception {
         databaseTester.setTearDownOperation(this.getTearDownOperation());
         databaseTester.onTearDown();
@@ -368,6 +354,8 @@ public class ComputerServiceTest extends DatabaseTestCase {
     /**
      * Retrieve the DataSet to be used from Xml file. This Xml file should be
      * located on the classpath.
+     * @return 
+     * @throws java.lang.Exception
      */
     @Override
     protected IDataSet getDataSet() throws Exception {
@@ -385,6 +373,7 @@ public class ComputerServiceTest extends DatabaseTestCase {
      * On setUp() refresh the database updating the data to the data in the
      * stale state. Cannot currently use CLEAN_INSERT due to foreign key
      * constraints.
+     * @return 
      */
     @Override
     protected DatabaseOperation getSetUpOperation() {
@@ -394,6 +383,7 @@ public class ComputerServiceTest extends DatabaseTestCase {
     /**
      * On tearDown() bring back to the state it was in
      * before the tests started.
+     * @return 
      */
     @Override
     protected DatabaseOperation getTearDownOperation() {

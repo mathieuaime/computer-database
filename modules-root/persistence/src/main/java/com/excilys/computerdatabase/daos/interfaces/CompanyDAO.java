@@ -7,6 +7,7 @@ import com.excilys.computerdatabase.daos.interfaces.template.PageDAO;
 import com.excilys.computerdatabase.exceptions.CompanyNotFoundException;
 import com.excilys.computerdatabase.models.Company;
 import com.excilys.computerdatabase.models.Computer;
+import com.excilys.computerdatabase.models.Page;
 
 public interface CompanyDAO extends CrudDAO<Company>, PageDAO<Company> {
     /**

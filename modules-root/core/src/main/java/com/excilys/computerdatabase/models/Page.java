@@ -1,4 +1,4 @@
-package com.excilys.computerdatabase.dtos;
+package com.excilys.computerdatabase.models;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,6 +7,7 @@ public class Page<T> {
     private List<T> objects;
     private int page;
     private int pageSize;
+    private int count;
     private String search;
     private String order;
     private String column;
@@ -25,9 +26,7 @@ public class Page<T> {
      * @param pageSize size of the page
      */
     public Page(List<T> objects, int page, int pageSize) {
-        this.objects = objects;
-        this.page = page;
-        this.pageSize = pageSize;
+        this(objects, page, pageSize, null, "ASC", "name");
     }
 
     /**
@@ -68,6 +67,14 @@ public class Page<T> {
         this.search = search;
         this.order = order;
         this.column = column;
+    }
+    
+    public Page(Page<?> page) {
+        this.page = page.page;
+        this.pageSize = page.pageSize;
+        this.search = page.search;
+        this.order = page.order;
+        this.column = page.column;
     }
 
     public List<T> getObjects() {
@@ -120,5 +127,22 @@ public class Page<T> {
 
     public int getObjectNumber() {
         return objects.size();
+    }
+    
+    public int getCount() {
+        return count;
+    }
+
+    public void setCount(int count) {
+        this.count = count;
+    }
+
+    public int getOffset() {
+        return (page - 1) * pageSize;
+    }
+
+    @Override
+    public String toString() {
+        return "Page{" + "objects=" + objects + ", page=" + page + ", pageSize=" + pageSize + ", count=" + count + ", search=" + search + ", order=" + order + ", column=" + column + '}';
     }
 }

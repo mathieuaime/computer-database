@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.security.access.annotation.Secured;
 
 import com.excilys.computerdatabase.exceptions.NotFoundException;
+import com.excilys.computerdatabase.models.Page;
 
 public interface CrudService<T, U> {
     /**
