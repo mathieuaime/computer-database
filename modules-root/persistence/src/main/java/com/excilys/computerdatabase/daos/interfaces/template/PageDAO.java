@@ -14,12 +14,8 @@ public interface PageDAO<T> {
 
     /**
      * Returns the list of the computers between offset and offset + length -1.
-     * @param offset the first computer
-     * @param length the number of computers
-     * @param search the field to search for
-     * @param sort the field to sort for
-     * @param order the field to order by
-     * @return List Computer
+     * @param page the page
+     * @return Page T
      */
     Page<T> findAll(Page<?> page);
     

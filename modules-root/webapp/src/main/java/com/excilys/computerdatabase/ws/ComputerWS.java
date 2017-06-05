@@ -34,7 +34,7 @@ import com.excilys.computerdatabase.validators.ComputerValidator;
 
 @RestController
 @RequestMapping(value = "/api/computer", produces = MediaType.APPLICATION_JSON_VALUE)
-@Secured("ROLE_USER")
+//@Secured("ROLE_USER")
 public class ComputerWS {
 
     @Autowired
@@ -69,7 +69,7 @@ public class ComputerWS {
     }
 
     @PostMapping
-    @Secured("ROLE_ADMIN")
+    //@Secured("ROLE_ADMIN")
     public ResponseEntity<?> post(@Valid @ModelAttribute("computerDTO") ComputerDTO computerDTO) {
         LOGGER.info("post(computerDTO: " + computerDTO + ")");
         try {
@@ -90,7 +90,7 @@ public class ComputerWS {
     }
 
     @PutMapping
-    @Secured("ROLE_ADMIN")
+    //@Secured("ROLE_ADMIN")
     public ResponseEntity<?> put(@Valid @ModelAttribute("computerDTO") ComputerDTO computerDTO) {
         LOGGER.info("update(computerDTO: " + computerDTO + ")");
         try {
@@ -106,7 +106,7 @@ public class ComputerWS {
     }
 
     @DeleteMapping(value = "/{id}")
-    @Secured("ROLE_ADMIN")
+    //@Secured("ROLE_ADMIN")
     public ResponseEntity<?> delete(@PathVariable(value = "id") long id) {
         LOGGER.info("delete(id: " + id + ")");
         try {

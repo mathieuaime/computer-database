@@ -4,7 +4,7 @@ import org.springframework.security.access.annotation.Secured;
 
 import com.excilys.computerdatabase.models.Page;
 
-@Secured("ROLE_USER")
+//@Secured("ROLE_USER")
 public interface PageService<T> {
 
     /**

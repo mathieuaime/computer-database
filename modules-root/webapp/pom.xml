@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>com.excilys.computerdatabase</groupId>
 		<artifactId>modules-root</artifactId>
-		<version>0.9.0-SNAPSHOT</version>
+		<version>0.9.0-RELEASE</version>
 	</parent>
 
 	<properties>
@@ -20,25 +20,25 @@
 		<dependency>
 			<groupId>com.excilys.computerdatabase</groupId>
 			<artifactId>core</artifactId>
-			<version>0.9.0-SNAPSHOT</version>
+			<version>0.9.0-RELEASE</version>
 		</dependency>
 
 		<dependency>
 			<groupId>com.excilys.computerdatabase</groupId>
 			<artifactId>persistence</artifactId>
-			<version>0.9.0-SNAPSHOT</version>
+			<version>0.9.0-RELEASE</version>
 		</dependency>
 
 		<dependency>
 			<groupId>com.excilys.computerdatabase</groupId>
 			<artifactId>service</artifactId>
-			<version>0.9.0-SNAPSHOT</version>
+			<version>0.9.0-RELEASE</version>
 		</dependency>
 
 		<dependency>
 			<groupId>com.excilys.computerdatabase</groupId>
 			<artifactId>binding</artifactId>
-			<version>0.9.0-SNAPSHOT</version>
+			<version>0.9.0-RELEASE</version>
 		</dependency>
 
 		<!-- JSP dependencies -->

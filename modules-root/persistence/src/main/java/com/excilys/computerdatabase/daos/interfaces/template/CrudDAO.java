@@ -10,8 +10,7 @@ public interface CrudDAO<T> {
      * Return the computer found by its id.
      * @param id the id of the computer
      * @return Computer
-     * @throws ComputerNotFoundException when the computer doesn't exist
-     * @throws CompanyNotFoundException when the company doesn't exist
+     * @throws NotFoundException when the object doesn't exist
      */
     T getById(long id) throws NotFoundException;
 
@@ -24,28 +23,29 @@ public interface CrudDAO<T> {
 
     /**
      * Add a computer.
-     * @param computer the computer to add
-     * @return Computer
-     * @throws CompanyNotFoundException when the company doesn't exist
+     * @param object the object to add
+     * @return T
+     * @throws NotFoundException when the company doesn't exist
      */
     T save(T object) throws NotFoundException;
 
     /**
      * Update a object.
-     * @param t the object to update
+     * @param object the object to update
      * @return T
+     * @throws NotFoundException when the object is not found
      */
     T update(T object) throws NotFoundException;
 
     /**
-     * Delete a computer.
-     * @param id the id of the computer
+     * Delete a object.
+     * @param id the id of the object
      */
     void delete(long id);
 
     /**
-     * Delete a list of computer.
-     * @param listId the list of ids of the computers
+     * Delete a list of objects.
+     * @param listId the list of ids of the objects
      */
     void delete(List<Long> listId);
 }
