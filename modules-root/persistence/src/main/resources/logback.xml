@@ -15,8 +15,4 @@
     		<appender-ref ref="consoleAppender" />
     	</logger>
 
-    	<root>
-    		<level value="DEBUG" />
-    		<appender-ref ref="consoleAppender" />
-    	</root>
     </configuration>

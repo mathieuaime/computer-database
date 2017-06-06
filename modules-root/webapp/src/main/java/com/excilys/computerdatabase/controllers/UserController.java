@@ -39,7 +39,6 @@ public class UserController {
      * @return redirection
      */
     @PostMapping(value = "/signup")
-    @Secured("ROLE_ADMIN")
     public String signup(ModelMap model, @Valid @ModelAttribute User user) {
         LOGGER.info("signup(user :" + user.getUsername() + ")");
 

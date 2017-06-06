@@ -15,8 +15,4 @@
     		<appender-ref ref="consoleAppender" />
     	</logger>
 
-    	<root>
-    		<level value="INFO" />
-    		<appender-ref ref="consoleAppender" />
-    	</root>
     </configuration>
