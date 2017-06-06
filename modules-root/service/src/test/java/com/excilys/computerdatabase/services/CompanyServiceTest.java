@@ -2,7 +2,6 @@ package com.excilys.computerdatabase.services;
 
 import java.io.File;
 import java.sql.Connection;
-import java.sql.DriverManager;
 
 import javax.sql.DataSource;
 
@@ -24,7 +23,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.excilys.computerdatabase.config.Config;
 import com.excilys.computerdatabase.config.spring.BindingConfig;
 import com.excilys.computerdatabase.config.spring.DAOConfig;
 import com.excilys.computerdatabase.config.spring.ServiceConfig;
@@ -44,10 +42,6 @@ public class CompanyServiceTest extends DatabaseTestCase {
     private DataSource dataSource;
     
     private IDatabaseTester databaseTester;
-    
-    private static final String URL = Config.getProperties().getProperty("urlTest");
-    private static final String USER = Config.getProperties().getProperty("user");
-    private static final String PASSWORD = Config.getProperties().getProperty("password");
 
     private static final String SAMPLE_TEST_XML = "src/test/resources/db-sample.xml";
 
@@ -257,8 +251,8 @@ public class CompanyServiceTest extends DatabaseTestCase {
 
     @Override
     protected IDatabaseConnection getConnection() throws Exception {
-        Connection jdbcConnection = DriverManager.getConnection(URL, USER, PASSWORD);
-
-        return new DatabaseConnection(jdbcConnection); 
+        Connection jdbcConnection = dataSource.getConnection();
+        IDatabaseConnection connection = new DatabaseConnection(jdbcConnection);
+        return connection;
     }
 }

@@ -7,7 +7,6 @@ import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -39,7 +38,6 @@ public class UserController {
      * @return redirection
      */
     @PostMapping(value = "/signup")
-    @Secured("ROLE_ADMIN")
     public String signup(ModelMap model, @Valid @ModelAttribute User user) {
         LOGGER.info("signup(user :" + user.getUsername() + ")");
 

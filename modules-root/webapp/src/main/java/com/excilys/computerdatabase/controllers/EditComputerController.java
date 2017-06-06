@@ -1,5 +1,7 @@
 package com.excilys.computerdatabase.controllers;
 
+import java.time.format.DateTimeFormatter;
+
 import javax.validation.Valid;
 
 import org.slf4j.Logger;
@@ -15,7 +17,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.excilys.computerdatabase.config.Config;
 import com.excilys.computerdatabase.dtos.CompanyDTO;
 import com.excilys.computerdatabase.dtos.ComputerDTO;
 import com.excilys.computerdatabase.exceptions.CompanyNotFoundException;
@@ -23,8 +24,8 @@ import com.excilys.computerdatabase.exceptions.ComputerNotFoundException;
 import com.excilys.computerdatabase.exceptions.IntroducedAfterDiscontinuedException;
 import com.excilys.computerdatabase.exceptions.NameEmptyException;
 import com.excilys.computerdatabase.exceptions.NotFoundException;
-import com.excilys.computerdatabase.mappers.CompanyMapper;
-import com.excilys.computerdatabase.mappers.ComputerMapper;
+import com.excilys.computerdatabase.mappers.impl.CompanyMapper;
+import com.excilys.computerdatabase.mappers.impl.ComputerMapper;
 import com.excilys.computerdatabase.models.Computer;
 import com.excilys.computerdatabase.services.interfaces.CompanyService;
 import com.excilys.computerdatabase.services.interfaces.ComputerService;
@@ -45,6 +46,9 @@ public class EditComputerController {
     
     @Autowired
     private CompanyMapper companyMapper;
+    
+    @Autowired
+    private DateTimeFormatter formatter;
 
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(EditComputerController.class);
 
@@ -60,7 +64,7 @@ public class EditComputerController {
         LOGGER.info("get(id : " + id + ")");
         model.addAttribute("user", CommonController.getUsername());
         model.addAttribute("companies", companyService.getPage().getObjects());
-        model.addAttribute("dateFormat", Config.getProperties().getProperty("date_format"));
+        model.addAttribute("dateFormat", formatter);
 
         ComputerDTO computerDTO = null;
 

@@ -32,7 +32,7 @@ public class CompanyWS {
     @GetMapping
     public ResponseEntity<?> get(@Valid @ModelAttribute Page<CompanyDTO> page) {
         LOGGER.info("get(page: " + page + ")");
-        return ResponseEntity.ok(companyService.getPage(page).getObjects());
+        return ResponseEntity.ok(companyService.getPage(page));
     }
 
     @GetMapping(value = "/{id}")
@@ -47,7 +47,7 @@ public class CompanyWS {
     }
 
     @DeleteMapping(value = "/{id}")
-    @Secured("ROLE_ADMIN")
+    //@Secured("ROLE_ADMIN")
     public ResponseEntity<?> delete(@PathVariable(value = "id") long id) {
         LOGGER.info("delete(id: " + id + ")");
         try {

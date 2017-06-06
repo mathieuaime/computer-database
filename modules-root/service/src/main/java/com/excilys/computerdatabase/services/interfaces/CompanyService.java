@@ -11,7 +11,7 @@ import com.excilys.computerdatabase.models.Page;
 import com.excilys.computerdatabase.services.interfaces.template.CrudService;
 import com.excilys.computerdatabase.services.interfaces.template.PageService;
 
-@Secured("ROLE_USER")
+//@Secured("ROLE_USER")
 public interface CompanyService extends CrudService<Company, Company>, PageService<Company> {
     /**
      * Returns the list of the computers of the company id.

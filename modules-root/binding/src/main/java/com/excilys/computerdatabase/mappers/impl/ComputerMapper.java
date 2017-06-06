@@ -1,4 +1,4 @@
-package com.excilys.computerdatabase.mappers;
+package com.excilys.computerdatabase.mappers.impl;
 
 import java.sql.Date;
 import java.sql.ResultSet;
@@ -75,9 +75,9 @@ public class ComputerMapper implements Mapper<Computer, ComputerDTO> {
         companyDTO.setId(computerDTO.getCompany().getId());
         companyDTO.setName(computerDTO.getCompany().getName());
 
-        LocalDate introduced = computerDTO.getIntroduced() != null
+        LocalDate introduced = computerDTO.getIntroduced() != null && !computerDTO.getIntroduced().equals("")
                 ? LocalDate.parse(computerDTO.getIntroduced(), formatter) : null;
-        LocalDate discontinued = computerDTO.getDiscontinued() != null
+        LocalDate discontinued = computerDTO.getDiscontinued() != null && !computerDTO.getDiscontinued().equals("")
                 ? LocalDate.parse(computerDTO.getDiscontinued(), formatter) : null;
 
         return new Computer.Builder(computerDTO.getName()).id(computerDTO.getId()).introduced(introduced)

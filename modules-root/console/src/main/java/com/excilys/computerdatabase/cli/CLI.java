@@ -21,8 +21,9 @@ import com.excilys.computerdatabase.dtos.ComputerDTO;
 import com.excilys.computerdatabase.exceptions.IntroducedAfterDiscontinuedException;
 import com.excilys.computerdatabase.exceptions.NameEmptyException;
 import com.excilys.computerdatabase.exceptions.NotFoundException;
-import com.excilys.computerdatabase.mappers.ComputerMapper;
+import com.excilys.computerdatabase.mappers.impl.ComputerMapper;
 import com.excilys.computerdatabase.models.Computer;
+import com.excilys.computerdatabase.models.Page;
 import com.excilys.computerdatabase.validators.ComputerValidator;
 
 public class CLI {
@@ -84,15 +85,15 @@ public class CLI {
     public static void printListCompanies() {
         Builder builder = target.path("company").request(MediaType.APPLICATION_JSON_TYPE);
 
-        GenericType<List<CompanyDTO>> genericType = new GenericType<List<CompanyDTO>>() {
+        GenericType<Page<CompanyDTO>> genericType = new GenericType<Page<CompanyDTO>>() {
         };
 
         Response response = builder.get();
         
         System.out.println(response);
 
-        List<CompanyDTO> companies = response.readEntity(genericType);
-        companies.forEach(System.out::println);
+        Page<CompanyDTO> companies = response.readEntity(genericType);
+        companies.getObjects().forEach(System.out::println);
     }
 
     /**

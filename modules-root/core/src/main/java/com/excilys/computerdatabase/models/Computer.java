@@ -12,16 +12,13 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import com.excilys.computerdatabase.config.Config;
-
 @Entity
 @Table(name = "computer")
 public class Computer implements Serializable {
 
     private static final long serialVersionUID = -2089516842549594133L;
 
-    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter
-            .ofPattern(Config.getProperties().getProperty("date_format"));
+    
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -215,7 +212,7 @@ public class Computer implements Serializable {
     @Override
     public String toString() {
 
-        return id + "/" + name + "/" + (introduced != null ? introduced.format(DATE_FORMATTER) : "") + "/"
-                + (discontinued != null ? discontinued.format(DATE_FORMATTER) : "") + "/" + company;
+        return id + "/" + name + "/" + (introduced != null ? introduced : "") + "/"
+                + (discontinued != null ? discontinued : "") + "/" + company;
     }
 }

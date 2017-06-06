@@ -1,4 +1,3 @@
-<%@tag import="com.excilys.computerdatabase.config.Config"%>
 <%@ tag language="java" pageEncoding="ISO-8859-1"%>
 
 <%@ attribute name="href" required="true" rtexprvalue="true"%>
@@ -21,8 +20,8 @@
 <%@ attribute name="li" required="false" type="java.lang.String"%>
 
 <%
-	int PAGE_DEFAULT = Integer.parseInt(Config.getProperties().getProperty("page_default"));
-	int pageSize_DEFAULT = Integer.parseInt(Config.getProperties().getProperty("page_size_default"));
+	int PAGE_DEFAULT = 1;
+	int pageSize_DEFAULT = 10;
 
     previous 				= (previous	!= null ? previous 	: false);
     next 					= (next 	!= null ? next 		: false);

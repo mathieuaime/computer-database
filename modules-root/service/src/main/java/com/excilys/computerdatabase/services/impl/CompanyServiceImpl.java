@@ -1,7 +1,6 @@
 package com.excilys.computerdatabase.services.impl;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.validation.ConstraintViolationException;
 
@@ -12,13 +11,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.excilys.computerdatabase.daos.interfaces.CompanyDAO;
 import com.excilys.computerdatabase.daos.interfaces.ComputerDAO;
-import com.excilys.computerdatabase.dtos.CompanyDTO;
-import com.excilys.computerdatabase.dtos.ComputerDTO;
 import com.excilys.computerdatabase.models.Page;
 import com.excilys.computerdatabase.exceptions.CompanyNotFoundException;
 import com.excilys.computerdatabase.exceptions.NotFoundException;
-import com.excilys.computerdatabase.mappers.CompanyMapper;
-import com.excilys.computerdatabase.mappers.ComputerMapper;
+import com.excilys.computerdatabase.mappers.impl.CompanyMapper;
+import com.excilys.computerdatabase.mappers.impl.ComputerMapper;
 import com.excilys.computerdatabase.models.Company;
 import com.excilys.computerdatabase.models.Computer;
 import com.excilys.computerdatabase.services.interfaces.CompanyService;

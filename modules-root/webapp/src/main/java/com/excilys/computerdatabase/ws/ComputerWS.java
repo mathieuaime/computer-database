@@ -6,6 +6,7 @@ import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -25,8 +26,8 @@ import com.excilys.computerdatabase.models.Page;
 import com.excilys.computerdatabase.exceptions.IntroducedAfterDiscontinuedException;
 import com.excilys.computerdatabase.exceptions.NameEmptyException;
 import com.excilys.computerdatabase.exceptions.NotFoundException;
-import com.excilys.computerdatabase.mappers.CompanyMapper;
-import com.excilys.computerdatabase.mappers.ComputerMapper;
+import com.excilys.computerdatabase.mappers.impl.CompanyMapper;
+import com.excilys.computerdatabase.mappers.impl.ComputerMapper;
 import com.excilys.computerdatabase.models.Computer;
 import com.excilys.computerdatabase.services.interfaces.CompanyService;
 import com.excilys.computerdatabase.services.interfaces.ComputerService;
@@ -54,17 +55,17 @@ public class ComputerWS {
     @GetMapping
     public ResponseEntity<?> get(@Valid @ModelAttribute Page<ComputerDTO> page) {
         LOGGER.info("get(page: " + page + ")");
-        return ResponseEntity.ok(computerService.getPage(page).getObjects());
+        return ResponseEntity.ok().headers(addAccessControllAllowOrigin()).body(computerService.getPage(page));
     }
 
     @GetMapping(value = "/{id}")
     public ResponseEntity<?> get(@PathVariable(value = "id") long id) {
         LOGGER.info("get(id: " + id + ")");
         try {
-            return ResponseEntity.ok(computerService.getById(id));
+            return ResponseEntity.ok().headers(addAccessControllAllowOrigin()).body(computerService.getById(id));
         } catch (NotFoundException e) {
             LOGGER.error("Computer " + id + " Not Found");
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.notFound().headers(addAccessControllAllowOrigin()).build();
         }
     }
 
@@ -81,11 +82,11 @@ public class ComputerWS {
             URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
                     .buildAndExpand(computerDTO.getId()).toUri();
 
-            return ResponseEntity.created(location).build();
+            return ResponseEntity.created(location).headers(addAccessControllAllowOrigin()).build();
         } catch (NotFoundException e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+            return ResponseEntity.status(HttpStatus.CONFLICT).headers(addAccessControllAllowOrigin()).build();
         } catch (NameEmptyException | IntroducedAfterDiscontinuedException e) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest().headers(addAccessControllAllowOrigin()).build();
         }
     }
 
@@ -99,9 +100,9 @@ public class ComputerWS {
             ComputerValidator.validate(computer);
             return ResponseEntity.ok(computerService.update(computer));
         } catch (NotFoundException e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+            return ResponseEntity.status(HttpStatus.CONFLICT).headers(addAccessControllAllowOrigin()).build();
         } catch (NameEmptyException | IntroducedAfterDiscontinuedException e) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest().headers(addAccessControllAllowOrigin()).build();
         }
     }
 
@@ -111,9 +112,9 @@ public class ComputerWS {
         LOGGER.info("delete(id: " + id + ")");
         try {
             computerService.delete(id);
-            return ResponseEntity.noContent().build();
+            return ResponseEntity.noContent().headers(addAccessControllAllowOrigin()).build();
         } catch (NotFoundException e) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.notFound().headers(addAccessControllAllowOrigin()).build();
         }
     }
 
@@ -121,9 +122,17 @@ public class ComputerWS {
     public ResponseEntity<?> getCompanies(@PathVariable(value = "id") long id) {
         LOGGER.info("getCompany(id: " + id + ")");
         try {
-            return ResponseEntity.ok(computerService.getCompany(id));
+            return ResponseEntity.ok().headers(addAccessControllAllowOrigin()).body(computerService.getCompany(id));
         } catch (NotFoundException e) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.notFound().headers(addAccessControllAllowOrigin()).build();
         }
+    }
+    
+    private HttpHeaders addAccessControllAllowOrigin() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Access-Control-Allow-Headers", "Content-Type");
+        headers.add("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE");
+        headers.add("Access-Control-Allow-Origin", "*");
+        return headers;
     }
 }
