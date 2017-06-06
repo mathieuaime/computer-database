@@ -1,58 +1,112 @@
 package com.excilys.computerdatabase.services;
 
-import java.io.File;
-import java.sql.Connection;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
-import javax.sql.DataSource;
+import java.util.ArrayList;
+import java.util.List;
 
-import org.dbunit.DataSourceDatabaseTester;
-import org.dbunit.DatabaseTestCase;
-import org.dbunit.IDatabaseTester;
-import org.dbunit.database.DatabaseConfig;
-import org.dbunit.database.DatabaseConnection;
-import org.dbunit.database.IDatabaseConnection;
-import org.dbunit.dataset.IDataSet;
-import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
-import org.dbunit.ext.mysql.MySqlDataTypeFactory;
-import org.dbunit.operation.DatabaseOperation;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.excilys.computerdatabase.config.spring.BindingConfig;
 import com.excilys.computerdatabase.config.spring.DAOConfig;
 import com.excilys.computerdatabase.config.spring.ServiceConfig;
+import com.excilys.computerdatabase.daos.interfaces.CompanyDAO;
+import com.excilys.computerdatabase.daos.interfaces.ComputerDAO;
 import com.excilys.computerdatabase.exceptions.CompanyNotFoundException;
 import com.excilys.computerdatabase.exceptions.NotFoundException;
+import com.excilys.computerdatabase.models.Company;
+import com.excilys.computerdatabase.models.Computer;
 import com.excilys.computerdatabase.models.Page;
+import com.excilys.computerdatabase.services.impl.CompanyServiceImpl;
 import com.excilys.computerdatabase.services.interfaces.CompanyService;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { BindingConfig.class, DAOConfig.class, ServiceConfig.class} )
-public class CompanyServiceTest extends DatabaseTestCase {
+@RunWith(MockitoJUnitRunner.class)
+@ContextConfiguration(classes = { BindingConfig.class, DAOConfig.class, ServiceConfig.class })
+public class CompanyServiceTest {
 
-    @Autowired
+    @InjectMocks
     private CompanyService companyService;
 
-    @Autowired
-    private DataSource dataSource;
-    
-    private IDatabaseTester databaseTester;
+    @Mock
+    private CompanyDAO companyDAO;
 
-    private static final String SAMPLE_TEST_XML = "src/test/resources/db-sample.xml";
+    @Mock
+    private ComputerDAO computerDAO;
+
+    private Company c1;
+    private Company c2;
+    private Company c3;
+
+    private Computer co1;
+    private Computer co2;
+
+    private final List<Company> l1;
+    private final List<Company> l2;
+    private final List<Company> l3;
+
+    private final List<Computer> lc1;
+    private final List<Computer> lc2;
+
+    public CompanyServiceTest() {
+        companyService = new CompanyServiceImpl();
+
+        c1 = new Company();
+        c1.setName("Company1");
+        c1.setId(1000L);
+
+        c2 = new Company();
+        c2.setName("Company2");
+        c2.setId(1001L);
+
+        c3 = new Company();
+        c3.setName("Company2");
+        c3.setId(1002L);
+
+        l1 = new ArrayList<>();
+        l2 = new ArrayList<>();
+        l3 = new ArrayList<>();
+
+        l1.add(c1);
+
+        l2.add(c2);
+        l2.add(c3);
+
+        l3.add(c1);
+        l3.add(c2);
+        l3.add(c3);
+
+        co1 = new Computer("Computer1");
+        co1.setId(1000L);
+        co1.setCompany(c1);
+
+        co2 = new Computer("Computer2");
+        co2.setId(1001L);
+        co2.setCompany(c2);
+
+        lc1 = new ArrayList<>();
+        lc2 = new ArrayList<>();
+
+        lc1.add(co1);
+
+        lc2.add(co1);
+        lc2.add(co2);
+    }
 
     /**
      * Test get by id.
      */
     @Test
     public void testGetById() {
-
         try {
-            assertEquals(1, companyService.getById(1).getId());
+            Mockito.when(companyDAO.getById(1000L)).thenReturn(c1);
+            assertEquals(1000L, companyService.getById(1000L).getId());
         } catch (Exception e) {
             fail("Company Not Found");
         }
@@ -65,7 +119,8 @@ public class CompanyServiceTest extends DatabaseTestCase {
     public void testGetByIdNonPresent() {
 
         try {
-            companyService.getById(1000L);
+            Mockito.when(companyDAO.getById(100L)).thenThrow(Mockito.mock(CompanyNotFoundException.class));
+            companyService.getById(100L);
             fail("Exception Not Thrown");
         } catch (NotFoundException e) {
             if (e instanceof CompanyNotFoundException) {
@@ -80,6 +135,7 @@ public class CompanyServiceTest extends DatabaseTestCase {
      */
     @Test
     public void testGetByNameZeroValue() {
+        Mockito.when(companyDAO.getByName("Company1000")).thenReturn(new ArrayList<>());
         assertEquals(0, companyService.getByName("Company1000").size());
     }
 
@@ -88,6 +144,7 @@ public class CompanyServiceTest extends DatabaseTestCase {
      */
     @Test
     public void testGetByNameOneValue() {
+        Mockito.when(companyDAO.getByName("Company1")).thenReturn(l1);
         assertEquals(1, companyService.getByName("Company1").size());
     }
 
@@ -96,6 +153,7 @@ public class CompanyServiceTest extends DatabaseTestCase {
      */
     @Test
     public void testGetByNameManyValue() {
+        Mockito.when(companyDAO.getByName("Company2")).thenReturn(l2);
         assertEquals(2, companyService.getByName("Company2").size());
     }
 
@@ -104,7 +162,9 @@ public class CompanyServiceTest extends DatabaseTestCase {
      */
     @Test
     public void testGetPage() {
+        Mockito.when(companyDAO.findAll(Mockito.any(Page.class))).thenReturn(new Page<>(l3, 1, 10));
         assertEquals(3, companyService.getPage().objectNumber());
+
     }
 
     /**
@@ -112,6 +172,8 @@ public class CompanyServiceTest extends DatabaseTestCase {
      */
     @Test
     public void testGetPageWithLimit() {
+
+        Mockito.when(companyDAO.findAll(Mockito.any(Page.class))).thenReturn(new Page<>(l1, 1, 1));
         assertEquals(1, companyService.getPage(new Page<>(1, 1)).objectNumber());
     }
 
@@ -120,7 +182,8 @@ public class CompanyServiceTest extends DatabaseTestCase {
      */
     @Test
     public void testGetPageWithSearch() {
-        assertEquals(1, companyService.getPage(new Page<>(1, 1, "Compa", "ASC", "name")).objectNumber());
+        Mockito.when(companyDAO.findAll(Mockito.any(Page.class))).thenReturn(new Page<>(l2, 1, 1));
+        assertEquals(2, companyService.getPage(new Page<>(1, 1, "Compa", "ASC", "name")).objectNumber());
     }
 
     /**
@@ -129,30 +192,33 @@ public class CompanyServiceTest extends DatabaseTestCase {
     @Test
     public void testGetComputerZeroValue() {
         try {
+            Mockito.when(companyDAO.getComputers(3L)).thenReturn(new ArrayList<>());
             assertEquals(0, companyService.getComputers(3L).size());
         } catch (CompanyNotFoundException e) {
             fail("Company Not Found");
         }
     }
-    
+
     /**
      * Test getComputer.
      */
     @Test
     public void testGetComputerOneValue() {
         try {
+            Mockito.when(companyDAO.getComputers(2L)).thenReturn(lc1);
             assertEquals(1, companyService.getComputers(2L).size());
         } catch (CompanyNotFoundException e) {
             fail("Company Not Found");
         }
     }
-    
+
     /**
      * Test getComputer.
      */
     @Test
     public void testGetComputerManyValue() {
         try {
+            Mockito.when(companyDAO.getComputers(1L)).thenReturn(lc2);
             assertEquals(2, companyService.getComputers(1L).size());
         } catch (CompanyNotFoundException e) {
             fail("Company Not Found");
@@ -165,19 +231,9 @@ public class CompanyServiceTest extends DatabaseTestCase {
     @Test
     public void testDelete() {
         try {
+            Mockito.doNothing().when(companyDAO).delete(1L);
+            Mockito.doNothing().when(computerDAO).delete(1L);
             companyService.delete(1L);
-
-            assertEquals(0, companyService.getComputers(1L).size());
-
-            try {
-                companyService.getById(1L);
-                fail("Company Not Deleted");
-            } catch (NotFoundException e) {
-                if (e instanceof CompanyNotFoundException) {
-                } else {
-                    fail("Bad Exception Thrown");
-                }
-            }
 
         } catch (NotFoundException e) {
             if (e instanceof CompanyNotFoundException) {
@@ -186,73 +242,5 @@ public class CompanyServiceTest extends DatabaseTestCase {
                 fail("Bad Exception Thrown");
             }
         }
-    }
-
-    /**
-     * Prepare the test instance by handling the Spring annotations and updating
-     * the database to the stale state.
-     * 
-     * @throws java.lang.Exception
-     */
-    @Before
-    public void setUp() throws Exception {
-        databaseTester = new DataSourceDatabaseTester(dataSource);
-        databaseTester.setDataSet(this.getDataSet());
-        databaseTester.setSetUpOperation(this.getSetUpOperation());
-        databaseTester.onSetup();
-    }
-
-    /**
-     * Perform any required database clean up after the test runs to ensure the
-     * stale state has not been dirtied for the next test.
-     * 
-     * @throws java.lang.Exception
-     */
-    @After
-    public void tearDown() throws Exception {
-        databaseTester.setTearDownOperation(this.getTearDownOperation());
-        databaseTester.onTearDown();
-    }
-
-    /**
-     * Retrieve the DataSet to be used from Xml file. This Xml file should be
-     * located on the classpath.
-     */
-    @Override
-    protected IDataSet getDataSet() throws Exception {
-        FlatXmlDataSetBuilder builder = new FlatXmlDataSetBuilder();
-        IDataSet dataSet = builder.build(new File(SAMPLE_TEST_XML));
-        return dataSet;
-    }
-    
-    @Override
-    protected void setUpDatabaseConfig(DatabaseConfig config) {
-        config.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new MySqlDataTypeFactory());
-    }
-
-    /**
-     * On setUp() refresh the database updating the data to the data in the
-     * stale state. Cannot currently use CLEAN_INSERT due to foreign key
-     * constraints.
-     */
-    @Override
-    protected DatabaseOperation getSetUpOperation() {
-        return DatabaseOperation.CLEAN_INSERT;
-    }
-
-    /**
-     * On tearDown() bring back to the state it was in
-     * before the tests started.
-     */
-    @Override
-    protected DatabaseOperation getTearDownOperation() {
-        return DatabaseOperation.NONE;
-    }
-
-    @Override
-    protected IDatabaseConnection getConnection() throws Exception {
-        Connection jdbcConnection = dataSource.getConnection();
-        IDatabaseConnection connection = new DatabaseConnection(jdbcConnection);
-        return connection;
     }
 }

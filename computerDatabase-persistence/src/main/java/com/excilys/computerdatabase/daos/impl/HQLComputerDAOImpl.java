@@ -93,6 +93,7 @@ public class HQLComputerDAOImpl implements ComputerDAO {
             q1.setFirstResult(page.offset());
 
             res.setObjects(q1.list());
+            res.setCount(count(page.getSearch()));
         }
         
         return res;

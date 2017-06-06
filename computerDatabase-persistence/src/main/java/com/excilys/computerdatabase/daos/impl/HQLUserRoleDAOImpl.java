@@ -10,7 +10,6 @@ import org.springframework.stereotype.Repository;
 
 import com.excilys.computerdatabase.config.hibernate.HibernateConfig;
 import com.excilys.computerdatabase.daos.interfaces.UserRoleDAO;
-import com.excilys.computerdatabase.exceptions.NotFoundException;
 import com.excilys.computerdatabase.exceptions.UserNotFoundException;
 import com.excilys.computerdatabase.models.UserRole;
 

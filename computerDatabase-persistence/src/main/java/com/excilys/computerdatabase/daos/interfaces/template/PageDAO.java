@@ -1,7 +1,5 @@
 package com.excilys.computerdatabase.daos.interfaces.template;
 
-import java.util.List;
-
 import com.excilys.computerdatabase.models.Page;
 
 public interface PageDAO<T> {
