@@ -154,7 +154,7 @@ public class ComputerServiceTest {
     @Test
     public void testGetPage() {
         Mockito.when(computerDAO.findAll(Mockito.any(Page.class))).thenReturn(new Page<>(l3, 1, 10));
-        assertEquals(3, computerService.getPage().getObjectNumber());
+        assertEquals(3, computerService.getPage().objectNumber());
     }
 
     /**
@@ -163,7 +163,7 @@ public class ComputerServiceTest {
     @Test
     public void testGetPageWithLimit() {
         Mockito.when(computerDAO.findAll(Mockito.any(Page.class))).thenReturn(new Page<>(l2, 1, 2));
-        assertEquals(2, computerService.getPage(new Page<>(1, 2)).getObjectNumber());
+        assertEquals(2, computerService.getPage(new Page<>(1, 2)).objectNumber());
     }
 
     /**
@@ -172,7 +172,7 @@ public class ComputerServiceTest {
     @Test
     public void testGetPageWithSearch() {
         Mockito.when(computerDAO.findAll(Mockito.any(Page.class))).thenReturn(new Page<>(l2, 1, 2));
-        assertEquals(2, computerService.getPage(new Page<>(1, 2, "Compu", "ASC", "name")).getObjectNumber());
+        assertEquals(2, computerService.getPage(new Page<>(1, 2, "Compu", "ASC", "name")).objectNumber());
     }
 
     /**
@@ -181,8 +181,9 @@ public class ComputerServiceTest {
     @Test
     public void testGetPageWithSearchNotFound() {
         Mockito.when(computerDAO.findAll(Mockito.any(Page.class))).thenReturn(new Page<>(1, 2));
-        assertEquals(0, computerService.getPage(new Page<>(1, 2, "Compurdg", "ASC", "name")).getObjectNumber());
+        assertEquals(0, computerService.getPage(new Page<>(1, 2, "Compurdg", "ASC", "name")).objectNumber());
     }
+    
 
     /**
      * Test getCompany.

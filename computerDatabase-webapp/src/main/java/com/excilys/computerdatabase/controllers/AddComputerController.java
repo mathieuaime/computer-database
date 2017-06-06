@@ -76,7 +76,9 @@ public class AddComputerController {
         LOGGER.info("post(computerDTO : " + computerDTO + ")");
 
         if (result.hasErrors()) {
-            return "500";
+            model.addAttribute("companies", companyService.getPage().getObjects());
+            model.addAttribute(result);
+            return "addComputer";
         }
         try {
             CompanyDTO companyDTO = companyMapper.dto(companyService.getById(computerDTO.getCompany().getId()));

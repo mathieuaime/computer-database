@@ -163,7 +163,8 @@ public class CompanyServiceTest {
     @Test
     public void testGetPage() {
         Mockito.when(companyDAO.findAll(Mockito.any(Page.class))).thenReturn(new Page<>(l3, 1, 10));
-        assertEquals(3, companyService.getPage().getObjectNumber());
+        assertEquals(3, companyService.getPage().objectNumber());
+
     }
 
     /**
@@ -171,8 +172,9 @@ public class CompanyServiceTest {
      */
     @Test
     public void testGetPageWithLimit() {
+
         Mockito.when(companyDAO.findAll(Mockito.any(Page.class))).thenReturn(new Page<>(l1, 1, 1));
-        assertEquals(1, companyService.getPage(new Page<>(1, 1)).getObjectNumber());
+        assertEquals(1, companyService.getPage(new Page<>(1, 1)).objectNumber());
     }
 
     /**
@@ -181,7 +183,7 @@ public class CompanyServiceTest {
     @Test
     public void testGetPageWithSearch() {
         Mockito.when(companyDAO.findAll(Mockito.any(Page.class))).thenReturn(new Page<>(l2, 1, 1));
-        assertEquals(2, companyService.getPage(new Page<>(1, 1, "Compa", "ASC", "name")).getObjectNumber());
+        assertEquals(2, companyService.getPage(new Page<>(1, 1, "Compa", "ASC", "name")).objectNumber());
     }
 
     /**

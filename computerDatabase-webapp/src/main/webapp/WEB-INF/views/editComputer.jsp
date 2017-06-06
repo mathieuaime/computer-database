@@ -45,12 +45,14 @@
 											<spring:message code="label.computer.name" />
 										</form:label>
 										<form:input class="form-control" path="name" />
+										<form:errors path="name" cssClass="error" />
 									</div>
 									<div class="form-group">
 										<form:label path="introduced">
 											<spring:message code="label.computer.introduced" />
 										</form:label>
 										<form:input type="date" class="form-control" path="introduced" />
+										<form:errors path="introduced" cssClass="error" />
 									</div>
 									<div class="form-group">
 										<form:label path="discontinued">
@@ -58,6 +60,7 @@
 										</form:label>
 										<form:input type="date" class="form-control"
 											path="discontinued" />
+										<form:errors path="discontinued" cssClass="error" />
 									</div>
 									<div class="form-group">
 										<form:label path="company">
@@ -79,6 +82,7 @@
 										text="${cancelMessage}" />
 								</div>
 							</form:form>
+
 						</div>
 					</div>
 					<c:if test="${error != null}">

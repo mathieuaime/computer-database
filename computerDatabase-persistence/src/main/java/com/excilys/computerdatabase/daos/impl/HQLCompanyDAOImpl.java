@@ -49,7 +49,7 @@ public class HQLCompanyDAOImpl implements CompanyDAO {
 
             if (page.getPageSize() != -1) {
                 q1.setMaxResults(page.getPageSize());
-                q1.setFirstResult(page.getOffset());
+                q1.setFirstResult(page.offset());
             }
 
             res.setObjects(q1.list());

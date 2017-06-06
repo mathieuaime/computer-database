@@ -25,13 +25,14 @@ import com.excilys.computerdatabase.models.Page;
 import com.excilys.computerdatabase.exceptions.NotFoundException;
 import com.excilys.computerdatabase.mappers.impl.CompanyMapper;
 import com.excilys.computerdatabase.mappers.impl.ComputerMapper;
+import com.excilys.computerdatabase.mappers.impl.PageMapper;
 import com.excilys.computerdatabase.models.Computer;
 import com.excilys.computerdatabase.services.interfaces.CompanyService;
 import com.excilys.computerdatabase.services.interfaces.ComputerService;
 
 @RestController
 @RequestMapping(value = "/api/computer", produces = MediaType.APPLICATION_JSON_VALUE)
-//@Secured("ROLE_USER")
+// @Secured("ROLE_USER")
 public class ComputerWS {
 
     @Autowired
@@ -46,19 +47,24 @@ public class ComputerWS {
     @Autowired
     private CompanyMapper companyMapper;
 
+    @Autowired
+    private PageMapper pageMapper;
+
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(ComputerWS.class);
 
     @GetMapping
-    public ResponseEntity<?> get(@Valid @ModelAttribute Page<ComputerDTO> page) {
+    public ResponseEntity<?> get(@Valid @ModelAttribute Page<?> page) {
         LOGGER.info("get(page: " + page + ")");
-        return ResponseEntity.ok().headers(addAccessControllAllowOrigin()).body(computerService.getPage(page));
+
+        return ResponseEntity.ok().body(pageMapper.dto(computerService.getPage(page)));
     }
 
     @GetMapping(value = "/{id}")
     public ResponseEntity<?> get(@PathVariable(value = "id") long id) {
         LOGGER.info("get(id: " + id + ")");
         try {
-            return ResponseEntity.ok().headers(addAccessControllAllowOrigin()).body(computerService.getById(id));
+            return ResponseEntity.ok().headers(addAccessControllAllowOrigin())
+                    .body(computerMapper.dto(computerService.getById(id)));
         } catch (NotFoundException e) {
             LOGGER.error("Computer " + id + " Not Found");
             return ResponseEntity.notFound().headers(addAccessControllAllowOrigin()).build();
@@ -66,7 +72,7 @@ public class ComputerWS {
     }
 
     @PostMapping
-    //@Secured("ROLE_ADMIN")
+    // @Secured("ROLE_ADMIN")
     public ResponseEntity<?> post(@Valid @ModelAttribute("computerDTO") ComputerDTO computerDTO) {
         LOGGER.info("post(computerDTO: " + computerDTO + ")");
         try {
@@ -84,7 +90,7 @@ public class ComputerWS {
     }
 
     @PutMapping
-    //@Secured("ROLE_ADMIN")
+    // @Secured("ROLE_ADMIN")
     public ResponseEntity<?> put(@Valid @ModelAttribute("computerDTO") ComputerDTO computerDTO) {
         LOGGER.info("update(computerDTO: " + computerDTO + ")");
         try {
@@ -97,7 +103,7 @@ public class ComputerWS {
     }
 
     @DeleteMapping(value = "/{id}")
-    //@Secured("ROLE_ADMIN")
+    // @Secured("ROLE_ADMIN")
     public ResponseEntity<?> delete(@PathVariable(value = "id") long id) {
         LOGGER.info("delete(id: " + id + ")");
         try {
@@ -117,7 +123,7 @@ public class ComputerWS {
             return ResponseEntity.notFound().headers(addAccessControllAllowOrigin()).build();
         }
     }
-    
+
     private HttpHeaders addAccessControllAllowOrigin() {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Access-Control-Allow-Headers", "Content-Type");

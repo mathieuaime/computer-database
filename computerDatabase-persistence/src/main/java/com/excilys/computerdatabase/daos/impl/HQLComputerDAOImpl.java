@@ -53,7 +53,7 @@ public class HQLComputerDAOImpl implements ComputerDAO {
 
     @Override
     public Page<Computer> findAll(Page<?> page) {
-        LOGGER.info("findAll(offset : " + page.getOffset() + ", length : " + page.getPageSize() + ", search : " + page.getSearch() + ", column : "
+        LOGGER.info("findAll(offset : " + page.offset() + ", length : " + page.getPageSize() + ", search : " + page.getSearch() + ", column : "
                 + page.getColumn() + ", order : " + page.getOrder() + ")");
         
         Page<Computer> res = new Page<>(page);
@@ -90,7 +90,7 @@ public class HQLComputerDAOImpl implements ComputerDAO {
                 q1.setParameter("search", page.getSearch() + "%");
             }
             q1.setMaxResults(length);
-            q1.setFirstResult(page.getOffset());
+            q1.setFirstResult(page.offset());
 
             res.setObjects(q1.list());
             res.setCount(count(page.getSearch()));

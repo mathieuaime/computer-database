@@ -25,6 +25,11 @@ footer .btn-group {
 	margin: 10px 10px;
 }
 
+.error {
+	color: red;
+	Font-Weight: Bold;
+}
+
 input[type='checkbox'] {
 	margin: 0px;
 	padding: 0px;
