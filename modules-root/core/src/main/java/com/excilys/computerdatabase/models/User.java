@@ -33,6 +33,7 @@ public class User implements Serializable {
      * Default constructor.
      */
     public User() {
+        this.enabled = true;
     }
 
     /**
@@ -41,7 +42,7 @@ public class User implements Serializable {
      * @param password password
      */
     public User(String username, String password) {
-        this(username, password, false);
+        this(username, password, true);
     }
 
     /**

@@ -23,7 +23,7 @@ drop schema if exists `computer-database-db2`;
   create table users (
     username                  varchar(255) not null,
     password                  varchar(60) not null,
-    enabled		      boolean default false,
+    enabled		      boolean default true,
     constraint pk_users primary key (username))
   ;
 
