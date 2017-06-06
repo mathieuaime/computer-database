@@ -19,7 +19,7 @@ public @interface VerificationComputerDTO {
      * retourne le message associer à l'erreur de l'annotation.
      * @return String : message de l'erreur
      */
-    String message() default "Erreur vérification computerDTO";
+    String message() default "";
 
     /**
      * @return Class<?>[] : tableau de classe
