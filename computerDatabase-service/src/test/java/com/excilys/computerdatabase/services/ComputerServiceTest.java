@@ -1,65 +1,61 @@
 package com.excilys.computerdatabase.services;
 
-import java.io.File;
-import java.sql.Connection;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
-import javax.sql.DataSource;
-
-import org.dbunit.DataSourceDatabaseTester;
-import org.dbunit.DatabaseTestCase;
-import org.dbunit.IDatabaseTester;
-import org.dbunit.database.DatabaseConfig;
-import org.dbunit.database.DatabaseConnection;
-import org.dbunit.database.IDatabaseConnection;
-import org.dbunit.dataset.IDataSet;
-import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
-import org.dbunit.ext.mysql.MySqlDataTypeFactory;
-import org.dbunit.operation.DatabaseOperation;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.excilys.computerdatabase.config.spring.BindingConfig;
 import com.excilys.computerdatabase.config.spring.DAOConfig;
 import com.excilys.computerdatabase.config.spring.ServiceConfig;
+import com.excilys.computerdatabase.daos.interfaces.ComputerDAO;
 import com.excilys.computerdatabase.exceptions.CompanyNotFoundException;
 import com.excilys.computerdatabase.exceptions.ComputerNotFoundException;
 import com.excilys.computerdatabase.exceptions.NotFoundException;
 import com.excilys.computerdatabase.models.Company;
 import com.excilys.computerdatabase.models.Computer;
 import com.excilys.computerdatabase.models.Page;
+import com.excilys.computerdatabase.services.impl.ComputerServiceImpl;
 import com.excilys.computerdatabase.services.interfaces.ComputerService;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(MockitoJUnitRunner.class)
 @ContextConfiguration(classes = { BindingConfig.class, DAOConfig.class, ServiceConfig.class} )
-public class ComputerServiceTest extends DatabaseTestCase {
+public class ComputerServiceTest {
 
-    @Autowired
+    @InjectMocks
     private ComputerService computerService;
 
-    @Autowired
-    private DataSource dataSource;
-
-    private IDatabaseTester databaseTester;
+    @Mock
+    private ComputerDAO computerDAO;
 
     private final Company comp1;
     private final Company comp2;
     private final Computer c1;
     private final Computer c2;
     private final Computer c3;
-
-    private static final String SAMPLE_TEST_XML = "src/test/resources/db-sample.xml";
+    
+    private final List<Computer> l1;
+    private final List<Computer> l2;
+    private final List<Computer> l3;
 
     /**
      * ComputerTest constructor.
      */
     public ComputerServiceTest() {
+
+        computerService = new ComputerServiceImpl();
+
         comp1 = new Company.Builder("Company2").id(2L).build();
         comp2 = new Company.Builder("Company2").id(1500L).build();
 
@@ -71,9 +67,22 @@ public class ComputerServiceTest extends DatabaseTestCase {
         c2.setId(1001L);
         c2.setCompany(comp1);
         
-        c3 = new Computer("Computer3");
+        c3 = new Computer("Computer2");
         c3.setId(1002L);
         c3.setCompany(comp2);
+        
+        l1 = new ArrayList<>();
+        l2 = new ArrayList<>();
+        l3 = new ArrayList<>();
+        
+        l1.add(c1);
+        
+        l2.add(c2);
+        l2.add(c3);
+        
+        l3.add(c1);
+        l3.add(c2);
+        l3.add(c3);
     }
 
     /**
@@ -82,7 +91,8 @@ public class ComputerServiceTest extends DatabaseTestCase {
     @Test
     public void testGetById() {
         try {
-            assertEquals(1, computerService.getById(1L).getId());
+            Mockito.when(computerDAO.getById(1L)).thenReturn(c1);
+            assertEquals(1000L, computerService.getById(1L).getId());
         } catch (NotFoundException e) {
             if (e instanceof ComputerNotFoundException) {
                 fail("Computer Not Found");
@@ -100,6 +110,7 @@ public class ComputerServiceTest extends DatabaseTestCase {
     @Test
     public void testGetByIdNonPresent() {
         try {
+            Mockito.when(computerDAO.getById(1000L)).thenThrow(Mockito.mock(ComputerNotFoundException.class));
             computerService.getById(1000L);
             fail("Exception Not Thrown");
         } catch (NotFoundException e) {
@@ -115,6 +126,7 @@ public class ComputerServiceTest extends DatabaseTestCase {
      */
     @Test
     public void testGetByNameZeroValue() {
+        Mockito.when(computerDAO.getByName("Computer1000")).thenReturn(new ArrayList<>());
         assertEquals(0, computerService.getByName("Computer1000").size());
     }
 
@@ -123,6 +135,7 @@ public class ComputerServiceTest extends DatabaseTestCase {
      */
     @Test
     public void testGetByNameOneValue() {
+        Mockito.when(computerDAO.getByName("Computer1")).thenReturn(l1);
         assertEquals(1, computerService.getByName("Computer1").size());
     }
 
@@ -131,6 +144,7 @@ public class ComputerServiceTest extends DatabaseTestCase {
      */
     @Test
     public void testGetByNameManyValue() {
+        Mockito.when(computerDAO.getByName("Computer2")).thenReturn(l2);
         assertEquals(2, computerService.getByName("Computer2").size());
     }
 
@@ -139,7 +153,8 @@ public class ComputerServiceTest extends DatabaseTestCase {
      */
     @Test
     public void testGetPage() {
-        assertEquals(4, computerService.getPage().getObjectNumber());
+        Mockito.when(computerDAO.findAll(Mockito.any(Page.class))).thenReturn(new Page<>(l3, 1, 10));
+        assertEquals(3, computerService.getPage().getObjectNumber());
     }
 
     /**
@@ -147,6 +162,7 @@ public class ComputerServiceTest extends DatabaseTestCase {
      */
     @Test
     public void testGetPageWithLimit() {
+        Mockito.when(computerDAO.findAll(Mockito.any(Page.class))).thenReturn(new Page<>(l2, 1, 2));
         assertEquals(2, computerService.getPage(new Page<>(1, 2)).getObjectNumber());
     }
 
@@ -155,6 +171,7 @@ public class ComputerServiceTest extends DatabaseTestCase {
      */
     @Test
     public void testGetPageWithSearch() {
+        Mockito.when(computerDAO.findAll(Mockito.any(Page.class))).thenReturn(new Page<>(l2, 1, 2));
         assertEquals(2, computerService.getPage(new Page<>(1, 2, "Compu", "ASC", "name")).getObjectNumber());
     }
 
@@ -163,6 +180,7 @@ public class ComputerServiceTest extends DatabaseTestCase {
      */
     @Test
     public void testGetPageWithSearchNotFound() {
+        Mockito.when(computerDAO.findAll(Mockito.any(Page.class))).thenReturn(new Page<>(1, 2));
         assertEquals(0, computerService.getPage(new Page<>(1, 2, "Compurdg", "ASC", "name")).getObjectNumber());
     }
 
@@ -172,7 +190,8 @@ public class ComputerServiceTest extends DatabaseTestCase {
     @Test
     public void testGetCompany() {
         try {
-            assertEquals(1L, computerService.getCompany(1L).getId());
+            Mockito.when(computerDAO.getCompany(1L)).thenReturn(comp1);
+            assertEquals(2L, computerService.getCompany(1L).getId());
         } catch (NotFoundException e) {
             if (e instanceof ComputerNotFoundException) {
                 fail("Computer Not Found");
@@ -190,6 +209,7 @@ public class ComputerServiceTest extends DatabaseTestCase {
     @Test
     public void testGetCompanyComputerNonPresent() {
         try {
+            Mockito.when(computerDAO.getCompany(1500L)).thenThrow(Mockito.mock(ComputerNotFoundException.class));
             computerService.getCompany(1500L);
             fail("Exception Not Thrown");
         } catch (NotFoundException e) {
@@ -205,8 +225,8 @@ public class ComputerServiceTest extends DatabaseTestCase {
      */
     @Test
     public void testAdd() {
-
         try {
+            Mockito.when(computerDAO.save(c1)).thenReturn(c1);
             Computer c = computerService.save(c1);
             assertEquals(c1, c);
         } catch (NotFoundException e) {
@@ -227,6 +247,7 @@ public class ComputerServiceTest extends DatabaseTestCase {
     public void testAddNonPresentCompany() {
 
         try {
+            Mockito.when(computerDAO.save(c3)).thenThrow(Mockito.mock(CompanyNotFoundException.class));
             computerService.save(c3);
             fail("Exception Not Thrown");
         } catch (NotFoundException e) {
@@ -245,6 +266,7 @@ public class ComputerServiceTest extends DatabaseTestCase {
 
         c1.setId(1L);
         try {
+            Mockito.when(computerDAO.update(c1)).thenReturn(c1);
             Computer c = computerService.update(c1);
             assertEquals(c1, c);
         } catch (NotFoundException e) {
@@ -266,6 +288,7 @@ public class ComputerServiceTest extends DatabaseTestCase {
 
         c1.setId(1500L);
         try {
+            Mockito.when(computerDAO.update(c1)).thenThrow(Mockito.mock(ComputerNotFoundException.class));
             computerService.update(c1);
             fail("Exception Not Thrown");
         } catch (NotFoundException e) {
@@ -282,20 +305,11 @@ public class ComputerServiceTest extends DatabaseTestCase {
     @Test
     public void testDelete() {
         try {
+            Mockito.doNothing().when(computerDAO).delete(1L);
             computerService.delete(1L);
         } catch (NotFoundException e) {
             if (e instanceof ComputerNotFoundException) {
                 fail("Computer Not Found");
-            } else {
-                fail("Bad Exception Thrown");
-            }
-        }
-
-        try {
-            computerService.getById(1L);
-            fail("Computer Not Deleted");
-        } catch (NotFoundException e) {
-            if (e instanceof ComputerNotFoundException) {
             } else {
                 fail("Bad Exception Thrown");
             }
@@ -308,86 +322,14 @@ public class ComputerServiceTest extends DatabaseTestCase {
     @Test
     public void testDeleteList() {
         try {
+            Mockito.doNothing().when(computerDAO).delete(new ArrayList<>(Arrays.asList(1L, 2L)));
             computerService.delete(new ArrayList<>(Arrays.asList(1L, 2L)));
-            computerService.getById(1L);
-            computerService.getById(2L);
-            fail("Computer Not Deleted");
         } catch (NotFoundException e) {
+            fail("Computer Not Deleted");
         }
     }
-
-
-    /**
-     * Prepare the test instance by handling the Spring annotations and updating
-     * the database to the stale state.
-     * 
-     * @throws java.lang.Exception
-     */
-    @Before
-    @Override
-    public void setUp() throws Exception {
-        databaseTester = new DataSourceDatabaseTester(dataSource);
-        databaseTester.setDataSet(this.getDataSet());
-        databaseTester.setSetUpOperation(this.getSetUpOperation());
-        databaseTester.onSetup();
-    }
-
-    /**
-     * Perform any required database clean up after the test runs to ensure the
-     * stale state has not been dirtied for the next test.
-     * 
-     * @throws java.lang.Exception
-     */
-    @After
-    @Override
-    public void tearDown() throws Exception {
-        databaseTester.setTearDownOperation(this.getTearDownOperation());
-        databaseTester.onTearDown();
-    }
-
-    /**
-     * Retrieve the DataSet to be used from Xml file. This Xml file should be
-     * located on the classpath.
-     * @return 
-     * @throws java.lang.Exception
-     */
-    @Override
-    protected IDataSet getDataSet() throws Exception {
-        FlatXmlDataSetBuilder builder = new FlatXmlDataSetBuilder();
-        IDataSet dataSet = builder.build(new File(SAMPLE_TEST_XML));
-        return dataSet;
-    }
     
-    @Override
-    protected void setUpDatabaseConfig(DatabaseConfig config) {
-        config.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new MySqlDataTypeFactory());
-    }
-
-    /**
-     * On setUp() refresh the database updating the data to the data in the
-     * stale state. Cannot currently use CLEAN_INSERT due to foreign key
-     * constraints.
-     * @return 
-     */
-    @Override
-    protected DatabaseOperation getSetUpOperation() {
-        return DatabaseOperation.CLEAN_INSERT;
-    }
-
-    /**
-     * On tearDown() bring back to the state it was in
-     * before the tests started.
-     * @return 
-     */
-    @Override
-    protected DatabaseOperation getTearDownOperation() {
-        return DatabaseOperation.NONE;
-    }
-
-    @Override
-    protected IDatabaseConnection getConnection() throws Exception {
-        Connection jdbcConnection = dataSource.getConnection();
-        IDatabaseConnection connection = new DatabaseConnection(jdbcConnection);
-        return connection;
+    @Before
+    public void setup() {
     }
 }
