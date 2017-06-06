@@ -2,6 +2,9 @@ package com.excilys.computerdatabase.dtos;
 
 import javax.validation.constraints.NotNull;
 
+import com.excilys.computerdatabase.validators.VerificationComputerDTO;
+
+@VerificationComputerDTO
 public class ComputerDTO {
 
     private long id;
