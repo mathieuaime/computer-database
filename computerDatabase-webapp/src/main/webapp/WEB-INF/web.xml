@@ -3,15 +3,15 @@
   <display-name>computer-database</display-name>
   <error-page>
     <error-code>403</error-code>
-    <location>/WEB-INF/views/403.jsp</location>
+    <location>/403</location>
   </error-page>
   <error-page>
     <error-code>404</error-code>
-    <location>/WEB-INF/views/404.jsp</location>
+    <location>/404</location>
   </error-page>
   <error-page>
     <error-code>500</error-code>
-    <location>/WEB-INF/views/500.jsp</location>
+    <location>/500</location>
   </error-page>
   <welcome-file-list>
     <welcome-file>/dashboard</welcome-file>

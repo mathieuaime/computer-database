@@ -5,6 +5,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
@@ -81,6 +82,8 @@ public class CommonController {
      */
     @GetMapping(value = "/403")
     public String accessDeniedPage(ModelMap model) {
+        model.addAttribute("isAdmin", SecurityContextHolder.getContext().getAuthentication().getAuthorities()
+                .contains(new SimpleGrantedAuthority("ROLE_ADMIN")));
         model.addAttribute("user", getUsername());
         return "403";
     }
@@ -92,6 +95,8 @@ public class CommonController {
      */
     @GetMapping(value = "/404")
     public String notFoundPage(ModelMap model) {
+        model.addAttribute("isAdmin", SecurityContextHolder.getContext().getAuthentication().getAuthorities()
+                .contains(new SimpleGrantedAuthority("ROLE_ADMIN")));
         model.addAttribute("user", getUsername());
         return "404";
     }
@@ -103,6 +108,8 @@ public class CommonController {
      */
     @GetMapping(value = "/500")
     public String errorPage(ModelMap model) {
+        model.addAttribute("isAdmin", SecurityContextHolder.getContext().getAuthentication().getAuthorities()
+                .contains(new SimpleGrantedAuthority("ROLE_ADMIN")));
         model.addAttribute("user", getUsername());
         return "500";
     }

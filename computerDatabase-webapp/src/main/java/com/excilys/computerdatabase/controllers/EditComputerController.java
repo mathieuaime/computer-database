@@ -8,6 +8,8 @@ import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -60,6 +62,8 @@ public class EditComputerController {
     public String get(ModelMap model, @RequestParam(value = "id", defaultValue = "0") long id) {
         LOGGER.info("get(id : " + id + ")");
         model.addAttribute("user", CommonController.getUsername());
+        model.addAttribute("isAdmin", SecurityContextHolder.getContext().getAuthentication().getAuthorities()
+                .contains(new SimpleGrantedAuthority("ROLE_ADMIN")));
         model.addAttribute("companies", companyService.getPage().getObjects());
         model.addAttribute("dateFormat", formatter);
 

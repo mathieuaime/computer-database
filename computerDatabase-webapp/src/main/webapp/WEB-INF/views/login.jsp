@@ -103,7 +103,7 @@
 
 								<div class="field-wrap">
 									<form:label path="password">
-										<spring:message code="label.login.register.username" />
+										<spring:message code="label.login.register.password" />
 										<span class="req">*</span>
 									</form:label>
 									<form:input type="password" path="password" autocomplete="off" />
