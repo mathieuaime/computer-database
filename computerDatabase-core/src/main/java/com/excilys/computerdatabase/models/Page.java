@@ -3,10 +3,17 @@ package com.excilys.computerdatabase.models;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.validation.constraints.Min;
+
+import com.excilys.computerdatabase.validators.VerificationPage;
+
+@VerificationPage
 public class Page<T> {
     private List<T> objects;
+    @Min(0)
     private int page;
     private int pageSize;
+    @Min(0)
     private int count;
     private String search;
     private String order;

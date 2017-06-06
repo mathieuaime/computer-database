@@ -15,5 +15,10 @@
             <artifactId>persistence-api</artifactId>
             <scope>provided</scope>
         </dependency>
+                    <!-- Form Validation using Annotations -->
+            <dependency>
+                <groupId>javax.validation</groupId>
+                <artifactId>validation-api</artifactId>
+            </dependency>
     </dependencies>
 </project>

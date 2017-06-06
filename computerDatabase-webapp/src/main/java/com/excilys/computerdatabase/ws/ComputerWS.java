@@ -10,7 +10,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -23,15 +22,12 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.excilys.computerdatabase.dtos.ComputerDTO;
 import com.excilys.computerdatabase.models.Page;
-import com.excilys.computerdatabase.exceptions.IntroducedAfterDiscontinuedException;
-import com.excilys.computerdatabase.exceptions.NameEmptyException;
 import com.excilys.computerdatabase.exceptions.NotFoundException;
 import com.excilys.computerdatabase.mappers.impl.CompanyMapper;
 import com.excilys.computerdatabase.mappers.impl.ComputerMapper;
 import com.excilys.computerdatabase.models.Computer;
 import com.excilys.computerdatabase.services.interfaces.CompanyService;
 import com.excilys.computerdatabase.services.interfaces.ComputerService;
-import com.excilys.computerdatabase.validators.ComputerValidator;
 
 @RestController
 @RequestMapping(value = "/api/computer", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -76,7 +72,6 @@ public class ComputerWS {
         try {
             computerDTO.setCompany(companyMapper.dto(companyService.getById(computerDTO.getCompany().getId())));
             Computer computer = computerMapper.bean(computerDTO);
-            ComputerValidator.validate(computer);
             computerDTO = computerMapper.dto(computerService.save(computer));
 
             URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
@@ -85,8 +80,6 @@ public class ComputerWS {
             return ResponseEntity.created(location).headers(addAccessControllAllowOrigin()).build();
         } catch (NotFoundException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).headers(addAccessControllAllowOrigin()).build();
-        } catch (NameEmptyException | IntroducedAfterDiscontinuedException e) {
-            return ResponseEntity.badRequest().headers(addAccessControllAllowOrigin()).build();
         }
     }
 
@@ -97,12 +90,9 @@ public class ComputerWS {
         try {
             computerDTO.setCompany(companyMapper.dto(companyService.getById(computerDTO.getCompany().getId())));
             Computer computer = computerMapper.bean(computerDTO);
-            ComputerValidator.validate(computer);
             return ResponseEntity.ok(computerService.update(computer));
         } catch (NotFoundException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).headers(addAccessControllAllowOrigin()).build();
-        } catch (NameEmptyException | IntroducedAfterDiscontinuedException e) {
-            return ResponseEntity.badRequest().headers(addAccessControllAllowOrigin()).build();
         }
     }
 

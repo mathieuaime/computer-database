@@ -45,6 +45,7 @@
         <checkstyleDir>${basedir}/checkstyle</checkstyleDir>
         <selenium-chrome-driver>3.3.0</selenium-chrome-driver>
         <org.seleniumhq.selenium>3.3.0</org.seleniumhq.selenium>
+        <version.plugin.tomcat>2.2</version.plugin.tomcat>
     </properties>
     <dependencyManagement>
         <dependencies>

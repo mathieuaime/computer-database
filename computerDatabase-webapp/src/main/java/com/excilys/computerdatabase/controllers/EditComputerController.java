@@ -21,15 +21,12 @@ import com.excilys.computerdatabase.dtos.CompanyDTO;
 import com.excilys.computerdatabase.dtos.ComputerDTO;
 import com.excilys.computerdatabase.exceptions.CompanyNotFoundException;
 import com.excilys.computerdatabase.exceptions.ComputerNotFoundException;
-import com.excilys.computerdatabase.exceptions.IntroducedAfterDiscontinuedException;
-import com.excilys.computerdatabase.exceptions.NameEmptyException;
 import com.excilys.computerdatabase.exceptions.NotFoundException;
 import com.excilys.computerdatabase.mappers.impl.CompanyMapper;
 import com.excilys.computerdatabase.mappers.impl.ComputerMapper;
 import com.excilys.computerdatabase.models.Computer;
 import com.excilys.computerdatabase.services.interfaces.CompanyService;
 import com.excilys.computerdatabase.services.interfaces.ComputerService;
-import com.excilys.computerdatabase.validators.ComputerValidator;
 
 @Controller
 @RequestMapping("/editComputer")
@@ -108,19 +105,10 @@ public class EditComputerController {
             computerDTO.setCompany(companyDTO);
 
             Computer computer = computerMapper.bean(computerDTO);
-            ComputerValidator.validate(computer);
             computerService.update(computer);
 
             LOGGER.debug("update");
             return "redirect:dashboard";
-        } catch (IntroducedAfterDiscontinuedException e) {
-            LOGGER.error("IntroducedAfterDiscontinued");
-            model.addAttribute("error", "La date d'ajout doit être antérieure à la date de retrait");
-            return get(model, computerDTO.getId());
-        } catch (NameEmptyException e) {
-            LOGGER.error("NameEmpty");
-            model.addAttribute("error", "{label.error.nameEmpty}");
-            return get(model, computerDTO.getId());
         } catch (NotFoundException e) {
             if (e instanceof ComputerNotFoundException) {
                 LOGGER.error("ComputerNotFound");
