@@ -46,7 +46,7 @@ public class EditComputerController {
     
     @Autowired
     private CompanyMapper companyMapper;
-    
+
     @Autowired
     private DateTimeFormatter formatter;
 
