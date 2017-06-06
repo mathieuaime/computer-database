@@ -24,7 +24,7 @@ public class TestDashboard {
     public static void beforeClass() {
         ChromeDriverManager.getInstance().setup();
         driver = new ChromeDriver();
-        baseUrl = "http://localhost:8080/computerDatabase";
+        baseUrl = "http://localhost:8080/computerDatabase-webapp";
         login();
     }
 
@@ -44,7 +44,7 @@ public class TestDashboard {
         driver.get(baseUrl + "/dashboard");
         WebElement addComputer = driver.findElement(By.id("addComputer"));
         addComputer.click();
-        assertEquals(driver.getCurrentUrl(), baseUrl + "/add");
+        assertEquals(driver.getCurrentUrl(), baseUrl + "/addComputer");
     }
 
     private static void login() {

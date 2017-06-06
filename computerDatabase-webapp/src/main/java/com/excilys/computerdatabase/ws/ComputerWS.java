@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -35,7 +36,7 @@ import com.excilys.computerdatabase.validators.ComputerValidator;
 
 @RestController
 @RequestMapping(value = "/api/computer", produces = MediaType.APPLICATION_JSON_VALUE)
-//@Secured("ROLE_USER")
+// @Secured("ROLE_USER")
 public class ComputerWS {
 
     @Autowired
@@ -69,8 +70,17 @@ public class ComputerWS {
         }
     }
 
+    @CrossOrigin(origins = "http://localhost:4200")
+    @GetMapping(value = "/computer", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Page<Computer>> getAllComputers() {
+
+        Page<Computer> page = computerService.getPage();
+        return new ResponseEntity<>(page, addAccessControllAllowOrigin(), HttpStatus.OK);
+
+    }
+
     @PostMapping
-    //@Secured("ROLE_ADMIN")
+    // @Secured("ROLE_ADMIN")
     public ResponseEntity<?> post(@Valid @ModelAttribute("computerDTO") ComputerDTO computerDTO) {
         LOGGER.info("post(computerDTO: " + computerDTO + ")");
         try {
@@ -91,7 +101,7 @@ public class ComputerWS {
     }
 
     @PutMapping
-    //@Secured("ROLE_ADMIN")
+    // @Secured("ROLE_ADMIN")
     public ResponseEntity<?> put(@Valid @ModelAttribute("computerDTO") ComputerDTO computerDTO) {
         LOGGER.info("update(computerDTO: " + computerDTO + ")");
         try {
@@ -107,7 +117,7 @@ public class ComputerWS {
     }
 
     @DeleteMapping(value = "/{id}")
-    //@Secured("ROLE_ADMIN")
+    // @Secured("ROLE_ADMIN")
     public ResponseEntity<?> delete(@PathVariable(value = "id") long id) {
         LOGGER.info("delete(id: " + id + ")");
         try {
@@ -127,11 +137,11 @@ public class ComputerWS {
             return ResponseEntity.notFound().headers(addAccessControllAllowOrigin()).build();
         }
     }
-    
+
     private HttpHeaders addAccessControllAllowOrigin() {
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Access-Control-Allow-Headers", "Content-Type");
-        headers.add("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE");
+        headers.add("Access-Control-Allow-Headers", "Origin, Content-Type, X-Auth-Token");
+        headers.add("Access-Control-Allow-Methods", "GET, POST, PATCH, PUT, DELETE, OPTIONS");
         headers.add("Access-Control-Allow-Origin", "*");
         return headers;
     }
