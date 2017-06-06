@@ -1,5 +1,6 @@
 package com.excilys.computerdatabase.models;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,7 +9,7 @@ import javax.validation.constraints.Min;
 import com.excilys.computerdatabase.validators.VerificationPage;
 
 @VerificationPage
-public class Page<T> {
+public class Page<T>  implements Serializable{
     private List<T> objects;
     @Min(0)
     private int page;
@@ -132,7 +133,7 @@ public class Page<T> {
         this.column = column;
     }
 
-    public int getObjectNumber() {
+    public int objectNumber() {
         return objects.size();
     }
     
@@ -144,7 +145,7 @@ public class Page<T> {
         this.count = count;
     }
 
-    public int getOffset() {
+    public int offset() {
         return (page - 1) * pageSize;
     }
 

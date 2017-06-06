@@ -109,6 +109,7 @@ public class ComputerDTOValidator implements ConstraintValidator<VerificationCom
      */
     public boolean formatDate(String date) {
         LOGGER.info("-------->getLocalDate(date) args: " + date);
+        langue = LocaleContextHolder.getLocale();
         if (this.langue.toString().equals("fr_fr")) {
             return (Pattern.matches(DATE_FRANCAISE, date)) || (Pattern.matches(DATE_FRANCAISE_ENVERS, date))
                     || (date.equals(""));

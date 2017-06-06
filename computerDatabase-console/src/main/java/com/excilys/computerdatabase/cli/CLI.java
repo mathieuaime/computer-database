@@ -3,9 +3,6 @@ package com.excilys.computerdatabase.cli;
 import java.util.List;
 import java.util.Scanner;
 
-import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
@@ -15,11 +12,15 @@ import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
 import com.excilys.computerdatabase.config.Config;
 import com.excilys.computerdatabase.dtos.CompanyDTO;
 import com.excilys.computerdatabase.dtos.ComputerDTO;
 import com.excilys.computerdatabase.exceptions.NotFoundException;
 import com.excilys.computerdatabase.mappers.impl.ComputerMapper;
+import com.excilys.computerdatabase.models.Company;
 import com.excilys.computerdatabase.models.Computer;
 import com.excilys.computerdatabase.models.Page;
 import com.excilys.computerdatabase.validators.ComputerDTOValidator;
@@ -58,7 +59,7 @@ public class CLI {
 
         Client client = ClientBuilder.newClient();
         client.register(feature);
-        target = client.target("http://localhost:8080").path("/webapp").path("api");
+        target = client.target("http://localhost:8080").path("/computerDatabase-webapp").path("api");
     }
 
     /**
@@ -82,14 +83,12 @@ public class CLI {
     public static void printListCompanies() {
         Builder builder = target.path("company").request(MediaType.APPLICATION_JSON_TYPE);
 
-        GenericType<Page<CompanyDTO>> genericType = new GenericType<Page<CompanyDTO>>() {
+        GenericType<Page<Company>> genericType = new GenericType<Page<Company>>() {
         };
 
         Response response = builder.get();
 
-        System.out.println(response);
-
-        Page<CompanyDTO> companies = response.readEntity(genericType);
+        Page<Company> companies = response.readEntity(genericType);
         companies.getObjects().forEach(System.out::println);
     }
 
@@ -99,15 +98,13 @@ public class CLI {
     public static void printListComputers() {
         Builder builder = target.path("computer").request(MediaType.APPLICATION_JSON_TYPE);
 
-        GenericType<List<ComputerDTO>> genericType = new GenericType<List<ComputerDTO>>() {
+        GenericType<Page<ComputerDTO>> genericType= new GenericType<Page<ComputerDTO>>() {
         };
 
         Response response = builder.get();
 
-        System.out.println(response);
-
-        List<ComputerDTO> computers = response.readEntity(genericType);
-        computers.forEach(System.out::println);
+        Page<ComputerDTO> computers = response.readEntity(genericType);
+        computers.getObjects().forEach(System.out::println);
     }
 
     /**
@@ -200,8 +197,8 @@ public class CLI {
                     companyDTO.setId(Long.parseLong(idCompany));
 
                     computerDTO.setName(nameComputer);
-                    computerDTO.setIntroduced(!introducedComputer.equals("") ? introducedComputer : null);
-                    computerDTO.setDiscontinued(!discontinuedComputer.equals("") ? discontinuedComputer : null);
+                    computerDTO.setIntroduced(introducedComputer);
+                    computerDTO.setDiscontinued(discontinuedComputer);
                     computerDTO.setCompany(companyDTO);
                     boolean verification = new ComputerDTOValidator().isValid(computerDTO, null);
                     if (verification) {
@@ -213,7 +210,7 @@ public class CLI {
 
                         System.out.println("Computer ajouté");
                     } else {
-                        System.out.println("Les données de l'ordinateur sont incorrecte");
+                        System.out.println("Les données de l'ordinateur sont incorrectes");
                     }
 
                 } catch (NumberFormatException e) {

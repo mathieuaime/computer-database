@@ -139,7 +139,7 @@ public class ComputerServiceTest extends DatabaseTestCase {
      */
     @Test
     public void testGetPage() {
-        assertEquals(4, computerService.getPage().getObjectNumber());
+        assertEquals(4, computerService.getPage().objectNumber());
     }
 
     /**
@@ -147,7 +147,7 @@ public class ComputerServiceTest extends DatabaseTestCase {
      */
     @Test
     public void testGetPageWithLimit() {
-        assertEquals(2, computerService.getPage(new Page<>(1, 2)).getObjectNumber());
+        assertEquals(2, computerService.getPage(new Page<>(1, 2)).objectNumber());
     }
 
     /**
@@ -155,7 +155,7 @@ public class ComputerServiceTest extends DatabaseTestCase {
      */
     @Test
     public void testGetPageWithSearch() {
-        assertEquals(2, computerService.getPage(new Page<>(1, 2, "Compu", "ASC", "name")).getObjectNumber());
+        assertEquals(2, computerService.getPage(new Page<>(1, 2, "Compu", "ASC", "name")).objectNumber());
     }
 
     /**
@@ -163,7 +163,7 @@ public class ComputerServiceTest extends DatabaseTestCase {
      */
     @Test
     public void testGetPageWithSearchNotFound() {
-        assertEquals(0, computerService.getPage(new Page<>(1, 2, "Compurdg", "ASC", "name")).getObjectNumber());
+        assertEquals(0, computerService.getPage(new Page<>(1, 2, "Compurdg", "ASC", "name")).objectNumber());
     }
 
     /**

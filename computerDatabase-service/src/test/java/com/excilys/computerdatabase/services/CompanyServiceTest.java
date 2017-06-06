@@ -104,7 +104,7 @@ public class CompanyServiceTest extends DatabaseTestCase {
      */
     @Test
     public void testGetPage() {
-        assertEquals(3, companyService.getPage().getObjectNumber());
+        assertEquals(3, companyService.getPage().objectNumber());
     }
 
     /**
@@ -112,7 +112,7 @@ public class CompanyServiceTest extends DatabaseTestCase {
      */
     @Test
     public void testGetPageWithLimit() {
-        assertEquals(1, companyService.getPage(new Page<>(1, 1)).getObjectNumber());
+        assertEquals(1, companyService.getPage(new Page<>(1, 1)).objectNumber());
     }
 
     /**
@@ -120,7 +120,7 @@ public class CompanyServiceTest extends DatabaseTestCase {
      */
     @Test
     public void testGetPageWithSearch() {
-        assertEquals(1, companyService.getPage(new Page<>(1, 1, "Compa", "ASC", "name")).getObjectNumber());
+        assertEquals(1, companyService.getPage(new Page<>(1, 1, "Compa", "ASC", "name")).objectNumber());
     }
 
     /**
