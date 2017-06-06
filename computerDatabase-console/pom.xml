@@ -1,0 +1,47 @@
+<project
+    xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.excilys.computerdatabase</groupId>
+        <artifactId>computerDatabase</artifactId>
+        <version>6.0.0-RELEASE</version>
+    </parent>
+    <artifactId>computerDatabase-console</artifactId>
+    <dependencies>
+        <!-- Computer-database Dependencies -->
+        <dependency>
+            <groupId>com.excilys.computerdatabase</groupId>
+            <artifactId>computerDatabase-core</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.excilys.computerdatabase</groupId>
+            <artifactId>computerDatabase-persistence</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.excilys.computerdatabase</groupId>
+            <artifactId>computerDatabase-service</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.excilys.computerdatabase</groupId>
+            <artifactId>computerDatabase-binding</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.ws.rs</groupId>
+            <artifactId>javax.ws.rs-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.core</groupId>
+            <artifactId>jersey-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.media</groupId>
+            <artifactId>jersey-media-json-jackson</artifactId>
+        </dependency>
+    </dependencies>
+</project>
