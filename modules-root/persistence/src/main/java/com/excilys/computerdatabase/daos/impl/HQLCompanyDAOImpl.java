@@ -15,6 +15,7 @@ import com.excilys.computerdatabase.exceptions.CompanyNotFoundException;
 import com.excilys.computerdatabase.exceptions.NotFoundException;
 import com.excilys.computerdatabase.models.Company;
 import com.excilys.computerdatabase.models.Computer;
+import com.excilys.computerdatabase.models.Page;
 
 @Repository
 public class HQLCompanyDAOImpl implements CompanyDAO {
@@ -30,26 +31,31 @@ public class HQLCompanyDAOImpl implements CompanyDAO {
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(HQLCompanyDAOImpl.class);
 
     @Override
-    public List<Company> findAll() {
+    public Page<Company> findAll() {
         LOGGER.info("findAll()");
-        return findAll(0, -1, null, null, "name");
+        //return findAll(0, -1, null, null, "name");
+        return findAll(new Page<>());
     }
 
     @Override
-    public List<Company> findAll(int offset, int length, String search, String sort, String order) {
-        LOGGER.info("findAll(offset: " + offset + ", length : " + length + ", order : " + order + ")");
-        String query = QUERY_FIND_COMPANIES + order;
+    public Page<Company> findAll(Page<?> page) {
+        LOGGER.info("findAll(page: " + page + ")");
+        String query = QUERY_FIND_COMPANIES + page.getColumn() + " " + page.getOrder();
+        
+        Page<Company> res = new Page<>(page);
 
         try (Session session = HibernateConfig.getSessionFactory().openSession();) {
             Query<Company> q1 = session.createQuery(query, Company.class);
 
-            if (length != -1) {
-                q1.setMaxResults(length);
-                q1.setFirstResult(offset);
+            if (page.getPageSize() != -1) {
+                q1.setMaxResults(page.getPageSize());
+                q1.setFirstResult(page.getOffset());
             }
 
-            return q1.list();
+            res.setObjects(q1.list());
         }
+        
+        return res;
     }
 
     @Override

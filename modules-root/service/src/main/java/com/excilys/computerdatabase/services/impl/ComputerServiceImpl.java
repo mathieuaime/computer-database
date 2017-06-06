@@ -1,7 +1,6 @@
 package com.excilys.computerdatabase.services.impl;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,12 +8,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.excilys.computerdatabase.daos.interfaces.ComputerDAO;
-import com.excilys.computerdatabase.dtos.CompanyDTO;
-import com.excilys.computerdatabase.dtos.ComputerDTO;
-import com.excilys.computerdatabase.dtos.Page;
+import com.excilys.computerdatabase.models.Page;
 import com.excilys.computerdatabase.exceptions.NotFoundException;
 import com.excilys.computerdatabase.mappers.CompanyMapper;
 import com.excilys.computerdatabase.mappers.ComputerMapper;
+import com.excilys.computerdatabase.models.Company;
 import com.excilys.computerdatabase.models.Computer;
 import com.excilys.computerdatabase.services.interfaces.ComputerService;
 
@@ -34,56 +32,41 @@ public class ComputerServiceImpl implements ComputerService {
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(ComputerServiceImpl.class);
 
     @Override
-    public Page<ComputerDTO> getPage() {
+    public Page<Computer> getPage() {
         LOGGER.info("getPage()");
-        return getPage(1, count(null), null, null, null);
+        return getPage(new Page<>());
     }
 
     @Override
-    public Page<ComputerDTO> getPage(int pageNumero, int length) {
-        LOGGER.info("getPage(pageNumero : " + pageNumero + ", length : " + length + ")");
-        return getPage(pageNumero, length, null, "name", "ASC");
-    }
-
-    @Override
-    public Page<ComputerDTO> getPage(Page<ComputerDTO> page) {
+    public Page<Computer> getPage(Page<?> page) {
         LOGGER.info("getPage(page: " + page + ")");
-        return getPage(page.getPage(), page.getPageSize(), page.getSearch(), page.getColumn(), page.getOrder());
+        return computerDAO.findAll(page);
     }
 
     @Override
-    public Page<ComputerDTO> getPage(int pageNumero, int length, String search, String column, String order) {
-        LOGGER.info("getPage(pageNumero : " + pageNumero + ", length : " + length + ", search : " + search
-                + ", column : " + column + ", order : " + order + ")");
-        return new Page<ComputerDTO>(computerDAO.findAll((pageNumero - 1) * length, length, search, column, order)
-                .stream().map(it -> computerMapper.dto(it)).collect(Collectors.toList()), pageNumero, length);
-    }
-
-    @Override
-    public ComputerDTO getById(long id) throws NotFoundException {
+    public Computer getById(long id) throws NotFoundException {
         LOGGER.info("getById(id : " + id + ")");
-        return computerMapper.dto(computerDAO.getById(id));
+        return computerDAO.getById(id);
     }
 
     @Override
-    public List<ComputerDTO> getByName(String name) {
+    public List<Computer> getByName(String name) {
         LOGGER.info("getByName(name : " + name + ")");
-        return computerDAO.getByName(name).stream().map(it -> computerMapper.dto(it))
-                .collect(Collectors.toList());
+        return computerDAO.getByName(name);
     }
 
     @Override
     @Transactional(readOnly = false, rollbackFor = NotFoundException.class)
-    public ComputerDTO save(Computer computer) throws NotFoundException {
+    public Computer save(Computer computer) throws NotFoundException {
         LOGGER.info("add(computer : " + computer + ")");
-        return computerMapper.dto(computerDAO.save(computer));
+        return computerDAO.save(computer);
     }
 
     @Override
     @Transactional(readOnly = false, rollbackFor = NotFoundException.class)
-    public ComputerDTO update(Computer computer) throws NotFoundException {
+    public Computer update(Computer computer) throws NotFoundException {
         LOGGER.info("update(computer : " + computer + ")");
-        return computerMapper.dto(computerDAO.update(computer));
+        return computerDAO.update(computer);
     }
 
     @Override
@@ -107,8 +90,8 @@ public class ComputerServiceImpl implements ComputerService {
     }
 
     @Override
-    public CompanyDTO getCompany(long id) throws NotFoundException {
+    public Company getCompany(long id) throws NotFoundException {
         LOGGER.info("getCompany(id : " + id + ")");
-        return companyMapper.dto(computerDAO.getCompany(id));
+        return computerDAO.getCompany(id);
     }
 }

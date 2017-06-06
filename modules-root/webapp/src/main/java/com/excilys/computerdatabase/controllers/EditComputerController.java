@@ -23,6 +23,7 @@ import com.excilys.computerdatabase.exceptions.ComputerNotFoundException;
 import com.excilys.computerdatabase.exceptions.IntroducedAfterDiscontinuedException;
 import com.excilys.computerdatabase.exceptions.NameEmptyException;
 import com.excilys.computerdatabase.exceptions.NotFoundException;
+import com.excilys.computerdatabase.mappers.CompanyMapper;
 import com.excilys.computerdatabase.mappers.ComputerMapper;
 import com.excilys.computerdatabase.models.Computer;
 import com.excilys.computerdatabase.services.interfaces.CompanyService;
@@ -40,7 +41,10 @@ public class EditComputerController {
     private CompanyService companyService;
 
     @Autowired
-    ComputerMapper computerMapper;
+    private ComputerMapper computerMapper;
+    
+    @Autowired
+    private CompanyMapper companyMapper;
 
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(EditComputerController.class);
 
@@ -61,7 +65,7 @@ public class EditComputerController {
         ComputerDTO computerDTO = null;
 
         try {
-            computerDTO = computerService.getById(id);
+            computerDTO = computerMapper.dto(computerService.getById(id));
         } catch (NotFoundException e) {
             if (e instanceof ComputerNotFoundException) {
                 LOGGER.error("ComputerNotFound");
@@ -96,7 +100,7 @@ public class EditComputerController {
         }
 
         try {
-            CompanyDTO companyDTO = companyService.getById(computerDTO.getCompany().getId());
+            CompanyDTO companyDTO = companyMapper.dto(companyService.getById(computerDTO.getCompany().getId()));
             computerDTO.setCompany(companyDTO);
 
             Computer computer = computerMapper.bean(computerDTO);

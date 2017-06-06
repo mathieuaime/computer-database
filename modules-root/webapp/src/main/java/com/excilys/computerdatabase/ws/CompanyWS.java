@@ -15,13 +15,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.excilys.computerdatabase.dtos.CompanyDTO;
-import com.excilys.computerdatabase.dtos.Page;
+import com.excilys.computerdatabase.models.Page;
 import com.excilys.computerdatabase.exceptions.NotFoundException;
 import com.excilys.computerdatabase.services.interfaces.CompanyService;
 
 @RestController
 @RequestMapping(value = "/api/company", produces = MediaType.APPLICATION_JSON_VALUE)
-@Secured("ROLE_USER")
+//@Secured("ROLE_USER")
 public class CompanyWS {
 
     @Autowired

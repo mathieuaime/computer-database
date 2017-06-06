@@ -30,6 +30,7 @@ import com.excilys.computerdatabase.config.spring.DAOConfig;
 import com.excilys.computerdatabase.config.spring.ServiceConfig;
 import com.excilys.computerdatabase.exceptions.CompanyNotFoundException;
 import com.excilys.computerdatabase.exceptions.NotFoundException;
+import com.excilys.computerdatabase.models.Page;
 import com.excilys.computerdatabase.services.interfaces.CompanyService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -117,7 +118,7 @@ public class CompanyServiceTest extends DatabaseTestCase {
      */
     @Test
     public void testGetPageWithLimit() {
-        assertEquals(1, companyService.getPage(1, 1).getObjectNumber());
+        assertEquals(1, companyService.getPage(new Page<>(1, 1)).getObjectNumber());
     }
 
     /**
@@ -125,7 +126,7 @@ public class CompanyServiceTest extends DatabaseTestCase {
      */
     @Test
     public void testGetPageWithSearch() {
-        assertEquals(1, companyService.getPage(1, 1, "Compa", null, null).getObjectNumber());
+        assertEquals(1, companyService.getPage(new Page<>(1, 1, "Compa", "ASC", "name")).getObjectNumber());
     }
 
     /**

@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.excilys.computerdatabase.dtos.ComputerDTO;
-import com.excilys.computerdatabase.dtos.Page;
+import com.excilys.computerdatabase.models.Page;
 import com.excilys.computerdatabase.exceptions.ComputerNotFoundException;
 import com.excilys.computerdatabase.exceptions.NotFoundException;
 import com.excilys.computerdatabase.services.interfaces.ComputerService;

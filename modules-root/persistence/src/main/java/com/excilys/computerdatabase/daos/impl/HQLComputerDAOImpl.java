@@ -22,6 +22,7 @@ import com.excilys.computerdatabase.exceptions.CompanyNotFoundException;
 import com.excilys.computerdatabase.exceptions.ComputerNotFoundException;
 import com.excilys.computerdatabase.models.Company;
 import com.excilys.computerdatabase.models.Computer;
+import com.excilys.computerdatabase.models.Page;
 
 @Repository
 public class HQLComputerDAOImpl implements ComputerDAO {
@@ -45,22 +46,22 @@ public class HQLComputerDAOImpl implements ComputerDAO {
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(HQLComputerDAOImpl.class);
 
     @Override
-    public List<Computer> findAll() {
+    public Page<Computer> findAll() {
         LOGGER.info("findAll()");
-        return findAll(0, 0, null, "name", "ASC");
+        return findAll(new Page<>());
     }
 
     @Override
-    public List<Computer> findAll(int offset, int length, String search, String column, String order) {
-        LOGGER.info("findAll(offset : " + offset + ", length : " + length + ", search : " + search + ", column : "
-                + column + ", order : " + order + ")");
+    public Page<Computer> findAll(Page<?> page) {
+        LOGGER.info("findAll(offset : " + page.getOffset() + ", length : " + page.getPageSize() + ", search : " + page.getSearch() + ", column : "
+                + page.getColumn() + ", order : " + page.getOrder() + ")");
+        
+        Page<Computer> res = new Page<>(page);
 
-        column = column == null || column.equals("") ? "name" : column;
-        order = order == null || order.equals("") ? "ASC" : order;
-        length = length == 0 ? (int) count(null) : length;
+        int length = page.getPageSize() == 0 ? (int) count(null) : page.getPageSize();
 
         String query1 = QUERY_FIND_COMPUTER;
-        boolean isSearch = search != null && !search.equals("");
+        boolean isSearch = page.getSearch() != null && !page.getSearch().equals("");
 
         //TODO forcer hibernate à utiliser une requete sql custom pour le tri par companie
         /*if (column.startsWith("company")) {
@@ -80,19 +81,21 @@ public class HQLComputerDAOImpl implements ComputerDAO {
             query1 += " WHERE c.name LIKE :search OR c.company.name LIKE :search";
         }
 
-        query1 += " ORDER BY c." + column + " " + order;
+        query1 += " ORDER BY c." + page.getColumn() + " " + page.getOrder();
 
         try (Session session = HibernateConfig.getSessionFactory().openSession();) {
             Query<Computer> q1 = session.createQuery(query1, Computer.class);
 
             if (isSearch) {
-                q1.setParameter("search", search + "%");
+                q1.setParameter("search", page.getSearch() + "%");
             }
             q1.setMaxResults(length);
-            q1.setFirstResult(offset);
+            q1.setFirstResult(page.getOffset());
 
-            return q1.list();
+            res.setObjects(q1.list());
         }
+        
+        return res;
     }
 
     @Override
