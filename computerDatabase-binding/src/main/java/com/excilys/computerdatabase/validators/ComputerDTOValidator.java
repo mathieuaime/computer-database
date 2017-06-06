@@ -32,7 +32,7 @@ public class ComputerDTOValidator implements ConstraintValidator<VerificationCom
     public boolean isValid(ComputerDTO computerDTO, ConstraintValidatorContext arg1) {
         LOGGER.info("-------->isValide(ComputerDTO, validatorContext) args: " + computerDTO);
         boolean nameCorrect = verificationName(computerDTO.getName());
-        boolean DateCorrect = (verificationDateValide(computerDTO.getIntroduced(), computerDTO.getDiscontinued()));
+        boolean DateCorrect = (verificationDateValide(computerDTO));
         if (!nameCorrect) {
             arg1.buildConstraintViolationWithTemplate("Champs name incorrect : il ne peut être null ou vide");
         }
@@ -91,13 +91,12 @@ public class ComputerDTOValidator implements ConstraintValidator<VerificationCom
      * @param discontinuedDTO : date discontinued en String
      * @return boolean : si la date est valide
      */
-    public boolean verificationDateValide(String introducedDTO, String discontinuedDTO) {
-        LOGGER.info("-------->verificationDateValide(introducedDTO,discontinuedDTO) args: " + introducedDTO + " - "
-                + discontinuedDTO);
-        if (formatDate(introducedDTO) && (formatDate(discontinuedDTO))) {
-            LocalDate introduced = getLocalDate(introducedDTO);
-            LocalDate discontinued = getLocalDate(discontinuedDTO);
-            return dateLogique(introduced, discontinued);
+    public boolean verificationDateValide(ComputerDTO computer) {
+        LOGGER.info("-------->verificationDateValide(computer) args: " +computer);
+        if (formatDate(computer.getIntroduced()) && (formatDate(computer.getDiscontinued()))) {
+            LocalDate introduced = getLocalDate(computer.getIntroduced());
+            LocalDate discontinued = getLocalDate(computer.getDiscontinued());
+            return dateLogique(introduced, discontinued, computer);
         }
         return false;
     }
@@ -123,7 +122,7 @@ public class ComputerDTOValidator implements ConstraintValidator<VerificationCom
      * @param discontinued : date de fin
      * @return boolean : si les 2 valeurs sont logique entre elles
      */
-    public static boolean dateLogique(LocalDate introduced, LocalDate discontinued) {
+    public static boolean dateLogique(LocalDate introduced, LocalDate discontinued, ComputerDTO computer) {
         LOGGER.info("-------->dateLogique(introduced,discontinued) args: " + introduced + " - " + discontinued);
         if ((introduced == null) && (discontinued == null)) {
             return true;
@@ -132,11 +131,16 @@ public class ComputerDTOValidator implements ConstraintValidator<VerificationCom
             return false;
         }
         if ((introduced != null) && (discontinued == null)) {
+            computer.setIntroduced(introduced.toString());
             return true;
         }
         if ((introduced == discontinued) || (introduced.equals(discontinued))) {
+            computer.setIntroduced(introduced.toString());
+            computer.setDiscontinued(discontinued.toString());
             return true;
         }
+        computer.setIntroduced(introduced.toString());
+        computer.setDiscontinued(discontinued.toString());
         return introduced.isBefore(discontinued);
     }
 
@@ -150,6 +154,6 @@ public class ComputerDTOValidator implements ConstraintValidator<VerificationCom
         if (name == null) {
             return false;
         }
-        return !name.equals("");
+        return !name.equals("") && name.equals(name.replaceAll("[^(\\d\\s\\w\\.\\-)]|_", " "));
     }
 }
