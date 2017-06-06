@@ -10,8 +10,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.annotation.Secured;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -24,19 +22,16 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.excilys.computerdatabase.dtos.ComputerDTO;
 import com.excilys.computerdatabase.models.Page;
-import com.excilys.computerdatabase.exceptions.IntroducedAfterDiscontinuedException;
-import com.excilys.computerdatabase.exceptions.NameEmptyException;
 import com.excilys.computerdatabase.exceptions.NotFoundException;
 import com.excilys.computerdatabase.mappers.impl.CompanyMapper;
 import com.excilys.computerdatabase.mappers.impl.ComputerMapper;
 import com.excilys.computerdatabase.models.Computer;
 import com.excilys.computerdatabase.services.interfaces.CompanyService;
 import com.excilys.computerdatabase.services.interfaces.ComputerService;
-import com.excilys.computerdatabase.validators.ComputerValidator;
 
 @RestController
 @RequestMapping(value = "/api/computer", produces = MediaType.APPLICATION_JSON_VALUE)
-// @Secured("ROLE_USER")
+//@Secured("ROLE_USER")
 public class ComputerWS {
 
     @Autowired
@@ -70,23 +65,13 @@ public class ComputerWS {
         }
     }
 
-    @CrossOrigin(origins = "http://localhost:4200")
-    @GetMapping(value = "/computer", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Page<Computer>> getAllComputers() {
-
-        Page<Computer> page = computerService.getPage();
-        return new ResponseEntity<>(page, addAccessControllAllowOrigin(), HttpStatus.OK);
-
-    }
-
     @PostMapping
-    // @Secured("ROLE_ADMIN")
+    //@Secured("ROLE_ADMIN")
     public ResponseEntity<?> post(@Valid @ModelAttribute("computerDTO") ComputerDTO computerDTO) {
         LOGGER.info("post(computerDTO: " + computerDTO + ")");
         try {
             computerDTO.setCompany(companyMapper.dto(companyService.getById(computerDTO.getCompany().getId())));
             Computer computer = computerMapper.bean(computerDTO);
-            ComputerValidator.validate(computer);
             computerDTO = computerMapper.dto(computerService.save(computer));
 
             URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
@@ -95,29 +80,24 @@ public class ComputerWS {
             return ResponseEntity.created(location).headers(addAccessControllAllowOrigin()).build();
         } catch (NotFoundException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).headers(addAccessControllAllowOrigin()).build();
-        } catch (NameEmptyException | IntroducedAfterDiscontinuedException e) {
-            return ResponseEntity.badRequest().headers(addAccessControllAllowOrigin()).build();
         }
     }
 
     @PutMapping
-    // @Secured("ROLE_ADMIN")
+    //@Secured("ROLE_ADMIN")
     public ResponseEntity<?> put(@Valid @ModelAttribute("computerDTO") ComputerDTO computerDTO) {
         LOGGER.info("update(computerDTO: " + computerDTO + ")");
         try {
             computerDTO.setCompany(companyMapper.dto(companyService.getById(computerDTO.getCompany().getId())));
             Computer computer = computerMapper.bean(computerDTO);
-            ComputerValidator.validate(computer);
             return ResponseEntity.ok(computerService.update(computer));
         } catch (NotFoundException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).headers(addAccessControllAllowOrigin()).build();
-        } catch (NameEmptyException | IntroducedAfterDiscontinuedException e) {
-            return ResponseEntity.badRequest().headers(addAccessControllAllowOrigin()).build();
         }
     }
 
     @DeleteMapping(value = "/{id}")
-    // @Secured("ROLE_ADMIN")
+    //@Secured("ROLE_ADMIN")
     public ResponseEntity<?> delete(@PathVariable(value = "id") long id) {
         LOGGER.info("delete(id: " + id + ")");
         try {
@@ -137,11 +117,11 @@ public class ComputerWS {
             return ResponseEntity.notFound().headers(addAccessControllAllowOrigin()).build();
         }
     }
-
+    
     private HttpHeaders addAccessControllAllowOrigin() {
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Access-Control-Allow-Headers", "Origin, Content-Type, X-Auth-Token");
-        headers.add("Access-Control-Allow-Methods", "GET, POST, PATCH, PUT, DELETE, OPTIONS");
+        headers.add("Access-Control-Allow-Headers", "Content-Type");
+        headers.add("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE");
         headers.add("Access-Control-Allow-Origin", "*");
         return headers;
     }
