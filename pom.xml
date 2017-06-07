@@ -279,6 +279,8 @@
                 <version>${maven-checkstyle-plugin.version}</version>
                 <configuration>
                     <configLocation>${maven-checkstyle-plugin.configLocation}</configLocation>
+		   <suppressionsLocation>suppressions.xml</suppressionsLocation>
+		   <suppressionsFileExpression>checkstyle.suppressions.file</suppressionsFileExpression>
                 </configuration>
                 <reportSets>
                     <reportSet>
