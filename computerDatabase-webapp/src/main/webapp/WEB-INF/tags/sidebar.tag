@@ -23,7 +23,7 @@
 				<li class="active"><a href="dashboard"><spring:message
 							code="label.dashboard.title" /></a></li>
 				<c:if test="${isAdmin}">
-					<li><a href="addComputer"><spring:message
+					<li><a href="addComputer" id="addComputer"><spring:message
 								code="label.addComputer.title" /></a></li>
 				</c:if>
 			</ul>

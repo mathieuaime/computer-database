@@ -58,21 +58,21 @@
 							<div class="field-wrap">
 								<label> <spring:message
 										code="label.login.login.username" /><span class="req">*</span>
-								</label> <input type="text" name="username" required autocomplete="off" />
+								</label> <input type="text" name="username" id="username" required autocomplete="off" />
 							</div>
 
 							<div class="field-wrap">
 								<label> <spring:message
 										code="label.login.login.password" /><span class="req">*</span>
-								</label> <input type="password" name="password" required
+								</label> <input type="password" name="password" id="password" required
 									autocomplete="off" />
 							</div>
 
 							<input type="hidden" name="${_csrf.parameterName}"
 								value="${_csrf.token}" />
 
-							<button class="button button-block">
-								<spring:message code="label.login.login" />
+							<button class="button button-block" id="submit">
+								<spring:message code="label.login.login"/>
 							</button>
 
 						</form>
