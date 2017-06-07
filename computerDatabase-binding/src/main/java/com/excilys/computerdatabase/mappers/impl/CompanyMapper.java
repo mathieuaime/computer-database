@@ -60,6 +60,7 @@ public class CompanyMapper implements Mapper<Company, CompanyDTO> {
 
     @Override
     public Company bean(CompanyDTO companyDTO) {
+        LOGGER.info("bean(companyDTO : " + companyDTO + ")");
         return new Company.Builder(companyDTO.getName()).id(companyDTO.getId()).build();
     }
 }

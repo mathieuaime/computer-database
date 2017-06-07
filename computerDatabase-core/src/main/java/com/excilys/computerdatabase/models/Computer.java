@@ -17,8 +17,6 @@ public class Computer implements Serializable {
 
     private static final long serialVersionUID = -2089516842549594133L;
 
-    
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;

@@ -24,8 +24,7 @@ public class ComputerMapper implements Mapper<Computer, ComputerDTO> {
 
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(ComputerMapper.class);
 
-    @Autowired
-    private CompanyMapper companyMapper;
+    private CompanyMapper companyMapper = new CompanyMapper();
 
     @Autowired
     private DateTimeFormatter formatter;
@@ -71,6 +70,7 @@ public class ComputerMapper implements Mapper<Computer, ComputerDTO> {
 
     @Override
     public Computer bean(ComputerDTO computerDTO) throws CompanyNotFoundException {
+        LOGGER.info("bean(computerDTO: " + computerDTO + ")");
         CompanyDTO companyDTO = new CompanyDTO();
         companyDTO.setId(computerDTO.getCompany().getId());
         companyDTO.setName(computerDTO.getCompany().getName());
@@ -80,12 +80,17 @@ public class ComputerMapper implements Mapper<Computer, ComputerDTO> {
         LocalDate discontinued = computerDTO.getDiscontinued() != null && !computerDTO.getDiscontinued().equals("")
                 ? LocalDate.parse(computerDTO.getDiscontinued(), formatter) : null;
 
-        return new Computer.Builder(computerDTO.getName()).id(computerDTO.getId()).introduced(introduced)
-                .discontinued(discontinued).company(companyMapper.bean(companyDTO)).build();
+        return new Computer.Builder(computerDTO.getName())
+                .id(computerDTO.getId())
+                .introduced(introduced)
+                .discontinued(discontinued)
+                .company(companyMapper.bean(companyDTO))
+                .build();
     }
 
     @Override
     public ComputerDTO dto(Computer computer) {
+        LOGGER.info("dto(computer: " + computer + ")");
         ComputerDTO computerDTO = new ComputerDTO();
 
         if (computer != null) {

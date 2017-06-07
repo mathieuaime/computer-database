@@ -63,9 +63,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         filter.setUserDetailsService(userDetailsService);
 
         http.authorizeRequests()
-            .antMatchers("/resources/**", "/signup", "/about", "/login").permitAll()
+            .antMatchers("/resources/**", "/signup", "/about", "/login","/api/**").permitAll()
             .and().formLogin().loginPage("/login").usernameParameter("username").passwordParameter("password")
-            .and().exceptionHandling().accessDeniedPage("/403");
+            .and().exceptionHandling().accessDeniedPage("/403").and().csrf().ignoringAntMatchers("/api/**");
     }
 
     @PostConstruct

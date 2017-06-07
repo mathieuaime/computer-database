@@ -108,7 +108,7 @@ public class ComputerDTOValidator implements ConstraintValidator<VerificationCom
      * @param date : date en string
      * @return boolean : si oui ou non le format est correct
      */
-    public boolean formatDate(String date) {
+    public static boolean formatDate(String date) {
         LOGGER.info("-------->getLocalDate(date) args: " + date);
         Locale local = LocaleContextHolder.getLocale();
         if ((local.toString().equals("fr_fr"))||(local.toString().equals("fr"))) {

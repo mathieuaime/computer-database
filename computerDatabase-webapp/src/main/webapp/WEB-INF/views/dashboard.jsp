@@ -41,7 +41,7 @@
 						</div>
 					</c:if>
 
-					<h1 id="homeTitle">${computerCount}Computer${computerCount > 1 ? 's' : ''}</h1>
+					<h1 id="homeTitle">${computerCount} <spring:message code="label.dashboard.computer" />${computerCount > 1 ? 's' : ''}</h1>
 
 					<div id="actions" class="form-horizontal">
 						<div class="pull-left">

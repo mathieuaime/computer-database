@@ -4,6 +4,7 @@ import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
@@ -18,6 +19,7 @@ import com.excilys.computerdatabase.dtos.CompanyDTO;
 import com.excilys.computerdatabase.models.Company;
 import com.excilys.computerdatabase.models.Page;
 import com.excilys.computerdatabase.exceptions.NotFoundException;
+import com.excilys.computerdatabase.mappers.impl.CompanyMapper;
 import com.excilys.computerdatabase.services.interfaces.CompanyService;
 
 @RestController
@@ -27,6 +29,9 @@ public class CompanyWS {
 
     @Autowired
     private CompanyService companyService;
+
+    @Autowired
+    private CompanyMapper companyMapper;
 
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(CompanyWS.class);
 
@@ -40,7 +45,8 @@ public class CompanyWS {
     public ResponseEntity<?> get(@PathVariable(value = "id") long id) {
         LOGGER.info("get(id: " + id + ")");
         try {
-            return ResponseEntity.ok(companyService.getById(id));
+            return ResponseEntity.ok().headers(addAccessControllAllowOrigin())
+                    .body(companyMapper.dto(companyService.getById(id)));
         } catch (NotFoundException e) {
             LOGGER.error("Computer " + id + " Not Found");
             return ResponseEntity.notFound().build();
@@ -67,5 +73,13 @@ public class CompanyWS {
         } catch (NotFoundException e) {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    private HttpHeaders addAccessControllAllowOrigin() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Access-Control-Allow-Headers", "Content-Type");
+        headers.add("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE");
+        headers.add("Access-Control-Allow-Origin", "*");
+        return headers;
     }
 }

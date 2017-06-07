@@ -1,6 +1,5 @@
 package com.excilys.computerdatabase.cli;
 
-import java.util.List;
 import java.util.Scanner;
 
 import javax.ws.rs.client.Client;
@@ -14,21 +13,16 @@ import javax.ws.rs.core.Response;
 
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.http.HttpStatus;
 
 import com.excilys.computerdatabase.config.Config;
 import com.excilys.computerdatabase.dtos.CompanyDTO;
 import com.excilys.computerdatabase.dtos.ComputerDTO;
-import com.excilys.computerdatabase.exceptions.NotFoundException;
-import com.excilys.computerdatabase.mappers.impl.ComputerMapper;
 import com.excilys.computerdatabase.models.Company;
-import com.excilys.computerdatabase.models.Computer;
 import com.excilys.computerdatabase.models.Page;
 import com.excilys.computerdatabase.validators.ComputerDTOValidator;
 
 public class CLI {
-
-    // @Autowired
-    private static ComputerMapper computerMapper = new ComputerMapper();
 
     private static Scanner scanner;
 
@@ -43,8 +37,6 @@ public class CLI {
         AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
         context.scan("com.excilys.computerdatabase");
         context.refresh();
-
-        computerMapper = (ComputerMapper) context.getBean("computerMapper");
 
         context.close();
     }
@@ -145,6 +137,9 @@ public class CLI {
             String introducedComputer;
             String discontinuedComputer;
             String idCompany;
+            
+            Builder builder;
+            Response response;
 
             // get input as a String
             String choice = scanner.next();
@@ -178,13 +173,13 @@ public class CLI {
                 System.out.println("Nom ?");
                 nameComputer = scanner.next();
 
+                introducedComputer = "";
                 System.out.println("Date d'ajout ? (" + DATE_FORMAT + ")");
                 // introducedComputer = scanner.nextLine();
-                introducedComputer = "";
 
+                discontinuedComputer = "";
                 System.out.println("Date de retrait ? (" + DATE_FORMAT + ")");
                 // discontinuedComputer = scanner.nextLine();
-                discontinuedComputer = "";
 
                 System.out.println("Marque ?");
                 // idCompany = scanner.next();
@@ -192,9 +187,15 @@ public class CLI {
 
                 try {
                     ComputerDTO computerDTO = new ComputerDTO();
+                    builder = target.path("company").path(String.valueOf(idCompany)).request();
+
                     CompanyDTO companyDTO = new CompanyDTO();
 
-                    companyDTO.setId(Long.parseLong(idCompany));
+                    try {
+                        companyDTO = builder.get(CompanyDTO.class);
+                    } catch (javax.ws.rs.NotFoundException e) {
+                        System.out.println("Company " + idCompany + " Not Found");
+                    }
 
                     computerDTO.setName(nameComputer);
                     computerDTO.setIntroduced(introducedComputer);
@@ -202,11 +203,8 @@ public class CLI {
                     computerDTO.setCompany(companyDTO);
                     boolean verification = new ComputerDTOValidator().isValid(computerDTO, null);
                     if (verification) {
-                        Computer computer = computerMapper.bean(computerDTO);
-
-                        Builder builder = target.path("computer").request(MediaType.APPLICATION_JSON_TYPE);
-                        builder.post(Entity.json(computer));
-                        // computerService.save(computer);
+                        builder = target.path("computer").request();
+                        builder.post(Entity.json(computerDTO));
 
                         System.out.println("Computer ajouté");
                     } else {
@@ -216,13 +214,11 @@ public class CLI {
                 } catch (NumberFormatException e) {
                     System.out.println("L'id doit être un nombre");
 
-                } catch (NotFoundException e) {
-                    System.out.println("La company n'existe pas");
                 }
                 break;
 
             case "5":
-                System.out.println("Modification d'un computer");
+                System.out.println("Modification d'un ordinateur");
 
                 System.out.println("Id ?");
                 idComputer = scanner.nextLine();
@@ -239,65 +235,68 @@ public class CLI {
                 System.out.println("Nouvelle marque ?");
                 idCompany = scanner.nextLine();
 
-                /*
-                 * try { ComputerDTO computerDTO = new ComputerDTO(); CompanyDTO
-                 * companyDTO = new CompanyDTO();
-                 * 
-                 * companyDTO.setId(Long.parseLong(idCompany));
-                 * 
-                 * computerDTO.setName(nameComputer);
-                 * computerDTO.setId(Long.parseLong(idComputer));
-                 * computerDTO.setIntroduced(!introducedComputer.equals("") ?
-                 * introducedComputer : null);
-                 * computerDTO.setDiscontinued(!discontinuedComputer.equals("")
-                 * ? discontinuedComputer : null);
-                 * computerDTO.setCompany(companyDTO);
-                 * 
-                 * Computer computer = computerMapper.bean(computerDTO);
-                 * 
-                 * ComputerValidator.validate(computer);
-                 * computerService.update(computer);
-                 * 
-                 * } catch (NumberFormatException e) {
-                 * System.out.println("L'id doit être un nombre"); } catch
-                 * (IntroducedAfterDiscontinuedException e) { System.out.
-                 * println("La date d'ajout doit être antérieure à la date de retrait"
-                 * ); } catch (NameEmptyException e) {
-                 * System.out.println("Le nom doit être non nul"); } catch
-                 * (NotFoundException e) { if (e instanceof
-                 * ComputerNotFoundException) {
-                 * System.out.println("Le computer n'existe pas"); } else if (e
-                 * instanceof CompanyNotFoundException) {
-                 * System.out.println("La company n'exste pas"); } }
-                 */
+                try {
+                    ComputerDTO computerDTO = new ComputerDTO();
+                    CompanyDTO companyDTO = new CompanyDTO();
+
+                    try {
+                        builder = target.path("company").path(String.valueOf(idCompany)).request();
+                        companyDTO = builder.get(CompanyDTO.class);
+                    } catch (javax.ws.rs.NotFoundException e) {
+                        System.out.println("Company " + idCompany + " Not Found");
+                    }
+
+                    companyDTO.setId(Long.parseLong(idCompany));
+
+                    computerDTO.setName(nameComputer);
+                    computerDTO.setId(Long.parseLong(idComputer));
+                    computerDTO.setIntroduced(introducedComputer);
+                    computerDTO.setDiscontinued(discontinuedComputer);
+                    computerDTO.setCompany(companyDTO);
+
+                    boolean verification = new ComputerDTOValidator().isValid(computerDTO, null);
+                    if (verification) {
+                        builder = target.path("computer").request();
+                        builder.put(Entity.json(computerDTO));
+
+                        System.out.println("Computer ajouté");
+                    } else {
+                        System.out.println("Les données de l'ordinateur sont incorrectes");
+                    }
+                } catch (NumberFormatException e) {
+                    System.out.println("L'id doit être un nombre");
+                }
+                 
                 break;
 
             case "6":
                 System.out.println("Id du pc ?");
                 idComputer = scanner.next();
 
-                /*
-                 * try { computerService.delete(Long.parseLong(idComputer));
-                 * System.out.println("Computer supprimé"); } catch
-                 * (NumberFormatException e) {
-                 * System.out.println("L'id doit être un nombre"); } catch
-                 * (NotFoundException e) {
-                 * System.out.println("Le computer n'existe pas"); }
-                 */
+                builder = target.path("computer").path(idComputer).request(MediaType.APPLICATION_JSON_TYPE);
+
+                response = builder.delete();
+                if (response.getStatus() == HttpStatus.NO_CONTENT.value()) {
+                    System.out.println("Computer supprimé");
+                } else {
+                    System.out.println("Computer inconnu");
+                }
+
                 break;
 
             case "7":
                 System.out.println("Id de la companie ?");
                 idCompany = scanner.next();
 
-                /*
-                 * try { companyService.delete(Long.parseLong(idCompany));
-                 * System.out.println("Computer supprimé"); } catch
-                 * (NumberFormatException e) {
-                 * System.out.println("L'id doit être un nombre"); } catch
-                 * (NotFoundException e) {
-                 * System.out.println("Le computer n'existe pas"); }
-                 */
+                builder = target.path("company").path(idCompany).request(MediaType.APPLICATION_JSON_TYPE);
+
+                response = builder.delete();
+                if (response.getStatus() == HttpStatus.NO_CONTENT.value()) {
+                    System.out.println("Compagnie supprimée");
+                } else {
+                    System.out.println("Compagnie inconnue");
+                }
+
                 break;
 
             case "8":

@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -73,7 +74,7 @@ public class ComputerWS {
 
     @PostMapping
     // @Secured("ROLE_ADMIN")
-    public ResponseEntity<?> post(@Valid @ModelAttribute("computerDTO") ComputerDTO computerDTO) {
+    public ResponseEntity<?> post(@RequestBody @Valid ComputerDTO computerDTO) {
         LOGGER.info("post(computerDTO: " + computerDTO + ")");
         try {
             computerDTO.setCompany(companyMapper.dto(companyService.getById(computerDTO.getCompany().getId())));
@@ -91,7 +92,7 @@ public class ComputerWS {
 
     @PutMapping
     // @Secured("ROLE_ADMIN")
-    public ResponseEntity<?> put(@Valid @ModelAttribute("computerDTO") ComputerDTO computerDTO) {
+    public ResponseEntity<?> put(@RequestBody @Valid ComputerDTO computerDTO) {
         LOGGER.info("update(computerDTO: " + computerDTO + ")");
         try {
             computerDTO.setCompany(companyMapper.dto(companyService.getById(computerDTO.getCompany().getId())));
