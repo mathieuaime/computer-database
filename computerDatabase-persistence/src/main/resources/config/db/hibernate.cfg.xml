@@ -6,7 +6,7 @@
     <session-factory>
         <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
         <property name="hibernate.connection.password">qwerty1234</property>
-        <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/computer-database-db?zeroDateTimeBehavior=convertToNull</property>
+        <property name="hibernate.connection.url">jdbc:mysql://mysqlprod:3306/computer-database-db2?zeroDateTimeBehavior=convertToNull</property>
         <property name="hibernate.connection.username">admincdb</property>
         <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
 
