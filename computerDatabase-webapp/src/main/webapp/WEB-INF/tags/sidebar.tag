@@ -26,6 +26,7 @@
 					<li><a href="addComputer" id="addComputer"><spring:message
 								code="label.addComputer.title" /></a></li>
 				</c:if>
+				<li><a href="logout"><spring:message code="label.logout" /></a></li>
 			</ul>
 		</div>
 		<!--/.nav-collapse -->

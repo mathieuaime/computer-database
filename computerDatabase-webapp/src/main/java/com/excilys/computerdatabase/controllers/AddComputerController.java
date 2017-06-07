@@ -78,6 +78,9 @@ public class AddComputerController {
         if (result.hasErrors()) {
             model.addAttribute("companies", companyService.getPage().getObjects());
             model.addAttribute(result);
+            model.addAttribute("user", CommonController.getUsername());
+            model.addAttribute("isAdmin", SecurityContextHolder.getContext().getAuthentication().getAuthorities()
+                    .contains(new SimpleGrantedAuthority("ROLE_ADMIN")));
             return "addComputer";
         }
         try {
@@ -90,6 +93,9 @@ public class AddComputerController {
         } catch (NotFoundException e) {
             if (e instanceof CompanyNotFoundException) {
                 model.addAttribute("error", "La company n'existe pas");
+                model.addAttribute("user", CommonController.getUsername());
+                model.addAttribute("isAdmin", SecurityContextHolder.getContext().getAuthentication().getAuthorities()
+                        .contains(new SimpleGrantedAuthority("ROLE_ADMIN")));
             }
             return get(model);
         }
