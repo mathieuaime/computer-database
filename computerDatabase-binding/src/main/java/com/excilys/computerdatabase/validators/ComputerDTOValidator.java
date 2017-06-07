@@ -34,13 +34,15 @@ public class ComputerDTOValidator implements ConstraintValidator<VerificationCom
         boolean nameCorrect = verificationName(computerDTO.getName());
         boolean DateCorrect = (verificationDateValide(computerDTO));
         if (!nameCorrect) {
-            arg1.buildConstraintViolationWithTemplate("name incorrect").addPropertyNode("name").addConstraintViolation();
+            String langue  =  !LocaleContextHolder.getLocale().toString().equals("en")? "nom incorrect" : "invalid name" ; 
+            arg1.buildConstraintViolationWithTemplate(langue).addPropertyNode("name").addConstraintViolation();
         }
         if (!DateCorrect) {
+            String langue  =  !LocaleContextHolder.getLocale().toString().equals("en")? "date incorrecte" : "invalid date" ; 
             arg1.buildConstraintViolationWithTemplate(
-                    "date incorrecte").addPropertyNode("introduced").addConstraintViolation();
+                    langue).addPropertyNode("introduced").addConstraintViolation();
             arg1.buildConstraintViolationWithTemplate(
-                    "date incorrecte").addPropertyNode("discontinued").addConstraintViolation();
+                    langue).addPropertyNode("discontinued").addConstraintViolation();
         }
         return nameCorrect && DateCorrect;
 
@@ -115,7 +117,6 @@ public class ComputerDTOValidator implements ConstraintValidator<VerificationCom
             return (Pattern.matches(DATE_FRANCAISE, date)) || (Pattern.matches(DATE_FRANCAISE_ENVERS, date))
                     || (date.equals(""));
         } else {
-            System.out.println("je suis la");
             return ((Pattern.matches(DATE_ANGLAISE, date)) || (date.equals("")));
         }
     }
